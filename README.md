@@ -14,9 +14,15 @@ bili + lib = bilib
 
 请勿将此lib用于非法用途（包括敏感数据爬取和DoS/DDoS攻击），作者将不承担任何责任，使用此lib视为已遵守此规则
 
+另外，lib中注解可能与README冲突，请以README为准
+
+
+
 ## 稳定功能的API
 
 这部分包含了我从2020年5月开始调试的代码，目前爬取100w+数据后仍能稳定工作
+
+
 
 ### user_info(uid_input, get_ua=False)
 
@@ -47,6 +53,8 @@ bili + lib = bilib
     这可能是B站彩蛋？具体表现之一为访问其主页只会看到几个字
     
     返回昵称为'(##WDNMD_USER##)'，包含单引号
+    
+
 
 ### get_danmaku(cid_input, reset=False)
 
@@ -60,6 +68,8 @@ bili + lib = bilib
 
 异常：目前没有检查到这个API会触发反爬取，但保险起见，遇到任何异常会直接抛出
 
+
+
 ### listall_danmaku(file_path, stamp=False)
 
 功能：处理弹幕文件，并输出
@@ -72,6 +82,8 @@ bili + lib = bilib
 
 异常：现有的弹幕文件结构不会造成此API的异常
 
+
+
 ### count_danmaku(file_path)
 
 功能：获取弹幕文件行数
@@ -83,3 +95,67 @@ bili + lib = bilib
 返回：一个数字，此为弹幕文件总行数
 
 异常： 除非弹幕文件不存在，否则不太可能会触发异常
+
+
+
+## 实验性API
+
+这些都是获取视频/番剧或电影信息的API，由于有多分p的情况，目前推荐在单p下使用，对于番剧，请尽可能避免遇到存在SP的情况（季度的情况估计不会有问题）
+
+这些API将在最近开始测试，下面的说明不会包含遇到的异常
+
+### 简单说明
+
+在说明API前，需要说明一些B站在番剧方面API的一些参数（比较复杂），这些参数一般可在URL中找到
+
+	•season_id 番剧id （例如ss3398，冰菓），小概率才会在URL中出现
+
+	•media_id 番剧md号（例如md135652，JOJO的奇妙冒险 第五季）
+
+	•ep 剧集编号（例如ep84787，冰菓）
+	
+这些参数一般会一起在B站API出现
+	
+
+
+### video_info(id_input, mode="bv")
+
+功能：获取视频的信息
+
+必要的传参：视频av号或bv号（id_input），"av"和"bv"也要一同输入
+
+选择的传参：模式（mode），默认为bv模式，如果你输入的是av，请将mode设为"av"
+
+返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量}
+
+另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常，不会返回联合投稿的stuff
+
+
+
+### anime_base_info(media_id)
+
+功能：获取番剧基本信息
+
+必要的传参：番剧的md号（media_id），输入数字
+
+选择的传参：无
+
+返回：字典， {"title": 标题, "type": 类型, "area": 地区, "share_url": 介绍页URL（并不是播放页URL）, "cover_url": 介绍页封面URL,"media_id": md号, "ep_id": 剧集编号, "episode": 集数, "rating_count": 等级编号，猜测是总排行榜的RANK,"score": 评分, "season_id": 番剧ID, "coins": 总投币数, "danmakus": 总弹幕量, "follow": 追番数,"series_follow": 系列追番数, "views": 总播放量}
+
+另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
+
+
+
+### anime_episode_info(season_id)
+
+功能：获取指定番剧/电影的av,cid,标题等高级信息，以及每集的信息
+
+必要的传参：番剧的id号（season_id），输入数字
+
+选择的传参：无
+
+返回：字典，key为集编号（String，因为在冰菓遇到了11.5，而我不想混合使用float），value为一个列表，分别是：av号，弹幕池编号，剧集编号，当前集长标题，当前集封面URL，当前集播放页URL。
+
+另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
+
+## 来自作者的例子
