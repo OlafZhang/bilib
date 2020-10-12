@@ -167,6 +167,7 @@ bili + lib = bilib
 	episode_info = bilib.anime_episode_info(season_id)
 	
 	for i,j in episode_info.items():
+	
 	    print(i,j)
 	    
 	    av_no = j[0]
