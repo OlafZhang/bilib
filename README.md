@@ -183,6 +183,12 @@ bili + lib = bilib
 		
 	print(bilib.video_info(av_no,mode="av"))
 
+## 感谢
 
+本lib部分API参考来自https://www.bilibili.com/read/cv5293665
+
+同时也感谢自己Firefox的开发者工具和自己的Python 3.6.8和PyCharm 2019.3.3（认真）
+
+也感谢B站不把我打死（确信）
 
 
