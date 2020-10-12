@@ -114,7 +114,7 @@ bili + lib = bilib
 
 	•ep 剧集编号（例如ep84787，冰菓）
 	
-这些参数一般会一起在B站API出现
+这些参数一般会一起在B站API出现，md号在介绍页URL必能找到
 	
 
 
@@ -158,4 +158,31 @@ bili + lib = bilib
 
 另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
 
-## 来自作者的例子
+## demo
+
+	• 获取一个番剧的视频分p信息，并显示这些分p的信息，弹幕列表，同时也返回此番剧的信息（番剧本质是一个多分p的视频）
+	
+	season_id = bilib.anime_base_info(116772)["season_id"]
+	
+	episode_info = bilib.anime_episode_info(season_id)
+	
+	for i,j in episode_info.items():
+	    print(i,j)
+	    
+	    av_no = j[0]
+	    
+	    cid_no = int(j[1])
+	    
+	    danmaku_path = bilib.get_danmaku(cid_no)
+	    
+	    length_danmaku = bilib.count_danmaku(danmaku_path)
+	    
+	    for index in range(0,length_danmaku):
+	    
+		print(bilib.listall_danmaku(danmaku_path)[index])
+		
+	print(bilib.video_info(av_no,mode="av"))
+
+
+
+
