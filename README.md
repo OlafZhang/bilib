@@ -58,6 +58,8 @@ bili + lib = bilib
 
 ### get_danmaku(cid_input, reset=False)
 
+#### 2020.10.13，使用UCS-2(UTF-16)替换UTF-8编解码。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
+
 功能： 获取一个视频的弹幕，包括番剧/电影（最多返回8000条）
 
 必要的传参：视频的cid（cid_input）, 只能输入数字, 可以通过实验性功能或者浏览器F12功能获得cid
@@ -72,9 +74,7 @@ bili + lib = bilib
 
 ### listall_danmaku(file_path, stamp=False)
 
-#### 2020.10.13，使用UCS-2(UTF-16)替换UTF-8编解码。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
-
-#### 同时修复UnicodeEncodeError，使用UCS-2的特殊字符可能不能在IDLE显示，PyCharm正常显示
+#### 2020.10.13，修复UnicodeEncodeError，使用UCS-2的特殊字符可能不能在IDLE显示，PyCharm正常显示
 
 功能：处理弹幕文件，并输出
 
@@ -122,13 +122,13 @@ bili + lib = bilib
 	
 
 
-### video_info(id_input, mode="bv")
+### video_info(id_input)
 
 功能：获取视频的信息
 
 必要的传参：视频av号或bv号（id_input），"av"和"bv"也要一同输入
 
-选择的传参：模式（mode），默认为bv模式，如果你输入的是av，请将mode设为"av"
+选择的传参：无
 
 返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量}
 
