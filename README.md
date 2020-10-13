@@ -72,9 +72,9 @@ bili + lib = bilib
 
 ### listall_danmaku(file_path, stamp=False)
 
-#### 2020.10.13，这个API被打脸了，此API遇到UCS-2编码的弹幕会报编解码错误。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
+#### 2020.10.13，使用UCS-2(UTF-16)替换UTF-8编解码。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
 
-#### 即使作者在处理弹幕过程中已经强制转UTF-8了，但没有任何效果。作者暂时找不到解决方案
+#### 同时修复UnicodeEncodeError，使用UCS-2的特殊字符可能不能在IDLE显示，PyCharm正常显示
 
 功能：处理弹幕文件，并输出
 
