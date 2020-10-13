@@ -10,7 +10,7 @@
 # 404时，返回用户名'(##BLANK_USER##)',特殊情况导致无法爬取用户名时则返回用户名'(##WDNMD_USER##)'
 # 返回字典
 
-# video_info(id_input,mode="bv"),id_input默认输入bv号，修改mode为av后则输入av号
+# video_info(id_input),id_input可以输入av号或bv号
 # 这个是实验性功能，因为容错机制不完善，且不支持多p，功能：获取指定bv/av的播放信息
 # 注意！对于番剧/电影等的信息获取可能存在问题！但并非不可用！
 # 主要是番剧要去查对应的av/bv号，比较麻烦
@@ -27,6 +27,7 @@
 # 返回字典，字典key为集数(string)
 
 # get_danmaku(cid_input, reset = False)只允许输入cid数字
+# 使用UTF-16模式
 # 它会爬取弹幕文件并返回一个弹幕文件完整路径，且在目录生成文件
 # 默认是以cid命名的csv文件
 # 强制刷新(reset)为真时会强制刷新弹幕文件，假时会询问是否刷新
@@ -131,10 +132,11 @@ def anime_episode_info(season_id):
     return return_dict
 
 
-def video_info(id_input, mode="bv"):
+def video_info(id_input):
     ua = str(UserAgent().random)
     id_input = str(id_input)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
+    mode = str(id_input[0:2].lower())
     if mode == "bv":
         play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers)
     elif mode == "av":
@@ -307,10 +309,8 @@ def get_danmaku(cid_input, reset=False):
                             return os.path.abspath(file_name)
                         else:
                             raise danmakuError('danmaku file was deleted or error.')
-                    break
                 elif user_input == 'no' or user_input == 'n':
                     return os.path.abspath(file_name)
-                    break
                 else:
                     user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
         else:
