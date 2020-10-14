@@ -44,8 +44,8 @@
 
 import csv
 import os
-import time
 import sys
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -98,8 +98,8 @@ def anime_base_info(media_id):
         if str("啥都木有") in str(play_info['message']):
             raise InfoError("You might input a wrong aid/bvid.")
         else:
-            print(str(play_info))
-            raise InfoError("You might be banned now, because we can not get info from API for now.")
+            message = str(play_info)['message']
+            raise InfoError(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
 
 def anime_episode_info(season_id):
@@ -127,8 +127,10 @@ def anime_episode_info(season_id):
             if str("啥都木有") in str(play_info['message']):
                 raise InfoError("You might input a wrong season_id.")
             else:
-                print(str(play_info))
-                raise InfoError("You might be banned now, because we can not get info from API for now.")
+                message = str(play_info)['message']
+                raise InfoError(
+                    ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+
     return return_dict
 
 
@@ -136,7 +138,18 @@ def video_info(id_input):
     ua = str(UserAgent().random)
     id_input = str(id_input)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    mode = str(id_input[0:2].lower())
+    if id_input.isdigit():
+        mode = "av"
+    else:
+        mode = str(id_input[0:2].lower())
+        if str("av") == mode:
+            id_input = str(id_input[2:])
+        elif str("bv") == mode:
+            id_input = str("BV") + str(id_input[2:])
+        else:
+            mode = str("bv")
+            id_input = str("BV") + str(id_input[2:])
+
     if mode == "bv":
         play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers)
     elif mode == "av":
@@ -167,8 +180,8 @@ def video_info(id_input):
         if str("请求错误") in str(play_info['message']):
             raise InfoError("You might input a wrong aid/bvid.")
         else:
-            print(str(play_info))
-            raise InfoError("You might be banned now, because we can not get info from API for now.")
+            message = str(play_info)['message']
+            raise InfoError(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
 
 def user_info(uid_input, get_ua=False):
@@ -193,8 +206,8 @@ def user_info(uid_input, get_ua=False):
     except:
         raise InfoError("You might be banned now, because we can not get info from API for now.")
 
-    if connect_ok == False:
-        name = ("'(##BLANK_USER##)'")
+    if not connect_ok:
+        name = "'(##BLANK_USER##)'"
     else:
         try:
             name = name.text
@@ -203,7 +216,7 @@ def user_info(uid_input, get_ua=False):
             name = name.split('的个人空间 - 哔哩哔哩 ( ゜- ゜)つロ 乾杯~ Bilibili</title>')  ###主要防止某些神经病用特殊的昵称导致爬取异常
             name = str(name[0])
         except:
-            name = ("'(##WDNMD_USER##)'")
+            name = "'(##WDNMD_USER##)'"
     if get_ua:
         return_dict = {"uid_input": uid_input, "name": name, "fans": fans, "following": following, "st_code": st_code,
                        "ua": ua}
@@ -221,7 +234,7 @@ def get_danmaku(cid_input, reset=False):
             raise danmakuError('You should input cid ONLY.')
 
         if os.path.exists(file_name):
-            if reset == False:
+            if not reset:
                 user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
             else:
                 user_input = 'yes'
@@ -440,22 +453,22 @@ def listall_danmaku(file_path, stamp=False):
                 sec = str('0') + str(sec)
             else:
                 pass
-            send_time_video = str(('%s:%s:%s.%s') % (hour, minu, sec, send_time_right))
+            send_time_video = str('%s:%s:%s.%s' % (hour, minu, sec, send_time_right))
             def_list.append(send_time_video)
 
             # 整理弹幕类型
             if int(line[1]) == 1:
-                danmaku_type = ('滚动弹幕')
+                danmaku_type = '滚动弹幕'
             elif int(line[1]) == 4:
-                danmaku_type = ('底部弹幕')
+                danmaku_type = '底部弹幕'
             elif int(line[1]) == 5:
-                danmaku_type = ('顶部弹幕')
+                danmaku_type = '顶部弹幕'
             elif int(line[1]) == 6:
-                danmaku_type = ('逆向弹幕')
+                danmaku_type = '逆向弹幕'
             elif int(line[1]) == 7 and int(line[5]) == 0:
-                danmaku_type = ('特殊弹幕')
+                danmaku_type = '特殊弹幕'
             elif int(line[1]) == 7 and int(line[5]) == 1:
-                danmaku_type = ('精确弹幕')
+                danmaku_type = '精确弹幕'
             else:
                 raw_mode = True
 
@@ -480,7 +493,7 @@ def listall_danmaku(file_path, stamp=False):
 
             # 转换时间戳
             timestamp = int(line[4])
-            if stamp == False:
+            if not stamp:
                 time_send = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(timestamp)))
             else:
                 time_send = timestamp
@@ -512,7 +525,6 @@ def listall_danmaku(file_path, stamp=False):
                 return_thing[int(blank_count)] = line
             else:
                 return_thing[int(blank_count)] = def_list
-                def_list = []
 
             blank_count += 1
 
