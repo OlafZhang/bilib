@@ -183,12 +183,42 @@ def video_info(id_input):
             message = str(play_info)['message']
             raise InfoError(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
-
-def user_info(uid_input, get_ua=False):
+#这个是实验性API，理论效果更好，功能更多，但可能不如旧的API稳定
+def user_info(uid_input):
     uid_input = int(uid_input)
     ua = str(UserAgent().random)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    name = requests.get("https://space.bilibili.com/" + str(uid_input))
+    info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input),headers = headers)
+    info_get = info_get.json()
+    if str(info_get["message"]) == str("请求错误"):
+        raise InfoError("Request error.")
+    elif str(info_get["message"]) == str("0"):
+        pass
+    else:
+        print(info_get)
+        raise InfoError("Something error.")
+    name = info_get["data"]["name"]
+    uid = uid_input
+    sex = info_get["data"]["sex"]
+    level = info_get["data"]["level"]
+    face_url = info_get["data"]["face"]
+    sign = info_get["data"]["sign"]
+    birthday = info_get["data"]["birthday"]
+    coins = info_get["data"]["coins"]
+    vip_type = info_get["data"]["vip"]["label"]["text"]
+    fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers)
+    fans = fans.json()
+    following = fans['data']['following']
+    fans = fans['data']['follower']
+    return_dict = {"name":name,"uid":uid,"fans":fans,"following":following,"sex":sex,"level":level,"face_url":face_url,"sign":sign,"birthday":birthday,"coins":coins,"vip_type":vip_type}
+    return return_dict
+
+def user_info_old(uid_input, get_ua=False):
+    uid_input = int(uid_input)
+    ua = str(UserAgent().random)
+    headers = {"User-Agent": ua}
+    name = requests.get("https://space.bilibili.com/" + str(uid_input),headers = headers)
+    headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     if name.status_code != 200:
         if name.status_code == 412:
             raise InfoError("You might be banned now, because status code is 412.")
