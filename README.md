@@ -24,7 +24,9 @@ bili + lib = bilib
 
 
 
-### user_info(uid_input, get_ua=False)
+### user_info_old(uid_input, get_ua=False)
+
+这是旧的API，新API在下面
 
 功能： 获取一个用户的基本信息（粉丝，关注，UID，昵称）
 
@@ -53,6 +55,22 @@ bili + lib = bilib
     这可能是B站彩蛋？具体表现之一为访问其主页只会看到几个字
     
     返回昵称为'(##WDNMD_USER##)'，包含单引号
+    
+### user_info(uid_input)
+
+这是新的API，相比于旧的需要爬取一个API和一个HTML，新的直接使用两个API获得数据，更节省流量
+
+功能： 获取一个用户的详细信息（粉丝，关注，UID，昵称）
+
+必要的传参：用户的UID（uid_input）
+
+选择的传参：无
+
+返回：字典，形式为return_dict = {"name": 昵称, "uid": UID, "fans": 粉丝量, "following": 关注量, "sex": 性别, "level": 等级, "face_url": 头像URL, "sign": 个性签名, "birthday": 生日, "coins": 硬币, "vip_type": 是否为大会员且为哪种大会员}
+
+补充：由于愚人节会临时将大会员改为小会员，可能API也会如此呈现，故在此提醒
+
+异常：此API只会遇到三个异常：请求错误, 啥都木有，还有一个是过度爬取被禁止的消息，因为暂时没遇到，所以这里暂时不写
     
 
 
