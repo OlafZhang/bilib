@@ -7,7 +7,6 @@ import csv
 import os
 import sys
 import time
-import win32api
 
 import requests
 from bs4 import BeautifulSoup
@@ -34,7 +33,10 @@ def anime_base_info(media_id):
         cover_url = play_info["result"]["media"]["cover"]
         media_id = play_info["result"]["media"]["media_id"]
         ep_id = play_info["result"]["media"]["new_ep"]["id"]
-        episode = play_info["result"]["media"]["new_ep"]["index"]
+        try:
+            episode = play_info["result"]["media"]["new_ep"]["index_show"]
+        except:
+            episode = play_info["result"]["media"]["new_ep"]["index"]
         rating_count = play_info["result"]["media"]["rating"]["count"]
         score = play_info["result"]["media"]["rating"]["score"]
         season_id = play_info["result"]["media"]["season_id"]
@@ -51,7 +53,22 @@ def anime_base_info(media_id):
         follow = other_info["result"]["follow"]
         series_follow = other_info["result"]["series_follow"]
         views = other_info["result"]["views"]
-        return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "cover_url": cover_url,
+        try:
+            headers = {"User-Agent": ua}
+            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id),headers=headers)
+            soup = BeautifulSoup(url.text, "html.parser")
+            for x in soup.find_all('script'):
+                if str("window.__INITIAL_STATE__=") in str(x.string):
+                    text = x.string
+                    text = text[25:]
+                    text = str(text).split("}")
+                    desc = str(str(text[7]).split('"')[3])
+                else:
+                    pass
+        except:
+            desc = str(" ")
+
+        return_dict = {"title": title, "type": type, "area": area, "share_url": share_url,"desc": desc, "cover_url": cover_url,
                        "media_id": media_id, "ep_id": ep_id, "episode": episode, "rating_count": rating_count,
                        "score": score, "season_id": season_id, "coins": coins, "danmakus": danmakus, "follow": follow,
                        "series_follow": series_follow, "views": views}
@@ -156,7 +173,11 @@ def user_info(uid_input):
     if str(info_get["message"]) == str("请求错误"):
         raise InfoError("Request error.")
     elif str(info_get["message"]) == str("啥都木有"):
-        raise InfoError("Seems no such info")
+        raise InfoError("Seems no such info.")
+    elif str(info_get["message"]) == str("服务调用超时"):
+        raise InfoError("Timeout.")
+    elif str(info_get["message"]) == str("请求被拦截"):
+        raise InfoError("Banning.")
     elif str(info_get["message"]) == str("0"):
         pass
     else:
@@ -587,13 +608,20 @@ def get_danmaku_raw(cid_input, reset=False):
 
 
 def raw2ass(file_path):
-    final_file = str(str(file_path).split('.xml')[0]) + ".ass"
-    win32api.ShellExecute(0, 'open', '.\\Danmu2Ass\\Kaedei.Danmu2Ass.exe', file_path, '', 0)
-    for i in range(0,60):
-        if os.path.exists(final_file):
-            print(os.path.abspath(final_file))
-            return os.path.abspath(final_file)
-            break
-        else:
-            time.sleep(1)
-    print("FAIL")
+    import platform
+    sysstr = platform.system()
+    if sysstr == str("Windows"):
+        import win32api
+        final_file = str(str(file_path).split('.xml')[0]) + ".ass"
+        win32api.ShellExecute(0, 'open', '.\\Danmu2Ass\\Kaedei.Danmu2Ass.exe', file_path, '', 0)
+        for i in range(0, 60):
+            if os.path.exists(final_file):
+                print(os.path.abspath(final_file))
+                return os.path.abspath(final_file)
+                break
+            else:
+                time.sleep(1)
+        print("FAIL")
+    else:
+        print("You must use it in Windows, why not try Wine?")
+        return 0
