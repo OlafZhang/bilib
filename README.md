@@ -180,31 +180,31 @@ bili + lib = bilib
 
 另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
 
-## demo
+### get_danmaku_raw(cid_input, reset=False)
 
-	• 获取一个番剧的视频分p信息，并显示这些分p的信息，弹幕列表，同时也返回此番剧的信息（番剧本质是一个多分p的视频）
-	
-	season_id = bilib.anime_base_info(116772)["season_id"]
-	
-	episode_info = bilib.anime_episode_info(season_id)
-	
-	for i,j in episode_info.items():
-	
-	    print(i,j)
-	    
-	    av_no = j[0]
-	    
-	    cid_no = int(j[1])
-	    
-	    danmaku_path = bilib.get_danmaku(cid_no)
-	    
-	    length_danmaku = bilib.count_danmaku(danmaku_path)
-	    
-	    for index in range(0,length_danmaku):
-	    
-		print(bilib.listall_danmaku(danmaku_path)[index])
-		
-	print(bilib.video_info(av_no,mode="av"))
+功能： 获取一个视频的弹幕(原始文件，即xml)
+
+必要的传参：视频的cid（cid_input）, 只能输入数字, 可以通过实验性功能或者浏览器F12功能获得cid
+
+选择的传参：文件存在时强制刷新（reset），默认询问是否刷新（False），此处可能会修改为可以选择强制不刷新
+
+返回：弹幕文件的绝对路径，文件为xml，直接使用cid命名，同时打印绝对路径
+
+异常：目前没有检查到这个API会触发反爬取，但保险起见，遇到任何异常会直接抛出
+
+### raw2ass(file_path)
+
+#### 暂时仅支持Windows，因为需要调用Danmu2Ass
+
+功能： 将xml标准格式转换为ass字幕文件，以便能在第三方播放器实现弹幕效果
+
+必要的传参：xml文件绝对路径(file_path）
+
+选择的传参：无
+
+返回：ass字幕文件的绝对路径，文件为ass，直接使用cid命名，同时打印绝对路径
+
+异常：遇到大文件极小概率抛出FAIL异常，请手动修改for循环的超时等待时间
 
 ## 感谢
 
