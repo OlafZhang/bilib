@@ -3,49 +3,11 @@
 # 这是一个lib，引用大量B站API，目前用户信息和弹幕工作正常，其它存在潜在的bug
 # bilib = bili + lib
 
-# user_info(uid_input,get_ua = False),uid_input推荐只输入int型的UID
-# 这个会爬取指定UID的用户名，粉丝数，关注数
-# 列表默认情况下最后一位是状态码，用于判断某些特殊情况，如销号但仍然有粉丝的情况
-# get_ua为真时，会在列表末尾补充爬取时使用的User Agent，此为fake_useragent随机产生的
-# 404时，返回用户名'(##BLANK_USER##)',特殊情况导致无法爬取用户名时则返回用户名'(##WDNMD_USER##)'
-# 返回字典
-
-# video_info(id_input),id_input可以输入av号或bv号
-# 这个是实验性功能，因为容错机制不完善，且不支持多p，功能：获取指定bv/av的播放信息
-# 注意！对于番剧/电影等的信息获取可能存在问题！但并非不可用！
-# 主要是番剧要去查对应的av/bv号，比较麻烦
-# 返回字典，包含cid
-
-# anime_base_info(id_input)，输入media_id(纯数字)
-# 这个是实验性功能，因为容错机制不完善，功能：获取指定番剧/电影的播放信息
-# 目前在番剧测试API有效，media_id可在番剧/电影介绍页的URL找到，如md116772
-# 返回字典
-
-# anime_episode_info(season_id),输入season_id(纯数字)
-# season_id需要通过anime_base_info求得，部分番剧播放页中URL含有类似ss1134,也是season_id
-# 这个是实验性功能，因为容错机制不完善,且貌似不支持含有SP的情况，功能：获取指定番剧/电影的av,cid,标题等高级信息
-# 返回字典，字典key为集数(string)
-
-# get_danmaku(cid_input, reset = False)只允许输入cid数字
-# 使用UTF-16模式
-# 它会爬取弹幕文件并返回一个弹幕文件完整路径，且在目录生成文件
-# 默认是以cid命名的csv文件
-# 强制刷新(reset)为真时会强制刷新弹幕文件，假时会询问是否刷新
-
-# listall_danmaku(file_path,stamp = False)只需要指定文件路径
-# 除非你想返回时间戳而非转换好的东八区时间，那就让stamp为真
-# 这个会以字典的形式返回所有弹幕消息，这些消息同样被处理，key为序号
-# 同样，如果遇到未知类型弹幕，则会返回原始信息，也建议做监视的同学改原始代码
-# 可以嵌套get_danmaku()，但是重复查询则不推荐
-
-# count_danmaku(file_path),只需要指定弹幕文件路径
-# 返回弹幕文件长度，b站的弹幕API最多只能返回8000条弹幕记录
-
-
 import csv
 import os
 import sys
 import time
+import win32api
 
 import requests
 from bs4 import BeautifulSoup
@@ -183,15 +145,18 @@ def video_info(id_input):
             message = str(play_info)['message']
             raise InfoError(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
-#这个是实验性API，理论效果更好，功能更多，但可能不如旧的API稳定
+
+# 这个是实验性API，理论效果更好，功能更多，但可能不如旧的API稳定
 def user_info(uid_input):
     uid_input = int(uid_input)
     ua = str(UserAgent().random)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input),headers = headers)
+    info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers)
     info_get = info_get.json()
     if str(info_get["message"]) == str("请求错误"):
         raise InfoError("Request error.")
+    elif str(info_get["message"]) == str("啥都木有"):
+        raise InfoError("Seems no such info")
     elif str(info_get["message"]) == str("0"):
         pass
     else:
@@ -210,14 +175,16 @@ def user_info(uid_input):
     fans = fans.json()
     following = fans['data']['following']
     fans = fans['data']['follower']
-    return_dict = {"name":name,"uid":uid,"fans":fans,"following":following,"sex":sex,"level":level,"face_url":face_url,"sign":sign,"birthday":birthday,"coins":coins,"vip_type":vip_type}
+    return_dict = {"name": name, "uid": uid, "fans": fans, "following": following, "sex": sex, "level": level,
+                   "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type}
     return return_dict
+
 
 def user_info_old(uid_input, get_ua=False):
     uid_input = int(uid_input)
     ua = str(UserAgent().random)
     headers = {"User-Agent": ua}
-    name = requests.get("https://space.bilibili.com/" + str(uid_input),headers = headers)
+    name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     if name.status_code != 200:
         if name.status_code == 412:
@@ -574,3 +541,59 @@ def count_danmaku(file_path):
 
     file_path = open(str(file_path), 'r', encoding='utf-16')
     return len(file_path.readlines())
+
+
+def get_danmaku_raw(cid_input, reset=False):
+    try:
+        file_name = str(str(cid_input) + '.xml')
+        if str(cid_input).isdigit():
+            pass
+        else:
+            raise danmakuError('You should input cid ONLY.')
+
+        if os.path.exists(file_name):
+            if not reset:
+                user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+            else:
+                user_input = 'yes'
+            while True:
+                if user_input == 'yes' or user_input == 'y':
+                    url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
+                    rr = requests.get(url=url)
+                    rr.encoding = 'uft-8'
+                    xml = open(file_name, "w", encoding="utf-8")
+                    xml.write(rr.text)
+                    xml.close()
+                    print(os.path.abspath(file_name))
+                    return os.path.abspath(file_name)
+                    break
+                elif user_input == 'no' or user_input == 'n':
+                    return os.path.abspath(file_name)
+                    break
+                else:
+                 user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+        else:
+            url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
+            rr = requests.get(url=url)
+            rr.encoding = 'uft-8'
+            xml = open(file_name, "w", encoding="utf-8")
+            xml.write(rr.text)
+            xml.close()
+            print(os.path.abspath(file_name))
+            return os.path.abspath(file_name)
+
+    except Exception as e:
+        print(e)
+
+
+def raw2ass(file_path):
+    final_file = str(str(file_path).split('.xml')[0]) + ".ass"
+    win32api.ShellExecute(0, 'open', '.\\Danmu2Ass\\Kaedei.Danmu2Ass.exe', file_path, '', 0)
+    for i in range(0,60):
+        if os.path.exists(final_file):
+            print(os.path.abspath(final_file))
+            return os.path.abspath(final_file)
+            break
+        else:
+            time.sleep(1)
+    print("FAIL")
