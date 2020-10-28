@@ -27,7 +27,7 @@ jojo_5 = 135652
 beyond_the_boundary = 3365
 maid_dragon_1 = 5800
 
-base_info = bilib.anime_base_info(tamako_market)
+base_info = bilib.anime_base_info(tamako_love_story)
 season_id = int(base_info["season_id"])
 episode_info = bilib.anime_episode_info(season_id)
 
@@ -35,6 +35,7 @@ av_no = "av" + str(episode_info['1'][0])
 v_info = bilib.video_info(av_no)
 print("-----------大纲-----------")
 print("名称：" + str(base_info["title"]))
+anime_full_name = str(base_info["title"])
 print("简介：" + str(base_info["desc"]))
 print("地区：" + str(base_info["area"]))
 print("类型：" + str(base_info["type"]))
@@ -54,7 +55,6 @@ print("追番数：" + str(base_info["follow"]))
 print("系列追番数：" + str(base_info["series_follow"]))
 print("总播放量：" + str(base_info["views"]))
 print("-----------剧集-----------")
-
 no = 1
 # 是否下载弹幕文件
 get_dan = False
@@ -74,7 +74,7 @@ for i, j in episode_info.items():
             target_no = str("0") + str(no)
         else:
             target_no = str(no)
-        change_name = str(os.getcwd()) + "\\" + str(target_no) + " " + str(anime_short_name) + " danmaku_file.ass"
+        change_name = str(os.getcwd()) + "\\" + str(target_no) + " " + str(anime_full_name) + " danmaku_file.ass"
         os.rename(ass_path,change_name)
     else:
         pass
