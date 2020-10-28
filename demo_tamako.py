@@ -27,7 +27,7 @@ jojo_5 = 135652
 beyond_the_boundary = 3365
 maid_dragon_1 = 5800
 
-base_info = bilib.anime_base_info(tamako_love_story)
+base_info = bilib.anime_base_info(tamako_market)
 season_id = int(base_info["season_id"])
 episode_info = bilib.anime_episode_info(season_id)
 
@@ -45,6 +45,10 @@ print("-----------数据-----------")
 print("AV号：" + str(v_info["aid"]))
 print("BV号：" + str(v_info["bvid"]))
 print("media_id(md)：" + str(base_info["media_id"]))
+print("season_id(ss)：" + str(base_info["season_id"]))
+# 这里的ep号对应最后一集！
+print("剧集编号(ep)：" + str(base_info["ep_id"]))
+print("tag_id：" + str(base_info["tag_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 print("等级编号：" + str(base_info["rating_count"]))
 print("封面图片URL：" + str(base_info["cover_url"]))
