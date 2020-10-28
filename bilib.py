@@ -7,7 +7,7 @@ import csv
 import os
 import sys
 import time
-
+import re
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -55,23 +55,39 @@ def anime_base_info(media_id):
         views = other_info["result"]["views"]
         try:
             headers = {"User-Agent": ua}
-            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id),headers=headers)
+            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers)
             soup = BeautifulSoup(url.text, "html.parser")
             for x in soup.find_all('script'):
                 if str("window.__INITIAL_STATE__=") in str(x.string):
                     text = x.string
-                    text = text[25:]
-                    text = str(text).split("}")
-                    desc = str(str(text[7]).split('"')[3])
+                    # 这里是旧的方法，但是遇到某些番剧仍然出现问题，故匹配正则表达式
+                    #text = text[25:]
+                    #text = str(text).split("}")
+                    #desc = str(str(text[7]).split('"')[3])
+                    desc = str(re.findall(r'"(?:evaluate)":".+"', text)[0])
+                    desc = str(str(desc.split(":")[1]).split('"')[1])
+                    desc = desc.replace("\n", "")
+                    desc = desc.replace("\r", "")
+                    desc = desc.replace("\\n", "")
+                    desc = desc.replace("\\r", "")
+                    desc = desc.replace(" ", "")
+                    desc = desc.replace("　", "")
+                    if str(desc[0]) == str("【"):
+                        head_desc = str(re.findall(r'【\w+】', desc)[0])
+                        desc = desc.replace(head_desc, "")
+                    else:
+                        pass
+
+
                 else:
                     pass
         except:
             desc = str(" ")
 
-        return_dict = {"title": title, "type": type, "area": area, "share_url": share_url,"desc": desc, "cover_url": cover_url,
-                       "media_id": media_id, "ep_id": ep_id, "episode": episode, "rating_count": rating_count,
-                       "score": score, "season_id": season_id, "coins": coins, "danmakus": danmakus, "follow": follow,
-                       "series_follow": series_follow, "views": views}
+        return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "desc": desc,
+                       "cover_url": cover_url, "media_id": media_id, "ep_id": ep_id, "episode": episode,
+                       "rating_count": rating_count, "score": score, "season_id": season_id, "coins": coins,
+                       "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views}
         return return_dict
     except:
         if str("啥都木有") in str(play_info['message']):
@@ -592,7 +608,7 @@ def get_danmaku_raw(cid_input, reset=False):
                     return os.path.abspath(file_name)
                     break
                 else:
-                 user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+                    user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
         else:
             url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
             rr = requests.get(url=url)
