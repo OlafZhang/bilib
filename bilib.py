@@ -42,6 +42,11 @@ def anime_base_info(media_id):
         season_id = play_info["result"]["media"]["season_id"]
         share_url = play_info["result"]["media"]["share_url"]
         title = play_info["result"]["media"]["title"]
+        headers = {"Host": "api.bilibili.com", "User-Agent": ua}
+        tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
+                                  headers=headers)
+        tag_info = tag_info.json()
+        tag_id = tag_info["data"]["tag_id"]
         type = play_info["result"]["media"]["type_name"]
         ua = str(UserAgent().random)
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
@@ -87,7 +92,8 @@ def anime_base_info(media_id):
         return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "desc": desc,
                        "cover_url": cover_url, "media_id": media_id, "ep_id": ep_id, "episode": episode,
                        "rating_count": rating_count, "score": score, "season_id": season_id, "coins": coins,
-                       "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views}
+                       "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
+                       "tag_id" : tag_id}
         return return_dict
     except:
         if str("啥都木有") in str(play_info['message']):
