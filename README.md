@@ -70,9 +70,23 @@ bili + lib = bilib
 
 补充：由于愚人节会临时将大会员改为小会员，可能API也会如此呈现，故在此提醒
 
-异常：此API只会遇到三个异常：请求错误, 啥都木有，还有一个是过度爬取被禁止的消息，因为暂时没遇到，所以这里暂时不写
-    
+异常：此API只会遇到四个异常：请求错误, 啥都木有，服务调用超时，请求被拦截，会抛出InfoError异常。
 
+	• InfoError("Request error.")
+	
+	请求错误，可能是程序问题，或者是网络问题。
+	
+	• InfoError("Seems no such info.")
+	
+	啥都木有，貌似没有此人的信息，可能已销号，原始API没有返回任何值。
+	
+	• InfoError("Timeout.")
+	
+        服务调用超时，检查网络或重新尝试。
+	
+	• InfoError("Banning.")
+	
+	请求被拦截，412错误，服务器已启动反爬机制，请稍后尝试。
 
 ### get_danmaku(cid_input, reset=False)
 
@@ -142,6 +156,8 @@ bili + lib = bilib
 
 ### video_info(id_input)
 
+### 不太推荐在番剧使用此API，bv号和av号除外，其它数据均可通过anime_base_info(media_id)获取
+
 功能：获取视频的信息
 
 必要的传参：视频av号或bv号（id_input），"av"和"bv"也要一同输入
@@ -157,6 +173,10 @@ bili + lib = bilib
 ### anime_base_info(media_id)
 
 ### 注意，这里的desc和video_info的desc性质不同，不能混用
+
+### 相比于视频的介绍（desc），番剧的介绍看起来不能通过API来获取，只能截取HTML后使用bs4和正则表达式来搜索，比较麻烦
+
+### 目前极不稳定，仅少数番剧在此功能没有表现出异常
 
 功能：获取番剧基本信息
 
