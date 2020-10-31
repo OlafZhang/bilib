@@ -12,14 +12,27 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
+# 传参异常/未定义异常
+class InfoError(Exception):
+    pass
 
+# 弹幕文件等异常
 class danmakuError(Exception):
     pass
 
-
-# 被ban时会抛出此异常
-class InfoError(Exception):
+# 请求异常
+class Timeout(Exception):
     pass
+
+class RequestError(Exception):
+    pass
+
+class SeemsNothing(Exception):
+    pass
+
+class RequestRefuse(Exception):
+    pass
+
 
 
 def anime_base_info(media_id):
@@ -97,10 +110,10 @@ def anime_base_info(media_id):
         return return_dict
     except:
         if str("啥都木有") in str(play_info['message']):
-            raise InfoError("You might input a wrong aid/bvid.")
+            raise SeemsNothing("You might input a wrong aid/bvid.")
         else:
             message = str(play_info)['message']
-            raise InfoError(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+            raise RequestRefuse(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
 
 def anime_episode_info(season_id):
@@ -126,10 +139,10 @@ def anime_episode_info(season_id):
             return_dict[title_no] = dict_list
         except:
             if str("啥都木有") in str(play_info['message']):
-                raise InfoError("You might input a wrong season_id.")
+                raise SeemsNothing("You might input a wrong season_id.")
             else:
                 message = str(play_info)['message']
-                raise InfoError(
+                raise RequestRefuse(
                     ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
     return return_dict
@@ -179,10 +192,10 @@ def video_info(id_input):
         return return_dict
     except:
         if str("请求错误") in str(play_info['message']):
-            raise InfoError("You might input a wrong aid/bvid.")
+            raise SeemsNothing("You might input a wrong aid/bvid.")
         else:
             message = str(play_info)['message']
-            raise InfoError(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+            raise RequestRefuse(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
 
 # 这个是实验性API，理论效果更好，功能更多，但可能不如旧的API稳定
@@ -193,13 +206,13 @@ def user_info(uid_input):
     info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers)
     info_get = info_get.json()
     if str(info_get["message"]) == str("请求错误"):
-        raise InfoError("Request error.")
+        raise RequestError("Request error.")
     elif str(info_get["message"]) == str("啥都木有"):
-        raise InfoError("Seems no such info.")
+        raise SeemsNothing("Seems no such info.")
     elif str(info_get["message"]) == str("服务调用超时"):
-        raise InfoError("Timeout.")
+        raise Timeout("Timeout.")
     elif str(info_get["message"]) == str("请求被拦截"):
-        raise InfoError("Banning.")
+        raise RequestRefuse("Banning.")
     elif str(info_get["message"]) == str("0"):
         pass
     else:
@@ -231,7 +244,7 @@ def user_info_old(uid_input, get_ua=False):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     if name.status_code != 200:
         if name.status_code == 412:
-            raise InfoError("You might be banned now, because status code is 412.")
+            raise RequestRefuse("You might be banned now, because status code is 412.")
         else:
             st_code = name.status_code
             connect_ok = False
@@ -244,7 +257,7 @@ def user_info_old(uid_input, get_ua=False):
         following = fans['data']['following']
         fans = fans['data']['follower']
     except:
-        raise InfoError("You might be banned now, because we can not get info from API for now.")
+        raise RequestRefuse("You might be banned now, because we can not get info from API for now.")
 
     if not connect_ok:
         name = "'(##BLANK_USER##)'"
@@ -271,7 +284,7 @@ def get_danmaku(cid_input, reset=False):
             url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
             file_name = str(str(cid_input) + '.csv')
         else:
-            raise danmakuError('You should input cid ONLY.')
+            raise InfoError('You should input cid ONLY.')
 
         if os.path.exists(file_name):
             if not reset:
@@ -355,7 +368,7 @@ def get_danmaku(cid_input, reset=False):
 
                     if int(os.path.getsize(file_name)) == 0:
                         os.remove(file_name)
-                        raise danmakuError('cid error, check cid.')
+                        raise InfoError('cid error, check cid.')
                     else:
                         if os.path.exists(file_name):
                             print(os.path.abspath(file_name))
@@ -441,7 +454,7 @@ def get_danmaku(cid_input, reset=False):
 
             if int(os.path.getsize(file_name)) == 0:
                 os.remove(file_name)
-                raise danmakuError('cid error, check cid.')
+                raise InfoError('cid error, check cid.')
             else:
                 if os.path.exists(file_name):
                     print(os.path.abspath(file_name))
@@ -592,7 +605,7 @@ def get_danmaku_raw(cid_input, reset=False):
         if str(cid_input).isdigit():
             pass
         else:
-            raise danmakuError('You should input cid ONLY.')
+            raise InfoError('You should input cid ONLY.')
 
         if os.path.exists(file_name):
             if not reset:
@@ -630,6 +643,10 @@ def get_danmaku_raw(cid_input, reset=False):
 
 
 def raw2ass(file_path):
+
+    class NotWindows(Exception):
+        pass
+
     import platform
     sysstr = platform.system()
     if sysstr == str("Windows"):
@@ -645,5 +662,4 @@ def raw2ass(file_path):
                 time.sleep(1)
         print("FAIL")
     else:
-        print("You must use it in Windows, why not try Wine?")
-        return 0
+        raise NotWindows("You must use it in Windows, why not try Wine?")
