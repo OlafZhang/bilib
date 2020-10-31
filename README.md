@@ -156,7 +156,7 @@ bili + lib = bilib
 
 ### video_info(id_input)
 
-### 不太推荐在番剧使用此API，bv号和av号除外，其它数据均可通过anime_base_info(media_id)获取
+### 不太推荐在番剧使用此API，除bv号和av号外，其它数据均可通过anime_base_info(media_id)获取
 
 功能：获取视频的信息
 
@@ -200,7 +200,7 @@ bili + lib = bilib
 
 选择的传参：无
 
-返回：字典，key为集编号（String，因为在冰菓遇到了11.5，而我不想混合使用float），value为一个列表，分别是：av号，弹幕池编号，剧集编号，当前集长标题，当前集封面URL，当前集播放页URL。
+返回：字典，key为集编号（String，因为在冰菓遇到了11.5，而我不想混合使用float），value为一个字典，格式： {"aid" : av号, "cid" : 弹幕池编号cid, "ep_id" : 剧集编号, "title_long" : 当前集长标题, "cover_url" : 当前集封面URL, "share_url" : 当前集播放页URL}。
 
 另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
 
