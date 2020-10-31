@@ -8,8 +8,6 @@ import bilib
 import time
 import os
 
-anime_short_name = str("玉子")
-
 # mediaID pool
 kon_1 = 28220978
 kon_2 = 28220984
@@ -31,7 +29,7 @@ base_info = bilib.anime_base_info(tamako_market)
 season_id = int(base_info["season_id"])
 episode_info = bilib.anime_episode_info(season_id)
 
-av_no = "av" + str(episode_info['1'][0])
+av_no = "av" + str(episode_info['1']["aid"])
 v_info = bilib.video_info(av_no)
 print("-----------大纲-----------")
 print("名称：" + str(base_info["title"]))
@@ -47,7 +45,7 @@ print("BV号：" + str(v_info["bvid"]))
 print("media_id(md)：" + str(base_info["media_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 # 这里的ep号对应最后一集！
-print("剧集编号(ep)：" + str(base_info["ep_id"]))
+print("最新一集的 剧集编号(ep)：" + str(base_info["ep_id"]))
 print("tag_id：" + str(base_info["tag_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 print("等级编号：" + str(base_info["rating_count"]))
@@ -64,11 +62,11 @@ no = 1
 get_dan = False
 for i, j in episode_info.items():
     print("第" + str(i) + "集")
-    print("集标题：" + str(j[3]))
-    print("剧集编号(ep)：" + str(j[2]))
-    print("弹幕cid：" + str(j[1]))
-    print("封面图片URL：" + str(j[4]))
-    print("播放页URL：" + str(j[5]))
+    print("集标题：" + str(j["title_long"]))
+    print("剧集编号(ep)：" + str(j["ep_id"]))
+    print("弹幕cid：" + str(j["cid"]))
+    print("封面图片URL：" + str(j["cover_url"]))
+    print("播放页URL：" + str(j["share_url"]))
     print("--------------------------")
     if get_dan:
         cid_no = int(j[1])
