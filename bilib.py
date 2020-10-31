@@ -122,7 +122,7 @@ def anime_episode_info(season_id):
             share_url = play_info["result"]["main_section"]["episodes"][index]["share_url"]
             title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
             title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
-            dict_list = [aid, cid, ep_id, title_long, cover_url, share_url]
+            dict_list = {"aid" : aid, "cid" : cid, "ep_id" : ep_id, "title_long" : title_long, "cover_url" : cover_url, "share_url" : share_url}
             return_dict[title_no] = dict_list
         except:
             if str("啥都木有") in str(play_info['message']):
