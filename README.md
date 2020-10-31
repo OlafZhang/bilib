@@ -54,6 +54,10 @@ bili + lib = bilib
 
 412错误，服务器已启动反爬机制，请稍后尝试。
 
+### NotWindows(当前并非Windows平台)
+
+仅在raw2ass()会报错，因为此功能只能在Windows上运行(暂时地)。
+
 
 
 ## 稳定功能的API
@@ -214,7 +218,7 @@ bili + lib = bilib
 
 ### raw2ass(file_path)
 
-#### 暂时仅支持Windows，因为需要调用Danmu2Ass
+#### 暂时仅支持Windows，因为需要调用Danmu2Ass，强行在非Windows平台执行会报NotWindows错误
 
 功能： 将xml标准格式转换为ass字幕文件，以便能在第三方播放器实现弹幕效果
 
