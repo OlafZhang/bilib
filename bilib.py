@@ -33,8 +33,6 @@ class SeemsNothing(Exception):
 class RequestRefuse(Exception):
     pass
 
-
-
 def anime_base_info(media_id):
     ua = str(UserAgent().random)
     id_input = str(media_id)
