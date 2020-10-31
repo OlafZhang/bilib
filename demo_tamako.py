@@ -8,24 +8,42 @@ import bilib
 import time
 import os
 
-# mediaID pool
+# 是否下载弹幕文件
+get_dan = True
+
+# mediaID池
+# 轻音少女系列
 kon_1 = 28220978
 kon_2 = 28220984
 kon_movie = 28220988
+
+# 玉子市场系列
 tamako_market = 116772
 tamako_love_story = 4155
+
+# 擅长捉弄的高木同学 第二季
 takagi_2 = 28221403
-re_zero = 3461
+
+# Re：从零开始的异世界生活
+re_zero_1_new = 3461
+
+# 冰菓
 hyouka = 3398
+
+# JOJO的奇妙冒险系列
 jojo_1_2 = 28223479
 jojo_3_ep1 = 28223481
 jojo_3_ep2 = 28223483
 jojo_4 = 140552
 jojo_5 = 135652
+
+#境界的彼方
 beyond_the_boundary = 3365
+
+# 小林家的龙女仆 第一季
 maid_dragon_1 = 5800
 
-base_info = bilib.anime_base_info(tamako_market)
+base_info = bilib.anime_base_info(beyond_the_boundary)
 season_id = int(base_info["season_id"])
 episode_info = bilib.anime_episode_info(season_id)
 
@@ -45,7 +63,7 @@ print("BV号：" + str(v_info["bvid"]))
 print("media_id(md)：" + str(base_info["media_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 # 这里的ep号对应最后一集！
-print("最新一集的 剧集编号(ep)：" + str(base_info["ep_id"]))
+print("最新一集的剧集编号(ep)：" + str(base_info["ep_id"]))
 print("tag_id：" + str(base_info["tag_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 print("等级编号：" + str(base_info["rating_count"]))
@@ -58,8 +76,7 @@ print("系列追番数：" + str(base_info["series_follow"]))
 print("总播放量：" + str(base_info["views"]))
 print("-----------剧集-----------")
 no = 1
-# 是否下载弹幕文件
-get_dan = False
+
 for i, j in episode_info.items():
     print("第" + str(i) + "集")
     print("集标题：" + str(j["title_long"]))
@@ -69,7 +86,7 @@ for i, j in episode_info.items():
     print("播放页URL：" + str(j["share_url"]))
     print("--------------------------")
     if get_dan:
-        cid_no = int(j[1])
+        cid_no = int(j["cid"])
         danmaku_path = bilib.get_danmaku_raw(cid_no)
         ass_path = bilib.raw2ass(danmaku_path)
         if len(str(no)) == 1:
