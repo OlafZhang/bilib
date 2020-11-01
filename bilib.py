@@ -327,174 +327,95 @@ def get_danmaku(cid_input, reset=False):
             while True:
                 user_input = user_input.lower()
                 if user_input == 'yes' or user_input == 'y':
-                    bvIndex = url.find('BV')
-                    id = url[bvIndex:]
-                    rr = requests.get(url=url)
-                    rr.encoding = 'uft-16'
-                    soup = BeautifulSoup(rr.text, 'lxml')
-                    danmu_info = soup.find_all('d')
-                    all_info = []
-                    all_text = []
-
-                    for i in danmu_info:
-                        all_info.append(i['p'])
-                        all_text.append(i)
-                    f = open('danmu_info.csv', 'w', encoding='utf-16')
-                    csv_writer = csv.writer(f)
-
-                    for i in all_info:
-                        i = str(i).split(',')
-                        csv_writer.writerow(i)
-                    f.close()
-
-                    f = open('danmu_text.csv', 'w', encoding='utf-16')
-                    csv_writer = csv.writer(f)
-
-                    for i in all_text:
-                        csv_writer.writerow(i)
-                    f.close()
-
-                    file1 = open('danmu_text.csv', 'r', encoding='utf-16')
-                    file2 = open('danmu_text_output.csv', 'w', encoding='utf-16')
-
-                    for line in file1.readlines():
-                        if line == '\n':
-                            line = line.strip("\n")
-                        file2.write(line)
-                    file1.close()
-                    file2.close()
-
-                    file1 = open('danmu_info.csv', 'r', encoding='utf-16')
-                    file2 = open('danmu_info_output.csv', 'w', encoding='utf-16')
-                    for line in file1.readlines():
-                        if line == '\n':
-                            line = line.strip("\n")
-                        file2.write(line)
-                    file1.close()
-                    file2.close()
-
-                    danmaku_list = []
-                    file1 = open('danmu_text_output.csv', 'r', encoding='utf-16')
-                    file2 = open('danmu_info_output.csv', 'r', encoding='utf-16')
-                    file_final = open(file_name, 'w', encoding='utf-16')
-
-                    for line in file1.readlines():
-                        danmaku = str(line)[0:int(len(line)) - 1]
-                        danmaku_list.append(str(danmaku))
-
-                    count = 0
-
-                    for line in file2.readlines():
-                        info = str(line)[0:int(len(line)) - 1]
-                        final_text = str(info + "," + danmaku_list[count] + "\n")
-                        file_final.write(final_text)
-                        count += 1
-
-                    file1.close()
-                    file2.close()
-                    file_final.close()
-
-                    os.remove("danmu_info.csv")
-                    os.remove("danmu_text.csv")
-                    os.remove("danmu_info_output.csv")
-                    os.remove("danmu_text_output.csv")
-
-                    if int(os.path.getsize(file_name)) == 0:
-                        os.remove(file_name)
-                        raise InfoError('cid error, check cid.')
-                    else:
-                        if os.path.exists(file_name):
-                            print(os.path.abspath(file_name))
-                            return os.path.abspath(file_name)
-                        else:
-                            raise danmakuError('danmaku file was deleted or error.')
+                    break
                 elif user_input == 'no' or user_input == 'n':
+                    print(str(os.path.abspath(file_name)))
                     return os.path.abspath(file_name)
                 else:
                     user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
         else:
-            bvIndex = url.find('BV')
-            id = url[bvIndex:]
-            rr = requests.get(url=url)
-            rr.encoding = 'uft-16'
-            soup = BeautifulSoup(rr.text, 'lxml')
-            danmu_info = soup.find_all('d')
-            all_info = []
-            all_text = []
+            pass
+        bvIndex = url.find('BV')
+        id = url[bvIndex:]
+        rr = requests.get(url=url)
+        rr.encoding = 'uft-16'
+        soup = BeautifulSoup(rr.text, 'lxml')
+        danmu_info = soup.find_all('d')
+        all_info = []
+        all_text = []
 
-            for i in danmu_info:
-                all_info.append(i['p'])
-                all_text.append(i)
-            f = open('danmu_info.csv', 'w', encoding='utf-16')
-            csv_writer = csv.writer(f)
+        for i in danmu_info:
+            all_info.append(i['p'])
+            all_text.append(i)
+        f = open('danmu_info.csv', 'w', encoding='utf-16')
+        csv_writer = csv.writer(f)
 
-            for i in all_info:
-                i = str(i).split(',')
-                csv_writer.writerow(i)
-            f.close()
+        for i in all_info:
+            i = str(i).split(',')
+            csv_writer.writerow(i)
+        f.close()
 
-            f = open('danmu_text.csv', 'w', encoding='utf-16')
-            csv_writer = csv.writer(f)
+        f = open('danmu_text.csv', 'w', encoding='utf-16')
+        csv_writer = csv.writer(f)
 
-            for i in all_text:
-                csv_writer.writerow(i)
-            f.close()
+        for i in all_text:
+            csv_writer.writerow(i)
+        f.close()
 
-            file1 = open('danmu_text.csv', 'r', encoding='utf-16')
-            file2 = open('danmu_text_output.csv', 'w', encoding='utf-16')
+        file1 = open('danmu_text.csv', 'r', encoding='utf-16')
+        file2 = open('danmu_text_output.csv', 'w', encoding='utf-16')
 
-            for line in file1.readlines():
-                if line == '\n':
-                    line = line.strip("\n")
-                file2.write(line)
-            file1.close()
-            file2.close()
+        for line in file1.readlines():
+            if line == '\n':
+                line = line.strip("\n")
+            file2.write(line)
+        file1.close()
+        file2.close()
 
-            file1 = open('danmu_info.csv', 'r', encoding='utf-16')
-            file2 = open('danmu_info_output.csv', 'w', encoding='utf-16')
-            for line in file1.readlines():
-                if line == '\n':
-                    line = line.strip("\n")
-                file2.write(line)
-            file1.close()
-            file2.close()
+        file1 = open('danmu_info.csv', 'r', encoding='utf-16')
+        file2 = open('danmu_info_output.csv', 'w', encoding='utf-16')
+        for line in file1.readlines():
+            if line == '\n':
+                line = line.strip("\n")
+            file2.write(line)
+        file1.close()
+        file2.close()
 
-            danmaku_list = []
-            file1 = open('danmu_text_output.csv', 'r', encoding='utf-16')
-            file2 = open('danmu_info_output.csv', 'r', encoding='utf-16')
-            file_final = open(file_name, 'w', encoding='utf-16')
+        danmaku_list = []
+        file1 = open('danmu_text_output.csv', 'r', encoding='utf-16')
+        file2 = open('danmu_info_output.csv', 'r', encoding='utf-16')
+        file_final = open(file_name, 'w', encoding='utf-16')
 
-            for line in file1.readlines():
-                danmaku = str(line)[0:int(len(line)) - 1]
-                danmaku_list.append(str(danmaku))
+        for line in file1.readlines():
+            danmaku = str(line)[0:int(len(line)) - 1]
+            danmaku_list.append(str(danmaku))
 
-            count = 0
+        count = 0
 
-            for line in file2.readlines():
-                info = str(line)[0:int(len(line)) - 1]
-                final_text = str(info + "," + danmaku_list[count] + "\n")
-                file_final.write(final_text)
-                count += 1
+        for line in file2.readlines():
+            info = str(line)[0:int(len(line)) - 1]
+            final_text = str(info + "," + danmaku_list[count] + "\n")
+            file_final.write(final_text)
+            count += 1
 
-            file1.close()
-            file2.close()
-            file_final.close()
+        file1.close()
+        file2.close()
+        file_final.close()
 
-            os.remove("danmu_info.csv")
-            os.remove("danmu_text.csv")
-            os.remove("danmu_info_output.csv")
-            os.remove("danmu_text_output.csv")
+        os.remove("danmu_info.csv")
+        os.remove("danmu_text.csv")
+        os.remove("danmu_info_output.csv")
+        os.remove("danmu_text_output.csv")
 
-            if int(os.path.getsize(file_name)) == 0:
-                os.remove(file_name)
-                raise InfoError('cid error, check cid.')
+        if int(os.path.getsize(file_name)) == 0:
+            os.remove(file_name)
+            raise InfoError('cid error, check cid.')
+        else:
+            if os.path.exists(file_name):
+                print(os.path.abspath(file_name))
+                return os.path.abspath(file_name)
             else:
-                if os.path.exists(file_name):
-                    print(os.path.abspath(file_name))
-                    return os.path.abspath(file_name)
-                else:
-                    raise danmakuError('danmaku file was deleted or error.')
-
+                raise danmakuError('danmaku file was deleted or error.')
 
     except Exception as e:
         print(e)
