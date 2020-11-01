@@ -62,10 +62,6 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 #### 触发反爬取后会记录当前用户的UID（如果已经登陆），所以请不要在源代码插入自己的用户cookie
 
-### NotWindows(当前并非Windows平台)
-
-仅在raw2ass()会报错，因为此功能只能在Windows上运行(暂时地)。
-
 
 
 ## 稳定功能的API
@@ -166,7 +162,9 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### raw2ass(file_path)
 
-#### 暂时仅支持Windows，因为需要调用Danmu2Ass，强行在非Windows平台执行会报NotWindows错误
+#### 需要调用[Niconvert](https://github.com/muzuiget/niconvert)
+
+#### 如果你要自己去下载官方版，请注意：作者针对此API将Niconvert进行了小改，以便能在命令行运行，下载原版需要自行调整
 
 功能： 将xml标准格式转换为ass字幕文件，以便能在第三方播放器实现弹幕效果
 
@@ -259,6 +257,8 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 ## 感谢
 
 本lib部分API参考来自https://www.bilibili.com/read/cv5293665
+
+感谢[Niconvert](https://github.com/muzuiget/niconvert)
 
 同时也感谢自己Firefox的开发者工具和自己的Python 3.6.8和PyCharm 2019.3.3（认真）
 
