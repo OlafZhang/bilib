@@ -8,46 +8,45 @@ import bilib
 import time
 import os
 
+
+
 # 是否下载弹幕文件
-get_dan = True
+get_dan = False
 
 # mediaID池
-# 轻音少女系列
+# 轻音少女系列(大会员)
 kon_1 = 28220978
 kon_2 = 28220984
 kon_movie = 28220988
 
-# 玉子市场系列
+# 玉子市场系列(免费)
 tamako_market = 116772
 tamako_love_story = 4155
 
-# 擅长捉弄的高木同学 第二季
+# 擅长捉弄的高木同学 第二季(大会员，分集名称有转义字符)
 takagi_2 = 28221403
 
-# Re：从零开始的异世界生活
-re_zero_1_new = 3461
-
-# 冰菓
+# 冰菓(大会员，有11.5集)
 hyouka = 3398
 
-# JOJO的奇妙冒险系列
-jojo_1_2 = 28223479
-jojo_3_ep1 = 28223481
-jojo_3_ep2 = 28223483
-jojo_4 = 140552
-jojo_5 = 135652
-
-#境界的彼方
+# 境界的彼方(大会员)
 beyond_the_boundary = 3365
 
-# 小林家的龙女仆 第一季
-maid_dragon_1 = 5800
+# 天气之子(付费，且因为此电影曾触发了大量lib中错误所以决定保留在demo)
+weathering_with_you = 28228734
 
-base_info = bilib.anime_base_info(beyond_the_boundary)
+# 在这里输入mediaID
+base_info = bilib.anime_base_info(tamako_market)
+
 season_id = int(base_info["season_id"])
 episode_info = bilib.anime_episode_info(season_id)
 
-av_no = "av" + str(episode_info['1']["aid"])
+# 获取第一个分集的key，以便传入video_info
+for key in episode_info.keys():
+    key = str(key)
+    break
+
+av_no = "av" + str(episode_info[key]["aid"])
 v_info = bilib.video_info(av_no)
 print("-----------大纲-----------")
 print("名称：" + str(base_info["title"]))
@@ -55,8 +54,12 @@ anime_full_name = str(base_info["title"])
 print("简介：" + str(base_info["desc"]))
 print("地区：" + str(base_info["area"]))
 print("类型：" + str(base_info["type"]))
-print("集数：" + str(base_info["episode"]))
+if str("上映") in str(base_info["episode"]):
+    print("上映时间：" + str(base_info["episode"]))
+else:
+    print("集数：" + str(base_info["episode"]))
 print("评分：" + str(base_info["score"]))
+print("观看可用性：" + str(base_info["vip_info"]))
 print("-----------数据-----------")
 print("AV号：" + str(v_info["aid"]))
 print("BV号：" + str(v_info["bvid"]))
@@ -77,17 +80,21 @@ print("总播放量：" + str(base_info["views"]))
 print("-----------剧集-----------")
 no = 1
 
-for i, j in episode_info.items():
-    print("第" + str(i) + "集")
-    print("集标题：" + str(j["title_long"]))
-    print("剧集编号(ep)：" + str(j["ep_id"]))
-    print("弹幕cid：" + str(j["cid"]))
-    print("封面图片URL：" + str(j["cover_url"]))
-    print("播放页URL：" + str(j["share_url"]))
+for ep_id, ep_info in episode_info.items():
+    if str(ep_id).isdigit() or (str(ep_id).split(".")[0]).isdigit():
+        print("第" + str(ep_id) + "集")
+    else:
+        print(str(ep_id))
+    print("集标题：" + str(ep_info["title_long"]))
+    print("剧集编号(ep)：" + str(ep_info["ep_id"]))
+    print("弹幕cid：" + str(ep_info["cid"]))
+    print("封面图片URL：" + str(ep_info["cover_url"]))
+    print("播放页URL：" + str(ep_info["share_url"]))
     print("--------------------------")
     if get_dan:
-        cid_no = int(j["cid"])
+        cid_no = int(ep_info["cid"])
         danmaku_path = bilib.get_danmaku_raw(cid_no)
+        bilib.get_danmaku(cid_no)
         ass_path = bilib.raw2ass(danmaku_path)
         if len(str(no)) == 1:
             target_no = str("0") + str(no)
