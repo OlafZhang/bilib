@@ -601,22 +601,13 @@ def get_danmaku_raw(cid_input, reset=False):
 
 
 def raw2ass(file_path):
-    class NotWindows(Exception):
-        pass
-
-    import platform
-    sysstr = platform.system()
-    if sysstr == str("Windows"):
-        import win32api
-        final_file = str(str(file_path).split('.xml')[0]) + ".ass"
-        win32api.ShellExecute(0, 'open', '.\\Danmu2Ass\\Kaedei.Danmu2Ass.exe', file_path, '', 0)
-        for i in range(0, 60):
-            if os.path.exists(final_file):
-                print(os.path.abspath(final_file))
-                return os.path.abspath(final_file)
-                break
-            else:
-                time.sleep(1)
-        print("FAIL")
-    else:
-        raise NotWindows("You must use it in Windows, why not try Wine?")
+    final_file = str(str(file_path).split('.xml')[0]) + ".ass"
+    os.system("python .\\niconvert-master\main.py " + str(file_path) + " -o \"" + str(final_file)+ "\"")
+    for i in range(0, 60):
+        if os.path.exists(final_file):
+            print(os.path.abspath(final_file))
+            return os.path.abspath(final_file)
+            break
+        else:
+            time.sleep(1)
+    print("FAIL")
