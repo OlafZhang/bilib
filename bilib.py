@@ -5,33 +5,44 @@
 
 import csv
 import os
+import re
 import sys
 import time
-import re
+
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+
 
 # 传参异常/未定义异常
 class InfoError(Exception):
     pass
 
-# 弹幕文件等异常
+
+# 弹幕文件相关异常
 class danmakuError(Exception):
     pass
 
-# 请求异常
+
+# 服务调用超时
 class Timeout(Exception):
     pass
 
+
+# 请求错误
 class RequestError(Exception):
     pass
 
+
+# 啥都木有
 class SeemsNothing(Exception):
     pass
 
+
+# 请求被拦截
 class RequestRefuse(Exception):
     pass
+
 
 def anime_base_info(media_id):
     ua = str(UserAgent().random)
@@ -55,7 +66,7 @@ def anime_base_info(media_id):
         title = play_info["result"]["media"]["title"]
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
         tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
-                                  headers=headers)
+                                headers=headers)
         tag_info = tag_info.json()
         tag_id = tag_info["data"]["tag_id"]
         type = play_info["result"]["media"]["type_name"]
@@ -75,11 +86,7 @@ def anime_base_info(media_id):
             soup = BeautifulSoup(url.text, "html.parser")
             for x in soup.find_all('script'):
                 if str("window.__INITIAL_STATE__=") in str(x.string):
-                    text = x.string
-                    # 这里是旧的方法，但是遇到某些番剧仍然出现问题，故匹配正则表达式
-                    #text = text[25:]
-                    #text = str(text).split("}")
-                    #desc = str(str(text[7]).split('"')[3])
+                    text = str(x.string)
                     desc = str(re.findall(r'"(?:evaluate)":".+"', text)[0])
                     desc = str(str(desc.split(":")[1]).split('"')[1])
                     desc = desc.replace("\n", "")
@@ -93,8 +100,33 @@ def anime_base_info(media_id):
                         desc = desc.replace(head_desc, "")
                     else:
                         pass
-
-
+                    try:
+                        vip_info = str(re.findall(r'"(?:vip_promotion)":".+"', text)[0])
+                        vip_info = str(str(vip_info.split(":")[1]).split('"')[1])
+                        vip_info = vip_info.replace("\n", "")
+                        vip_info = vip_info.replace("\r", "")
+                        vip_info = vip_info.replace("\\n", "")
+                        vip_info = vip_info.replace("\\r", "")
+                        vip_info = vip_info.replace(" ", "")
+                        vip_info = vip_info.replace("　", "")
+                    except IndexError:
+                        try:
+                            vip_info = str(re.findall(r'"(?:promotion)":".+"', text)[0])
+                            vip_info = str(str(vip_info.split(":")[1]).split('"')[1])
+                            vip_info = vip_info.replace("\n", "")
+                            vip_info = vip_info.replace("\r", "")
+                            vip_info = vip_info.replace("\\n", "")
+                            vip_info = vip_info.replace("\\r", "")
+                            vip_info = vip_info.replace(" ", "")
+                            vip_info = vip_info.replace("　", "")
+                        except IndexError:
+                            vip_info = str("免费")
+                    if str("开通大会员观看") == str(vip_info):
+                        vip_info = str("大会员")
+                    elif str("免费") == str(vip_info):
+                        vip_info = str("免费")
+                    else:
+                        vip_info = str("付费")
                 else:
                     pass
         except:
@@ -104,14 +136,15 @@ def anime_base_info(media_id):
                        "cover_url": cover_url, "media_id": media_id, "ep_id": ep_id, "episode": episode,
                        "rating_count": rating_count, "score": score, "season_id": season_id, "coins": coins,
                        "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
-                       "tag_id" : tag_id}
+                       "tag_id": tag_id, "vip_info": vip_info}
         return return_dict
     except:
         if str("啥都木有") in str(play_info['message']):
             raise SeemsNothing("You might input a wrong aid/bvid.")
         else:
             message = str(play_info)['message']
-            raise RequestRefuse(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+            raise RequestRefuse(
+                ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
 
 def anime_episode_info(season_id):
@@ -133,7 +166,8 @@ def anime_episode_info(season_id):
             share_url = play_info["result"]["main_section"]["episodes"][index]["share_url"]
             title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
             title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
-            dict_list = {"aid" : aid, "cid" : cid, "ep_id" : ep_id, "title_long" : title_long, "cover_url" : cover_url, "share_url" : share_url}
+            dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
+                         "share_url": share_url}
             return_dict[title_no] = dict_list
         except:
             if str("啥都木有") in str(play_info['message']):
@@ -193,7 +227,8 @@ def video_info(id_input):
             raise SeemsNothing("You might input a wrong aid/bvid.")
         else:
             message = str(play_info)['message']
-            raise RequestRefuse(("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+            raise RequestRefuse(
+                ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
 
 
 # 这个是实验性API，理论效果更好，功能更多，但可能不如旧的API稳定
@@ -295,7 +330,7 @@ def get_danmaku(cid_input, reset=False):
                     bvIndex = url.find('BV')
                     id = url[bvIndex:]
                     rr = requests.get(url=url)
-                    rr.encoding = 'uft-8'
+                    rr.encoding = 'uft-16'
                     soup = BeautifulSoup(rr.text, 'lxml')
                     danmu_info = soup.find_all('d')
                     all_info = []
@@ -381,7 +416,7 @@ def get_danmaku(cid_input, reset=False):
             bvIndex = url.find('BV')
             id = url[bvIndex:]
             rr = requests.get(url=url)
-            rr.encoding = 'uft-8'
+            rr.encoding = 'uft-16'
             soup = BeautifulSoup(rr.text, 'lxml')
             danmu_info = soup.find_all('d')
             all_info = []
@@ -597,6 +632,10 @@ def count_danmaku(file_path):
     return len(file_path.readlines())
 
 
+# 由于此API设计初衷是配合ass转换工具的，所以没有单独做xml转csv的API
+# 另外，为配合转换工具，设置了UTF-8编码而非UTF-16
+# 如果需要数据分析，请直接使用get_danmaku()
+
 def get_danmaku_raw(cid_input, reset=False):
     try:
         file_name = str(str(cid_input) + '.xml')
@@ -641,7 +680,6 @@ def get_danmaku_raw(cid_input, reset=False):
 
 
 def raw2ass(file_path):
-
     class NotWindows(Exception):
         pass
 
