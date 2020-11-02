@@ -98,7 +98,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典，形式为return_dict = {"name": 昵称, "uid": UID, "fans": 粉丝量, "following": 关注量, "sex": 性别, "level": 等级, "face_url": 头像URL, "sign": 个性签名, "birthday": 生日, "coins": 硬币, "vip_type": 是否为大会员且为哪种大会员}
+返回：字典，形式为return_dict = {"name": 昵称, "uid": UID, "fans": 粉丝量, "following": 关注量, "sex": 性别, "level": 等级, "face_url": 头像URL, "sign": 个性签名, "birthday": 生日, "coins": 硬币，可能是获币数量, "vip_type": 是否为大会员且为哪种大会员}
 
 补充：由于愚人节会临时将大会员改为小会员，可能API也会如此呈现，故在此提醒
 

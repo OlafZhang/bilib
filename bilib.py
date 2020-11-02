@@ -42,12 +42,24 @@ class SeemsNothing(Exception):
 class RequestRefuse(Exception):
     pass
 
+timeout = 5
+
+def set_timeout(set_time):
+    global timeout
+    try:
+        timeout = int(set_time)
+    except:
+        timeout = 5
+
 
 def anime_base_info(media_id):
     ua = str(UserAgent().random)
     id_input = str(media_id)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers)
+    try:
+        play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers,timeout=timeout)
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
     play_info = play_info.json()
     try:
         area = play_info["result"]["media"]["areas"][0]["name"]
@@ -64,15 +76,22 @@ def anime_base_info(media_id):
         share_url = play_info["result"]["media"]["share_url"]
         title = play_info["result"]["media"]["title"]
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-        tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
-                                headers=headers)
+        try:
+            tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
+                                    headers=headers,timeout=timeout)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
         tag_info = tag_info.json()
         tag_id = tag_info["data"]["tag_id"]
         type = play_info["result"]["media"]["type_name"]
         ua = str(UserAgent().random)
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-        other_info = requests.get("https://api.bilibili.com/pgc/web/season/stat?season_id=" + str(season_id),
-                                  headers=headers)
+        try:
+            other_info = requests.get("https://api.bilibili.com/pgc/web/season/stat?season_id=" + str(season_id),
+                                      headers=headers,timeout=timeout)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
+        tag_info = tag_info.json()
         other_info = other_info.json()
         coins = other_info["result"]["coins"]
         danmakus = other_info["result"]["danmakus"]
@@ -81,7 +100,10 @@ def anime_base_info(media_id):
         views = other_info["result"]["views"]
         try:
             headers = {"User-Agent": ua}
-            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers)
+            try:
+                url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,timeout=timeout)
+            except requests.exceptions.ReadTimeout:
+                raise Timeout("Timeout.")
             soup = BeautifulSoup(url.text, "html.parser")
             for x in soup.find_all('script'):
                 if str("window.__INITIAL_STATE__=") in str(x.string):
@@ -150,9 +172,12 @@ def anime_episode_info(season_id):
     ua = str(UserAgent().random)
     id_input = str(season_id)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
-                             headers=headers)
-    play_info = play_info.json()
+    try:
+        play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
+                                 headers=headers,timeout=timeout)
+        play_info = play_info.json()
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
     episode_list = len(play_info["result"]["main_section"]["episodes"])
     return_dict = {}
     for index in range(0, episode_list):
@@ -194,13 +219,15 @@ def video_info(id_input):
         else:
             mode = str("bv")
             id_input = str("BV") + str(id_input[2:])
-
-    if mode == "bv":
-        play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers)
-    elif mode == "av":
-        play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input), headers=headers)
-    else:
-        raise InfoError("You should input 'av' or 'bv'.")
+    try:
+        if mode == "bv":
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers,timeout=timeout)
+        elif mode == "av":
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input), headers=headers,timeout=timeout)
+        else:
+            raise InfoError("You should input 'av' or 'bv'.")
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
     play_info = play_info.json()
     try:
         aid = play_info['data']['aid']
@@ -235,7 +262,10 @@ def user_info(uid_input):
     uid_input = int(uid_input)
     ua = str(UserAgent().random)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers)
+    try:
+        info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers,timeout=timeout)
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
     info_get = info_get.json()
     if str(info_get["message"]) == str("请求错误"):
         raise RequestError("Request error.")
@@ -259,7 +289,18 @@ def user_info(uid_input):
     birthday = info_get["data"]["birthday"]
     coins = info_get["data"]["coins"]
     vip_type = info_get["data"]["vip"]["label"]["text"]
-    fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers)
+    if vip_type == str("大会员") or vip_type == str("年度大会员"):
+        pass
+    elif vip_type == str("小会员"):
+        vip_type == str("大会员")
+    elif vip_type == str("年度小会员"):
+        vip_type == str("年度大会员")
+    else:
+        vip_type == str("None")
+    try:
+        fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,timeout=timeout)
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
     fans = fans.json()
     following = fans['data']['following']
     fans = fans['data']['follower']
@@ -272,7 +313,10 @@ def user_info_old(uid_input, get_ua=False):
     uid_input = int(uid_input)
     ua = str(UserAgent().random)
     headers = {"User-Agent": ua}
-    name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers)
+    try:
+        name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers,timeout=timeout)
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     if name.status_code != 200:
         if name.status_code == 412:
@@ -284,7 +328,10 @@ def user_info_old(uid_input, get_ua=False):
         st_code = name.status_code
         connect_ok = True
     try:
-        fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers)
+        try:
+            fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,timeout=timeout)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
         fans = fans.json()
         following = fans['data']['following']
         fans = fans['data']['follower']
@@ -336,7 +383,10 @@ def get_danmaku(cid_input, reset=False):
             pass
         bvIndex = url.find('BV')
         id = url[bvIndex:]
-        rr = requests.get(url=url)
+        try:
+            rr = requests.get(url=url,timeout=timeout)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
         rr.encoding = 'uft-16'
         soup = BeautifulSoup(rr.text, 'lxml')
         danmu_info = soup.find_all('d')
@@ -572,7 +622,10 @@ def get_danmaku_raw(cid_input, reset=False):
             while True:
                 if user_input == 'yes' or user_input == 'y':
                     url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
-                    rr = requests.get(url=url)
+                    try:
+                        rr = requests.get(url=url,timeout=timeout)
+                    except requests.exceptions.ReadTimeout:
+                        raise Timeout("Timeout.")
                     rr.encoding = 'uft-8'
                     xml = open(file_name, "w", encoding="utf-8")
                     xml.write(rr.text)
@@ -587,7 +640,10 @@ def get_danmaku_raw(cid_input, reset=False):
                     user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
         else:
             url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
-            rr = requests.get(url=url)
+            try:
+                rr = requests.get(url=url,timeout=timeout)
+            except requests.exceptions.ReadTimeout:
+                raise Timeout("Timeout.")
             rr.encoding = 'uft-8'
             xml = open(file_name, "w", encoding="utf-8")
             xml.write(rr.text)
@@ -604,9 +660,9 @@ def raw2ass(file_path):
     sysstr = platform.system()
     final_file = str(str(file_path).split('.xml')[0]) + ".ass"
     if sysstr == "Windows":
-        os.system("python .\\niconvert-master\\main.py " + str(file_path) + " -o \"" + str(final_file)+ "\"")
+        os.system("python .\\niconvert-master\\main.py \"" + str(file_path) + "\" -o \"" + str(final_file)+ "\"")
     else:
-        os.system("python3 ./niconvert-master/main.py " + str(file_path) + " -o \"" + str(final_file) + "\"")
+        os.system("python3 ./niconvert-master/main.py \"" + str(file_path) + "\" -o \"" + str(final_file) + "\"")
     for i in range(0, 60):
         if os.path.exists(final_file):
             print(os.path.abspath(final_file))
