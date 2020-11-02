@@ -8,7 +8,6 @@ import os
 import re
 import sys
 import time
-
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -601,8 +600,13 @@ def get_danmaku_raw(cid_input, reset=False):
 
 
 def raw2ass(file_path):
+    import platform
+    sysstr = platform.system()
     final_file = str(str(file_path).split('.xml')[0]) + ".ass"
-    os.system("python .\\niconvert-master\main.py " + str(file_path) + " -o \"" + str(final_file)+ "\"")
+    if sysstr == "Windows":
+        os.system("python .\\niconvert-master\\main.py " + str(file_path) + " -o \"" + str(final_file)+ "\"")
+    else:
+        os.system("python3 ./niconvert-master/main.py " + str(file_path) + " -o \"" + str(final_file) + "\"")
     for i in range(0, 60):
         if os.path.exists(final_file):
             print(os.path.abspath(final_file))
