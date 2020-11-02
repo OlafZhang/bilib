@@ -160,12 +160,18 @@ def anime_base_info(media_id):
                        "tag_id": tag_id, "vip_info": vip_info}
         return return_dict
     except:
-        if str("啥都木有") in str(play_info['message']):
-            raise SeemsNothing("You might input a wrong aid/bvid.")
+        message = str(play_info)['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
         else:
-            message = str(play_info)['message']
-            raise RequestRefuse(
-                ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+            print(message)
+            raise InfoError("Something error.")
 
 
 def anime_episode_info(season_id):
@@ -194,12 +200,18 @@ def anime_episode_info(season_id):
                          "share_url": share_url}
             return_dict[title_no] = dict_list
         except:
-            if str("啥都木有") in str(play_info['message']):
-                raise SeemsNothing("You might input a wrong season_id.")
+            message = str(play_info)['message']
+            if str(message) == str("请求错误"):
+                raise RequestError("Request error.")
+            elif str(message) == str("啥都木有"):
+                raise SeemsNothing("Seems no such info.")
+            elif str(message) == str("服务调用超时"):
+                raise Timeout("Timeout.")
+            elif str(message) == str("请求被拦截"):
+                raise RequestRefuse("Banning.")
             else:
-                message = str(play_info)['message']
-                raise RequestRefuse(
-                    ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+                print(message)
+                raise InfoError("Something error.")
 
     return return_dict
 
@@ -249,12 +261,18 @@ def video_info(id_input):
                        "coin": coin, "share": share, "like": like}
         return return_dict
     except:
-        if str("请求错误") in str(play_info['message']):
-            raise SeemsNothing("You might input a wrong aid/bvid.")
+        message = str(play_info)['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
         else:
-            message = str(play_info)['message']
-            raise RequestRefuse(
-                ("You might be banned now, because we can not get info from API for now.(%s)") % (message))
+            print(message)
+            raise InfoError("Something error.")
 
 
 # 这个是实验性API，理论效果更好，功能更多，但可能不如旧的API稳定
@@ -320,7 +338,7 @@ def user_info_old(uid_input, get_ua=False):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     if name.status_code != 200:
         if name.status_code == 412:
-            raise RequestRefuse("You might be banned now, because status code is 412.")
+            raise RequestRefuse("HTTP 412 error.")
         else:
             st_code = name.status_code
             connect_ok = False
