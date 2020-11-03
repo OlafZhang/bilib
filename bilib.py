@@ -2,15 +2,28 @@
 
 # 这是一个lib，引用大量B站API，目前用户信息和弹幕工作正常，其它存在潜在的bug
 # bilib = bili + lib
-
-import csv
 import os
+import csv
 import re
 import sys
 import time
-import requests
-from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
+
+try:
+    import requests
+    from bs4 import BeautifulSoup
+    from fake_useragent import UserAgent
+except:
+    import platform
+    sysstr = platform.system()
+    if sysstr == "Windows":
+        os.system("pip install -r requirements.txt")
+    else:
+        os.system("pip3 install -r requirements.txt")
+    import requests
+    from bs4 import BeautifulSoup
+    from fake_useragent import UserAgent
+
+
 
 
 # 传参异常/未定义异常
