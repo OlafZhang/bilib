@@ -91,7 +91,6 @@ def anime_base_info(media_id):
                                       headers=headers,timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
-        tag_info = tag_info.json()
         other_info = other_info.json()
         coins = other_info["result"]["coins"]
         danmakus = other_info["result"]["danmakus"]
