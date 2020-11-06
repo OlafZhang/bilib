@@ -256,6 +256,25 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
+
+### get_resolution(id_input,getid = False)
+
+功能：获取视频最高清晰度
+
+必要的传参：av号,bv号或ep号，必须带字母
+
+选择的传参：getid，返回质量编号(True)而非清晰度描述(False)
+
+返回：字符，清晰度描述或质量编号
+
+另外说明：由于同时支持视频和某些番剧，故单独做了此API，作为备份，已集成到video_info()，anime_base_info()则使用了另外的方法
+
+由于我真的没料到B站出了HDR视频，为防止将来出现更高规格的视频，新编号一律返回类似“疑似错误的编号(250)”的形式
+
+报错: 部分番剧可能会返回"不支持"
+
+
+
 ## 实验性API
 
 
@@ -263,7 +282,9 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### 不太推荐在番剧使用此API，除bv号和av号外，其它数据均可通过anime_base_info(media_id)获取
 
-### 新加入原生分辨率识别功能，早期的视频可能不支持，正在尝试其他方法
+### 新加入原生分辨率识别功能，完美支持所有视频
+
+### 强行在番剧可能会在清晰度相关key返回"不支持"
 
 功能：获取视频的信息
 
@@ -271,7 +292,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量，"resolution": 原生分辨率}
+返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量, "quality": 最高画质,"quality_id": 最高画质编号}
 
 另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常，不会返回联合投稿的stuff
 

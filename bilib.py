@@ -62,6 +62,80 @@ def set_timeout(set_time):
     except:
         timeout = 5
 
+# 获取视频最高清晰度
+# 传入参数：av号,bv号或ep号
+# 由于同时支持视频和番剧，故单独做了API，作为备份
+# 已集成到video_info()，anime_base_info()则使用了另外的方法
+def get_resolution(id_input,getid = False):
+    id_input = str(id_input)
+    # 判断用户输入的是av号还是bv号
+    if str(id_input[0:2]).isalpha():
+        mode = str(id_input[0:2].lower())
+        if str("av") == mode:
+            id_input = str("av") + str(id_input[2:])
+        elif str("bv") == mode:
+            id_input = str("BV") + str(id_input[2:])
+        else:
+            mode = str("ep")
+            id_input = str("ep") + str(id_input[2:])
+    else:
+        raise InfoError("You should input av/bv/ep.")
+    ua = str(UserAgent().random)
+    headers = {"User-Agent": ua}
+    try:
+        if mode == str("ep"):
+            main_url = str("https://www.bilibili.com/bangumi/play/" + str(id_input))
+        else:
+            main_url = str("https://www.bilibili.com/video/" + str(id_input))
+        main_url = requests.get(main_url, headers=headers, timeout=timeout)
+    except:
+        raise Timeout("Timeout.")
+    quality = str("不支持")
+    quality_id = str("不支持")
+    soup = BeautifulSoup(main_url.text, "html.parser")
+    for x in soup.find_all('script'):
+        if str("window.__playinfo__=") in str(x.string):
+            # 匹配简介的正则表达式(关键字accept_quality)
+            text = str(x.string)
+            break
+        else:
+            pass
+    quality_id = str(re.findall(r'"accept_quality":.\d+.,', text)[0])
+    quality_id = str(str(quality_id.split("[")[1]).split("]")[0])
+    if str(",") in quality_id:
+        quality_id = quality_id.split(",")[0]
+    else:
+        pass
+
+    if quality_id.isdigit():
+        quality_id = int(quality_id)
+        if quality_id == 125:
+            quality = str("HDR")
+        elif quality_id == 120:
+            quality = str("4K")
+        elif quality_id == 116:
+            quality = str("1080P 高帧率")
+        elif quality_id == 112:
+            quality = str("1080P+")
+        elif quality_id == 80:
+            quality = str("1080P")
+        elif quality_id == 74:
+            quality = str("720P 高帧率")
+        elif quality_id == 64:
+            quality = str("720P")
+        elif quality_id == 32:
+            quality = str("480P")
+        elif quality_id == 16:
+            quality = str("360P")
+        else:
+            quality = str("疑似错误的编号(" + str(quality_id) + ")")
+    else:
+        quality = str("疑似错误的编号(" + str(quality_id) + ")")
+    if getid:
+        return quality_id
+    else:
+        return quality
+
 # 获取视频信息
 # 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
 # 而av号和bv号对番剧/电影来说没有意义
@@ -107,16 +181,58 @@ def video_info(id_input):
         share = play_info['data']["stat"]['share']
         like = play_info['data']["stat"]['like']
         cid = play_info['data']["cid"]
-        video_width = int(play_info['data']['dimension']['width'])
-        video_height = int(play_info['data']['dimension']['height'])
-        if video_width == 0:
-            resolution = str("不可用")
-        else:
-            resolution = str(str(video_width) + "*" + str(video_height))
+        headers = {"User-Agent": ua}
+        try:
+            main_url = str("https://www.bilibili.com/video/" + str(bvid))
+            main_url = requests.get(main_url,headers = headers,timeout = timeout)
+        except:
+            raise Timeout("Timeout.")
+        soup = BeautifulSoup(main_url.text, "html.parser")
+        quality = str("不支持")
+        quality_id = str("不支持")
+        for x in soup.find_all('script'):
+            if str("window.__playinfo__=") in str(x.string):
+                # 匹配简介的正则表达式(关键字accept_quality)
+                text = str(x.string)
+                quality_id = str(re.findall(r'"accept_quality":.\d+.,', text)[0])
+                quality_id = str(str(quality_id.split("[")[1]).split("]")[0])
+                if str(",") in quality_id:
+                    quality_id = quality_id.split(",")[0]
+                else:
+                    pass
+
+                if quality_id.isdigit():
+                    quality_id = int(quality_id)
+                    if quality_id == 125:
+                        quality = str("HDR")
+                    elif quality_id == 120:
+                        quality = str("4K")
+                    elif quality_id == 116:
+                        quality = str("1080P 高帧率")
+                    elif quality_id == 112:
+                        quality = str("1080P+")
+                    elif quality_id == 80:
+                        quality = str("1080P")
+                    elif quality_id == 74:
+                        quality = str("720P 高帧率")
+                    elif quality_id == 64:
+                        quality = str("720P")
+                    elif quality_id == 32:
+                        quality = str("480P")
+                    elif quality_id == 16:
+                        quality = str("360P")
+                    else:
+                        quality = str("疑似错误的编号(" + str(quality_id) + ")")
+                else:
+                    quality = str("疑似错误的编号(" + str(quality_id) + ")")
+                break
+            else:
+                pass
+
         return_dict = {"aid": aid, "bvid": bvid, "cid": cid, "title": title, "desc": desc, "owner_name": owner_name,
                        "owner_uid": owner_uid, "view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
-                       "coin": coin, "share": share, "like": like, "resolution": resolution}
-        # 返回字典，总共使用1个API
+                       "coin": coin, "share": share, "like": like, "quality": quality,"quality_id": quality_id}
+        # 返回字典，总共使用1个API和一个HTML页
         return return_dict
     except:
         message = str(play_info)['message']
