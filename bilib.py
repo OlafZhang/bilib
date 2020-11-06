@@ -177,7 +177,10 @@ def anime_base_info(media_id):
                        "tag_id": tag_id, "vip_info": vip_info}
         return return_dict
     except:
-        message = str(play_info)['message']
+        try:
+            message = str(play_info)['message']
+        except:
+            pass
         if str(message) == str("请求错误"):
             raise RequestError("Request error.")
         elif str(message) == str("啥都木有"):
@@ -242,7 +245,7 @@ def anime_episode_info(season_id):
     return return_dict
 
 # 获取视频信息
-# 对于番剧/电影，除了能配合anime_episode_info获得bv号以外，没有任何作用，且数据比较不可信
+# 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
 # 而av号和bv号对番剧/电影来说没有意义
 def video_info(id_input):
     ua = str(UserAgent().random)
@@ -286,9 +289,15 @@ def video_info(id_input):
         share = play_info['data']["stat"]['share']
         like = play_info['data']["stat"]['like']
         cid = play_info['data']["cid"]
+        video_width = int(play_info['data']['dimension']['width'])
+        video_height = int(play_info['data']['dimension']['height'])
+        if video_width == 0:
+            resolution = str("不可用")
+        else:
+            resolution = str(str(video_width) + "*" + str(video_height))
         return_dict = {"aid": aid, "bvid": bvid, "cid": cid, "title": title, "desc": desc, "owner_name": owner_name,
                        "owner_uid": owner_uid, "view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
-                       "coin": coin, "share": share, "like": like}
+                       "coin": coin, "share": share, "like": like, "resolution": resolution}
         # 返回字典，总共使用1个API
         return return_dict
     except:

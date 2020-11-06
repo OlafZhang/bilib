@@ -61,6 +61,7 @@ print("观看可用性：" + str(base_info["vip_info"]))
 print("-----------数据-----------")
 print("AV号：" + str(v_info["aid"]))
 print("BV号：" + str(v_info["bvid"]))
+print("原生分辨率：" + str(v_info["resolution"]))
 print("media_id(md)：" + str(base_info["media_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 # 这里的ep号对应最后一集！
