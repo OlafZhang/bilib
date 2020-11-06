@@ -33,19 +33,15 @@ beyond_the_boundary = 3365
 # 天气之子(付费，且因为此电影曾触发了大量lib中错误所以决定保留在demo)
 weathering_with_you = 28228734
 
+# 猫和老鼠旧版(最大画质480P)
+tom_and_jerry = 132112
+
 # 在这里输入mediaID
 base_info = bilib.anime_base_info(tamako_market)
 
 season_id = int(base_info["season_id"])
 episode_info = bilib.anime_episode_info(season_id)
 
-# 获取第一个分集的key，以便传入video_info
-for key in episode_info.keys():
-    key = str(key)
-    break
-
-av_no = "av" + str(episode_info[key]["aid"])
-v_info = bilib.video_info(av_no)
 print("-----------大纲-----------")
 print("名称：" + str(base_info["title"]))
 anime_full_name = str(base_info["title"])
@@ -59,15 +55,14 @@ else:
 print("评分：" + str(base_info["score"]))
 print("观看可用性：" + str(base_info["vip_info"]))
 print("-----------数据-----------")
-print("AV号：" + str(v_info["aid"]))
-print("BV号：" + str(v_info["bvid"]))
-print("原生分辨率：" + str(v_info["resolution"]))
+print("AV号：" + str(base_info["aid"]))
+print("BV号：" + str(base_info["bvid"]))
+print("最高画质：" + str(base_info["quality_ID"]) + "(" + str(base_info["quality"]) + ")")
 print("media_id(md)：" + str(base_info["media_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
+print("tag_id：" + str(base_info["tag_id"]))
 # 这里的ep号对应最后一集！
 print("最新一集的剧集编号(ep)：" + str(base_info["ep_id"]))
-print("tag_id：" + str(base_info["tag_id"]))
-print("season_id(ss)：" + str(base_info["season_id"]))
 print("等级编号：" + str(base_info["rating_count"]))
 print("封面图片URL：" + str(base_info["cover_url"]))
 print("介绍页URL：" + str(base_info["share_url"]))

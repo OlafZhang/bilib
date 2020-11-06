@@ -62,6 +62,130 @@ def set_timeout(set_time):
     except:
         timeout = 5
 
+# 获取视频信息
+# 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
+# 而av号和bv号对番剧/电影来说没有意义
+def video_info(id_input):
+    ua = str(UserAgent().random)
+    id_input = str(id_input)
+    headers = {"Host": "api.bilibili.com", "User-Agent": ua}
+    # 判断用户输入的是av号还是bv号
+    if id_input.isdigit():
+        mode = "av"
+    else:
+        mode = str(id_input[0:2].lower())
+        if str("av") == mode:
+            id_input = str(id_input[2:])
+        elif str("bv") == mode:
+            id_input = str("BV") + str(id_input[2:])
+        else:
+            mode = str("bv")
+            id_input = str("BV") + str(id_input[2:])
+    # 返回的结果全部来自此API
+    try:
+        if mode == "bv":
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers,timeout=timeout)
+        elif mode == "av":
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input), headers=headers,timeout=timeout)
+        else:
+            raise InfoError("You should input 'av' or 'bv'.")
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
+    play_info = play_info.json()
+    try:
+        aid = play_info['data']['aid']
+        bvid = play_info['data']['bvid']
+        title = play_info['data']['title']
+        desc = play_info['data']['desc']
+        owner_name = play_info['data']['owner']["name"]
+        owner_uid = play_info['data']['owner']["mid"]
+        view = play_info['data']["stat"]['view']
+        danmaku = play_info['data']["stat"]['danmaku']
+        reply = play_info['data']["stat"]['reply']
+        favorite = play_info['data']["stat"]['favorite']
+        coin = play_info['data']["stat"]['coin']
+        share = play_info['data']["stat"]['share']
+        like = play_info['data']["stat"]['like']
+        cid = play_info['data']["cid"]
+        video_width = int(play_info['data']['dimension']['width'])
+        video_height = int(play_info['data']['dimension']['height'])
+        if video_width == 0:
+            resolution = str("不可用")
+        else:
+            resolution = str(str(video_width) + "*" + str(video_height))
+        return_dict = {"aid": aid, "bvid": bvid, "cid": cid, "title": title, "desc": desc, "owner_name": owner_name,
+                       "owner_uid": owner_uid, "view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
+                       "coin": coin, "share": share, "like": like, "resolution": resolution}
+        # 返回字典，总共使用1个API
+        return return_dict
+    except:
+        message = str(play_info)['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
+        else:
+            print(message)
+            raise InfoError("Something error.")
+
+
+
+# 番剧/电影剧集信息（返回每集的cid，封面URL等，cid可用于爬取弹幕）
+def anime_episode_info(season_id):
+    ua = str(UserAgent().random)
+    id_input = str(season_id)
+    headers = {"Host": "api.bilibili.com", "User-Agent": ua}
+    # 返回的结果全部来自此API
+    try:
+        play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
+                                 headers=headers,timeout=timeout)
+        play_info = play_info.json()
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
+    # 读取剧集数量
+    episode_list = len(play_info["result"]["main_section"]["episodes"])
+    return_dict = {}
+    # 剧集遍历
+    for index in range(0, episode_list):
+        try:
+            # 剧集索引号,不一定是剧集编号
+            index = int(index)
+            aid = play_info["result"]["main_section"]["episodes"][index]["aid"]
+            cid = play_info["result"]["main_section"]["episodes"][index]["cid"]
+            # ep_id，每集独立存在的编号
+            ep_id = play_info["result"]["main_section"]["episodes"][index]["id"]
+            cover_url = play_info["result"]["main_section"]["episodes"][index]["cover"]
+            share_url = play_info["result"]["main_section"]["episodes"][index]["share_url"]
+            # 真正的剧集编号，必须是string
+            title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
+            # 剧集标题
+            title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
+            dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
+                         "share_url": share_url}
+            # 根据剧集编号返回词典
+            return_dict[title_no] = dict_list
+        except:
+            message = str(play_info)['message']
+            if str(message) == str("请求错误"):
+                raise RequestError("Request error.")
+            elif str(message) == str("啥都木有"):
+                raise SeemsNothing("Seems no such info.")
+            elif str(message) == str("服务调用超时"):
+                raise Timeout("Timeout.")
+            elif str(message) == str("请求被拦截"):
+                raise RequestRefuse("Banning.")
+            else:
+                print(message)
+                raise InfoError("Something error.")
+    # 返回一个含字典的大字典，总共使用了1个API
+    return return_dict
+
+
+
 # 番剧/电影基本信息（返回seasonID,以便请求剧集的详情）
 def anime_base_info(media_id):
     ua = str(UserAgent().random)
@@ -96,7 +220,27 @@ def anime_base_info(media_id):
                                     headers=headers,timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
+        # 获取av号和第一集cid，以便获取默认清晰度
+        episode_info = anime_episode_info(season_id)
+        # 获取第一个分集的key，以便传入video_info
+        for key in episode_info.keys():
+            key = str(key)
+            break
+        av_no = str(episode_info[key]["aid"])
+        # 获取BV号
+        bv_no = video_info(av_no)["bvid"]
+        cid = str(episode_info[key]["cid"])
+        try:
+            quality_info = requests.get("https://api.bilibili.com/pgc/player/web/playurl?aid=" + str(av_no) + "&cid=" + str(cid),
+                                    headers=headers, timeout=timeout)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
+
+        av_no = str("av" + str(av_no))
         tag_info = tag_info.json()
+        quality_info = quality_info.json()
+        quality = quality_info["result"]["support_formats"][0]["new_description"]
+        quality_ID = quality_info["result"]["support_formats"][0]["quality"]
         tag_id = tag_info["data"]["tag_id"]
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
         # 根据seasonID求总投币数，追番数等信息
@@ -169,12 +313,12 @@ def anime_base_info(media_id):
                     vip_info = str("付费")
             else:
                 pass
-        # 返回结果，总共使用3个API和一个HTML页
+        # 返回结果，总共使用3个Bilibili API，2个内建API和一个HTML页
         return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "desc": desc,
                        "cover_url": cover_url, "media_id": media_id, "ep_id": ep_id, "episode": episode,
                        "rating_count": rating_count, "score": score, "season_id": season_id, "coins": coins,
                        "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
-                       "tag_id": tag_id, "vip_info": vip_info}
+                       "tag_id": tag_id, "vip_info": vip_info, "aid" : av_no,"bvid": bv_no,"quality":quality,"quality_ID":quality_ID}
         return return_dict
     except:
         try:
@@ -194,125 +338,7 @@ def anime_base_info(media_id):
             print(message)
             raise InfoError("Something error.")
 
-# 番剧/电影剧集信息（返回每集的cid，封面URL等，cid可用于爬取弹幕）
-def anime_episode_info(season_id):
-    ua = str(UserAgent().random)
-    id_input = str(season_id)
-    headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    # 返回的结果全部来自此API
-    try:
-        play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
-                                 headers=headers,timeout=timeout)
-        play_info = play_info.json()
-    except requests.exceptions.ReadTimeout:
-        raise Timeout("Timeout.")
-    # 读取剧集数量
-    episode_list = len(play_info["result"]["main_section"]["episodes"])
-    return_dict = {}
-    # 剧集遍历
-    for index in range(0, episode_list):
-        try:
-            # 剧集索引号,不一定是剧集编号
-            index = int(index)
-            aid = play_info["result"]["main_section"]["episodes"][index]["aid"]
-            cid = play_info["result"]["main_section"]["episodes"][index]["cid"]
-            # ep_id，每集独立存在的编号
-            ep_id = play_info["result"]["main_section"]["episodes"][index]["id"]
-            cover_url = play_info["result"]["main_section"]["episodes"][index]["cover"]
-            share_url = play_info["result"]["main_section"]["episodes"][index]["share_url"]
-            # 真正的剧集编号，必须是string
-            title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
-            # 剧集标题
-            title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
-            dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
-                         "share_url": share_url}
-            # 根据剧集编号返回词典
-            return_dict[title_no] = dict_list
-        except:
-            message = str(play_info)['message']
-            if str(message) == str("请求错误"):
-                raise RequestError("Request error.")
-            elif str(message) == str("啥都木有"):
-                raise SeemsNothing("Seems no such info.")
-            elif str(message) == str("服务调用超时"):
-                raise Timeout("Timeout.")
-            elif str(message) == str("请求被拦截"):
-                raise RequestRefuse("Banning.")
-            else:
-                print(message)
-                raise InfoError("Something error.")
-    # 返回一个含字典的大字典，总共使用了1个API
-    return return_dict
 
-# 获取视频信息
-# 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
-# 而av号和bv号对番剧/电影来说没有意义
-def video_info(id_input):
-    ua = str(UserAgent().random)
-    id_input = str(id_input)
-    headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    # 判断用户输入的是av号还是bv号
-    if id_input.isdigit():
-        mode = "av"
-    else:
-        mode = str(id_input[0:2].lower())
-        if str("av") == mode:
-            id_input = str(id_input[2:])
-        elif str("bv") == mode:
-            id_input = str("BV") + str(id_input[2:])
-        else:
-            mode = str("bv")
-            id_input = str("BV") + str(id_input[2:])
-    # 返回的结果全部来自此API
-    try:
-        if mode == "bv":
-            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers,timeout=timeout)
-        elif mode == "av":
-            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input), headers=headers,timeout=timeout)
-        else:
-            raise InfoError("You should input 'av' or 'bv'.")
-    except requests.exceptions.ReadTimeout:
-        raise Timeout("Timeout.")
-    play_info = play_info.json()
-    try:
-        aid = play_info['data']['aid']
-        bvid = play_info['data']['bvid']
-        title = play_info['data']['title']
-        desc = play_info['data']['desc']
-        owner_name = play_info['data']['owner']["name"]
-        owner_uid = play_info['data']['owner']["mid"]
-        view = play_info['data']["stat"]['view']
-        danmaku = play_info['data']["stat"]['danmaku']
-        reply = play_info['data']["stat"]['reply']
-        favorite = play_info['data']["stat"]['favorite']
-        coin = play_info['data']["stat"]['coin']
-        share = play_info['data']["stat"]['share']
-        like = play_info['data']["stat"]['like']
-        cid = play_info['data']["cid"]
-        video_width = int(play_info['data']['dimension']['width'])
-        video_height = int(play_info['data']['dimension']['height'])
-        if video_width == 0:
-            resolution = str("不可用")
-        else:
-            resolution = str(str(video_width) + "*" + str(video_height))
-        return_dict = {"aid": aid, "bvid": bvid, "cid": cid, "title": title, "desc": desc, "owner_name": owner_name,
-                       "owner_uid": owner_uid, "view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
-                       "coin": coin, "share": share, "like": like, "resolution": resolution}
-        # 返回字典，总共使用1个API
-        return return_dict
-    except:
-        message = str(play_info)['message']
-        if str(message) == str("请求错误"):
-            raise RequestError("Request error.")
-        elif str(message) == str("啥都木有"):
-            raise SeemsNothing("Seems no such info.")
-        elif str(message) == str("服务调用超时"):
-            raise Timeout("Timeout.")
-        elif str(message) == str("请求被拦截"):
-            raise RequestRefuse("Banning.")
-        else:
-            print(message)
-            raise InfoError("Something error.")
 
 
 # 获取用户信息
