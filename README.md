@@ -208,13 +208,15 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### 不太推荐在番剧使用此API，除bv号和av号外，其它数据均可通过anime_base_info(media_id)获取
 
+### 新加入原生分辨率识别功能，早期的视频/番剧可能不支持，正在尝试其他方法
+
 功能：获取视频的信息
 
 必要的传参：视频av号或bv号（id_input），"av"和"bv"也要一同输入
 
 选择的传参：无
 
-返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量}
+返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量，"resolution": 原生分辨率}
 
 另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常，不会返回联合投稿的stuff
 
