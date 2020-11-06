@@ -182,53 +182,27 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-## 实验性API
-
-这些都是获取视频/番剧或电影信息的API，由于有多分p的情况，目前推荐在单p下使用，对于番剧，请尽可能避免遇到存在SP的情况（季度的情况估计不会有问题）
-
-这些API将在最近开始测试，下面的说明不会包含遇到的异常
-
-### 简单说明
-
-在说明API前，需要说明一些B站在番剧方面API的一些参数（比较复杂），这些参数一般可在URL中找到
-
-	•media_id 番剧md号（例如md135652，JOJO的奇妙冒险 第五季），会在介绍页URL中出现，在此API作为必须传入的参数
-	
-	•season_id 番剧id （例如ss3398，冰菓），小概率才会在介绍页URL中出现，可以通过此API获取
-
-	•ep 剧集编号（例如ep84787，冰菓，某一集），这个是单集才有的概念，每一集的ep_id都不一样。对于anime_base_info(media_id)，此ep_id为最后一集的
-	
-这些参数一般会一起在B站API出现，md号在介绍页URL必能找到
-
-还有一个不太重要的参数：tag_id，标签ID，每个番剧都不同，根据观察，这个可能和向用户推送关于此番剧的二创视频有关
-
-
-
-### video_info(id_input)
-
-### 不太推荐在番剧使用此API，除bv号和av号外，其它数据均可通过anime_base_info(media_id)获取
-
-### 新加入原生分辨率识别功能，早期的视频/番剧可能不支持，正在尝试其他方法
-
-功能：获取视频的信息
-
-必要的传参：视频av号或bv号（id_input），"av"和"bv"也要一同输入
-
-选择的传参：无
-
-返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量，"resolution": 原生分辨率}
-
-另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常，不会返回联合投稿的stuff
-
-
-
 ### anime_base_info(media_id)
 
 ### 注意，这里的desc和video_info的desc性质不同，不能混用
 
 ### 相比于视频的介绍（desc），番剧的介绍看起来不能通过API来获取，只能截取HTML后使用bs4和正则表达式来搜索，比较麻烦
 
-### 另外新加入了判断免费/大会员/付费的功能，目前不太稳定
+### 加入识别原生分辨率，是否收费等功能，已经集成av和bv的获取
+
+    简单说明
+
+    在说明API前，需要说明一些B站在番剧方面API的一些参数（比较复杂），这些参数一般可在URL中找到
+
+	• media_id 番剧md号（例如md135652，JOJO的奇妙冒险 第五季），会在介绍页URL中出现，在此API作为必须传入的参数
+	
+	• season_id 番剧id （例如ss3398，冰菓），小概率才会在介绍页URL中出现，可以通过此API获取
+
+	• ep 剧集编号（例如ep84787，冰菓，某一集），这个是单集才有的概念，每一集的ep_id都不一样。对于anime_base_info(media_id)，此ep_id为最后一集的
+	
+    这些参数一般会一起在B站API出现，md号在介绍页URL必能找到
+
+    还有一个不太重要的参数：tag_id，标签ID，每个番剧都不同，根据观察，这个可能和向用户推送关于此番剧的二创视频有关
 
 功能：获取番剧基本信息
 
@@ -236,11 +210,33 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典， {"title": 标题, "type": 类型, "area": 地区, "share_url": 介绍页URL（并不是播放页URL）, "desc":简介,"cover_url": 介绍页封面URL,"media_id": md号, "ep_id": 剧集编号, "episode": 集数, "rating_count": 等级编号，猜测是总排行榜的RANK,"score": 评分, "season_id": 番剧ID, "coins": 总投币数, "danmakus": 总弹幕量, "follow": 追番数,"series_follow": 系列追番数, "views": 总播放量,"tag_id" : 标签ID,"vip_info": 免费/大会员/付费}
+返回：字典， {"title": 标题, "type": 类型, "area": 地区, "share_url": 介绍页URL（并不是播放页URL）, "desc":简介,"cover_url": 介绍页封面URL,"media_id": md号, "ep_id": 剧集编号, "episode": 集数, "rating_count": 等级编号，猜测是总排行榜的RANK,"score": 评分, "season_id": 番剧ID, "coins": 总投币数, "danmakus": 总弹幕量, "follow": 追番数,"series_follow": 系列追番数, "views": 总播放量,"tag_id" : 标签ID,"vip_info": 免费/大会员/付费，"aid" : av号,"bvid": bv号,"quality":最高质量,"quality_ID":最高质量对应的编号}
 
 #### ep_id是对于单集番剧才有的概念，这里的ep_id是最后一集的
 
 #### episode对于番剧只能是总集数，但是对于一些电影来说则是上映时间（例如“2018-01-18上映”），请注意过滤
+
+    质量编号科普：
+
+    • 125 HDR(10bit,4K)
+    
+    • 120 4K
+    
+    • 116 1080P 60FPS高帧率
+    
+    • 112 1080P+ 高比特率
+    
+    • 80 1080P
+    
+    • 74 720P 60FPS高帧率
+    
+    • 64 720P
+    
+    • 32 480P
+    
+    • 16 360P
+    
+    • 0 自动
 
 另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
 
@@ -257,6 +253,27 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 返回：字典，key为集编号（String，因为在冰菓遇到了11.5，而我不想混合使用float），value为一个字典，格式： {"aid" : av号, "cid" : 弹幕池编号cid, "ep_id" : 剧集编号, "title_long" : 当前集长标题, "cover_url" : 当前集封面URL, "share_url" : 当前集播放页URL}。
 
 另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
+
+
+
+## 实验性API
+
+
+### video_info(id_input)
+
+### 不太推荐在番剧使用此API，除bv号和av号外，其它数据均可通过anime_base_info(media_id)获取
+
+### 新加入原生分辨率识别功能，早期的视频可能不支持，正在尝试其他方法
+
+功能：获取视频的信息
+
+必要的传参：视频av号或bv号（id_input），"av"和"bv"也要一同输入
+
+选择的传参：无
+
+返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量，"resolution": 原生分辨率}
+
+另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常，不会返回联合投稿的stuff
 
 
 
