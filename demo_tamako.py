@@ -15,6 +15,7 @@ get_dan = False
 # 轻音少女系列(大会员)
 kon_1 = 28220978
 kon_2 = 28220984
+# 轻音少女剧场版无法返回清晰度信息，请带上cookie
 kon_movie = 28220988
 
 # 玉子市场系列(免费)
@@ -30,11 +31,14 @@ hyouka = 3398
 # 境界的彼方(大会员)
 beyond_the_boundary = 3365
 
-# 天气之子(付费，且因为此电影曾触发了大量lib中错误所以决定保留在demo)
+# 天气之子(降级为大会员，且因为此电影曾触发了大量lib中错误所以决定保留在demo)
 weathering_with_you = 28228734
 
-# 猫和老鼠旧版(最大画质480P)
+# 猫和老鼠旧版(免费，最大画质480P)
 tom_and_jerry = 132112
+
+# 环太平洋(大会员)
+pacific_rim = 28227720
 
 # 在这里输入mediaID
 base_info = bilib.anime_base_info(tamako_market)
@@ -57,7 +61,7 @@ print("观看可用性：" + str(base_info["vip_info"]))
 print("-----------数据-----------")
 print("AV号：" + str(base_info["aid"]))
 print("BV号：" + str(base_info["bvid"]))
-print("最高画质：" + str(base_info["quality_ID"]) + "(" + str(base_info["quality"]) + ")")
+print("当前用户最高画质：" + str(base_info["quality_ID"]) + "(" + str(base_info["quality"]) + ")")
 print("media_id(md)：" + str(base_info["media_id"]))
 print("season_id(ss)：" + str(base_info["season_id"]))
 print("tag_id：" + str(base_info["tag_id"]))
@@ -71,6 +75,7 @@ print("总弹幕量：" + str(base_info["danmakus"]))
 print("追番数：" + str(base_info["follow"]))
 print("系列追番数：" + str(base_info["series_follow"]))
 print("总播放量：" + str(base_info["views"]))
+print("可用性：" + str(base_info["vip_info"]))
 print("-----------剧集-----------")
 no = 1
 

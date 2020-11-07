@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#coding:utf-8
 
 # 这是一个lib，引用大量B站API，目前用户信息和弹幕工作正常，其它存在潜在的bug
 # bilib = bili + lib
@@ -323,8 +324,12 @@ def anime_base_info(media_id):
             episode = play_info["result"]["media"]["new_ep"]["index_show"]
         except:
             episode = play_info["result"]["media"]["new_ep"]["index"]
-        rating_count = play_info["result"]["media"]["rating"]["count"]
-        score = play_info["result"]["media"]["rating"]["score"]
+        try:
+            rating_count = play_info["result"]["media"]["rating"]["count"]
+            score = play_info["result"]["media"]["rating"]["score"]
+        except:
+            rating_count = str("不支持")
+            score = str("不支持")
         season_id = play_info["result"]["media"]["season_id"]
         share_url = play_info["result"]["media"]["share_url"]
         title = play_info["result"]["media"]["title"]
@@ -355,8 +360,12 @@ def anime_base_info(media_id):
         av_no = str("av" + str(av_no))
         tag_info = tag_info.json()
         quality_info = quality_info.json()
-        quality = quality_info["result"]["support_formats"][0]["new_description"]
-        quality_ID = quality_info["result"]["support_formats"][0]["quality"]
+        if quality_info["message"] == "大会员专享限制":
+            quality = str("大会员专享限制")
+            quality_ID = str("无ID")
+        else:
+            quality = quality_info["result"]["support_formats"][0]["new_description"]
+            quality_ID = quality_info["result"]["support_formats"][0]["quality"]
         tag_id = tag_info["data"]["tag_id"]
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
         # 根据seasonID求总投币数，追番数等信息
@@ -397,8 +406,8 @@ def anime_base_info(media_id):
                 else:
                     pass
                 try:
-                    # 第一次匹配VIP信息的正则表达式(关键字vip_promotion)
-                    vip_info = str(re.findall(r'"(?:vip_promotion)":".+"', text)[0])
+                    # 匹配VIP信息的正则表达式(关键字vip_promotion)
+                    vip_info = str(re.findall(r'"vip_promotion":".+"', text)[0])
                     vip_info = str(str(vip_info.split(":")[1]).split('"')[1])
                     vip_info = vip_info.replace("\n", "")
                     vip_info = vip_info.replace("\r", "")
@@ -419,9 +428,15 @@ def anime_base_info(media_id):
                         vip_info = vip_info.replace("　", "")
                     except IndexError:
                         # 均未匹配则表示免费
-                        vip_info = str("免费")
+                         vip_info = str("免费")
                 if str("开通大会员观看") == str(vip_info):
                     vip_info = str("大会员")
+                elif str("成为大会员免费看") == str(vip_info):
+                    vip_info = str("大会员")
+                elif str("付费") == str(vip_info):
+                    vip_info = str("付费")
+                elif str("半价") == str(vip_info):
+                    vip_info = str("付费")
                 elif str("免费") == str(vip_info):
                     vip_info = str("免费")
                 else:
