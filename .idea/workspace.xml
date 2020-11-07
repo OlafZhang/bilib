@@ -28,7 +28,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.text">
+  <component name="RunManager" selected="Python.demo_tamako">
     <configuration name="demo_tamako" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="bilib" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -94,8 +94,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.text" />
         <item itemvalue="Python.demo_tamako" />
+        <item itemvalue="Python.text" />
         <item itemvalue="Python.json_text" />
       </list>
     </recent_temporary>
@@ -112,29 +112,29 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1899" height="283" key="GridCell.Tab.0.bottom" timestamp="1604666706405">
+    <state width="1899" height="283" key="GridCell.Tab.0.bottom" timestamp="1604709913563">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1604332777486" />
-    <state width="1899" height="283" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1604666706405" />
-    <state width="1899" height="283" key="GridCell.Tab.0.center" timestamp="1604666706405">
+    <state width="1899" height="283" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1604709913563" />
+    <state width="1899" height="283" key="GridCell.Tab.0.center" timestamp="1604709913563">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1604332777486" />
-    <state width="1899" height="283" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1604666706405" />
-    <state width="1899" height="283" key="GridCell.Tab.0.left" timestamp="1604666706405">
+    <state width="1899" height="283" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1604709913563" />
+    <state width="1899" height="283" key="GridCell.Tab.0.left" timestamp="1604709913563">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1604332777486" />
-    <state width="1899" height="283" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1604666706405" />
-    <state width="1899" height="283" key="GridCell.Tab.0.right" timestamp="1604666706405">
+    <state width="1899" height="283" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1604709913563" />
+    <state width="1899" height="283" key="GridCell.Tab.0.right" timestamp="1604709913563">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1604332777486" />
-    <state width="1899" height="283" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1604666706405" />
-    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1604665281500">
+    <state width="1899" height="283" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1604709913563" />
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1604706819619">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1604665281500" />
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1604706819619" />
   </component>
 </project>
