@@ -441,15 +441,72 @@ def anime_base_info(media_id):
                     vip_info = str("免费")
                 else:
                     # 由于付费的提示比较多样，所以放在最后
-                    vip_info = str("付费")
+                    vip_info = str("大会员/付费")
             else:
                 pass
+        # 获取演员/声优列表
+        re_text = text
+        human_raw = str(re.findall(r'"actors":".+"', re_text)[0])
+        human_raw = human_raw.split('"')
+        re_text = str(human_raw[3])
+        re_text = re_text.replace(r"\\n", ",")
+        re_text = re_text.replace(r"\n", ",")
+        re_text = re_text.replace(r"\\u002F", "/")
+        re_text = re_text.replace(r"\u002F", "/")
+        actor_list = str(re_text).split(",")
+        # 获取staff
+        re_text = text
+        staff_raw = str(re.findall(r'"staff":".+"', re_text)[0])
+        staff_raw = staff_raw.split('"')
+        re_text = str(staff_raw[3])
+        re_text = re_text.replace(r"\\n", ",")
+        re_text = re_text.replace(r"\n", ",")
+        re_text = re_text.replace(r"\\u002F", "/")
+        re_text = re_text.replace(r"\u002F", "/")
+        staff_list = str(re_text).split(",")
+        # 获得番剧/电影标签
+        re_text = text
+        flag_raw = str(re.findall('"styles":\[\{.+\}\]', re_text)[0])
+
+        flag_raw = flag_raw.split('[')[1]
+        flag_raw = flag_raw.split(']')[0]
+
+        flag_raw = flag_raw.split("},{")
+        flag_list = []
+        for raw in flag_raw:
+            raw = str(raw)
+            raw = raw.split('"')
+            flag_list.append(str(raw[5]))
+        # 获取完结/开播状态
+        re_text = text
+        end_raw = str(re.findall(r'"copyright":{"is_finish":.+,"is_started":.+}', re_text)[0])
+        end_raw = end_raw.split('{')
+        end_raw = end_raw[1].split('}')[0]
+        end_raw = str(end_raw)
+        end_raw = end_raw.replace('"', '')
+        end_raw = end_raw.replace(':', '=')
+        end_raw = end_raw.split(',')
+        try:
+            if end_raw[0] == str("is_finish=1"):
+                is_finish = str("是")
+            else:
+                is_finish = str("否")
+            if end_raw[1] == str("is_started=1"):
+                is_started = str("是")
+            else:
+                is_started = str("否")
+        except:
+            is_finish = str("不支持")
+            is_started = str("不支持")
+
         # 返回结果，总共使用3个Bilibili API，2个内建API和一个HTML页
         return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "desc": desc,
                        "cover_url": cover_url, "media_id": media_id, "ep_id": ep_id, "episode": episode,
                        "rating_count": rating_count, "score": score, "season_id": season_id, "coins": coins,
                        "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
-                       "tag_id": tag_id, "vip_info": vip_info, "aid" : av_no,"bvid": bv_no,"quality":quality,"quality_ID":quality_ID}
+                       "tag_id": tag_id, "vip_info": vip_info, "aid" : av_no,"bvid": bv_no,"quality":quality,
+                       "quality_ID":quality_ID,"is_finish":is_finish,"is_started":is_started,"actor_list":actor_list,
+                       "staff_list":staff_list,"flag_list":flag_list}
         return return_dict
     except:
         try:

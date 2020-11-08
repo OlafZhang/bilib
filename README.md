@@ -202,7 +202,15 @@ bili + lib = bilib
     
     另外，部分番剧不能返回正确的清晰度，因为有限制，且并不打算在每个ep求清晰度，因为会造成大量请求
     
-
+新加入功能：
+    
+    获取是否完结/是否开播状态(部分电影可能会显示异常)
+    
+    获取演员/声优列表
+    
+    获取STAFF列表(部分电影可能会出现原本有职业，但后面个别名字出现了没有职业的情况)
+    
+    获取标签，返回列表(如恋爱,音乐,校园)
 
 ### 简单说明
 
@@ -224,7 +232,7 @@ bili + lib = bilib
 
 选择的传参：无
 
-返回：字典， {"title": 标题, "type": 类型, "area": 地区, "share_url": 介绍页URL（并不是播放页URL）, "desc":简介,"cover_url": 介绍页封面URL,"media_id": md号, "ep_id": 剧集编号, "episode": 集数, "rating_count": 等级编号，猜测是总排行榜的RANK,"score": 评分, "season_id": 番剧ID, "coins": 总投币数, "danmakus": 总弹幕量, "follow": 追番数,"series_follow": 系列追番数, "views": 总播放量,"tag_id" : 标签ID,"vip_info": 免费/大会员/付费，"aid" : av号,"bvid": bv号,"quality":最高质量,"quality_ID":最高质量对应的编号}
+返回：字典， {"title": 标题, "type": 类型, "area": 地区, "share_url": 介绍页URL（并不是播放页URL）, "desc":简介,"cover_url": 介绍页封面URL,"media_id": md号, "ep_id": 剧集编号, "episode": 集数, "rating_count": 等级编号，猜测是总排行榜的RANK,"score": 评分, "season_id": 番剧ID, "coins": 总投币数, "danmakus": 总弹幕量, "follow": 追番数,"series_follow": 系列追番数, "views": 总播放量,"tag_id" : 标签ID,"vip_info": 免费/大会员/付费，"aid" : av号,"bvid": bv号,"quality":最高质量,"quality_ID":最高质量对应的编号,"is_finish":是否完结,"is_started":是否开播,"actor_list":演员/声优列表,"staff_list":STAFF列表,"flag_list":标签列表}
 
     ep_id是对于单集番剧才有的概念，这里的ep_id是最后一集的
 
