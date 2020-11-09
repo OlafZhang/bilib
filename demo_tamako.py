@@ -23,13 +23,25 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
     outprint("-----------大纲-----------")
     outprint("名称：" + str(base_info["title"]))
     anime_full_name = str(base_info["title"])
+    alias = str("")
+    for i in base_info["alias_list"]:
+        alias += str(i)
+        alias += str(" ")
+    outprint("别称：" + str(alias))
+    flag = str("")
+    for i in base_info["flag_list"]:
+        flag += str(i)
+        flag += str(" ")
+    outprint("标签：" + str(flag))
     outprint("简介：" + str(base_info["desc"]))
     outprint("地区：" + str(base_info["area"]))
     outprint("类型：" + str(base_info["type"]))
+    type = str(base_info["type"])
     if str("上映") in str(base_info["episode"]):
         outprint("上映时间：" + str(base_info["episode"]))
     else:
         outprint("集数：" + str(base_info["episode"]))
+        outprint("开播时间：" + str(base_info["showtime"]))
     outprint("是否开播：" + str(base_info["is_started"]))
     outprint("是否完结：" + str(base_info["is_finish"]))
     outprint("评分：" + str(base_info["score"]))
@@ -51,13 +63,10 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
     outprint("追番数：" + str(base_info["follow"]))
     outprint("系列追番数：" + str(base_info["series_follow"]))
     outprint("总播放量：" + str(base_info["views"]))
-    flag = str("")
-    for i in base_info["flag_list"]:
-        flag += str(i)
-        flag += str(" ")
-    outprint("标签：" + str(flag))
-    outprint("可用性：" + str(base_info["vip_info"]))
-    outprint("-----------演员-----------")
+    if str(type) == str("番剧"):
+        outprint("-----------声优-----------")
+    else:
+        outprint("-----------演员-----------")
     actor_list = base_info["actor_list"]
     for name in actor_list:
         if str(":") in str(name):
@@ -147,7 +156,10 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
         pass
 
 # 在这里输入mediaID
-get_full_info(tamako_market,get_dan = False,tofile = True)
+# get_dan为真时下载弹幕文件
+# tofile为真时导出全部信息到一个txt
+# 目前没有测试Linux
+get_full_info(tamako_market,get_dan = False,tofile = False)
 
 
 
