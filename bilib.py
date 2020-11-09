@@ -341,6 +341,11 @@ def anime_base_info(media_id):
                                     headers=headers,timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
+        try:
+            tag_info = tag_info.json()
+            tag_id = tag_info["data"]["tag_id"]
+        except KeyError:
+            tag_id = str("不支持")
         # 获取av号和第一集cid，以便获取默认清晰度
         episode_info = anime_episode_info(season_id)
         # 获取第一个分集的key，以便传入video_info
@@ -358,7 +363,6 @@ def anime_base_info(media_id):
             raise Timeout("Timeout.")
 
         av_no = str("av" + str(av_no))
-        tag_info = tag_info.json()
         quality_info = quality_info.json()
         if quality_info["message"] == "大会员专享限制":
             quality = str("大会员专享限制")
@@ -366,7 +370,7 @@ def anime_base_info(media_id):
         else:
             quality = quality_info["result"]["support_formats"][0]["new_description"]
             quality_ID = quality_info["result"]["support_formats"][0]["quality"]
-        tag_id = tag_info["data"]["tag_id"]
+
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
         # 根据seasonID求总投币数，追番数等信息
         try:
@@ -401,8 +405,15 @@ def anime_base_info(media_id):
                 desc = desc.replace("　", "")
                 # 去除简介最前面的无用信息，如xxx译制
                 if str(desc[0]) == str("【"):
-                    head_desc = str(re.findall(r'【\w+】', desc)[0])
-                    desc = desc.replace(head_desc, "")
+                    try:
+                        head_desc = str(re.findall(r'【\w+】', desc)[0])
+                        desc = desc.replace(head_desc, "")
+                    except:
+                        try:
+                            head_desc = str(re.findall(r'【.+】', desc)[0])
+                            desc = desc.replace(head_desc, "")
+                        except:
+                            pass
                 else:
                     pass
                 try:
@@ -645,21 +656,14 @@ def get_danmaku(cid_input, reset=False):
             raise InfoError('You should input cid ONLY.')
 
         if os.path.exists(file_name):
-            if not reset:
-                user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+            if reset:
+                pass
             else:
-                user_input = 'yes'
-            while True:
-                user_input = user_input.lower()
-                if user_input == 'yes' or user_input == 'y':
-                    break
-                elif user_input == 'no' or user_input == 'n':
-                    print(str(os.path.abspath(file_name)))
-                    return os.path.abspath(file_name)
-                else:
-                    user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+                print(str(os.path.abspath(file_name)))
+                return os.path.abspath(file_name)
         else:
             pass
+
         bvIndex = url.find('BV')
         id = url[bvIndex:]
         try:
@@ -896,41 +900,24 @@ def get_danmaku_raw(cid_input, reset=False):
             raise InfoError('You should input cid ONLY.')
 
         if os.path.exists(file_name):
-            if not reset:
-                user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+            if reset:
+                pass
             else:
-                user_input = 'yes'
-            while True:
-                if user_input == 'yes' or user_input == 'y':
-                    url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
-                    try:
-                        rr = requests.get(url=url,timeout=timeout)
-                    except requests.exceptions.ReadTimeout:
-                        raise Timeout("Timeout.")
-                    rr.encoding = 'uft-8'
-                    xml = open(file_name, "w", encoding="utf-8")
-                    xml.write(rr.text)
-                    xml.close()
-                    print(os.path.abspath(file_name))
-                    return os.path.abspath(file_name)
-                    break
-                elif user_input == 'no' or user_input == 'n':
-                    return os.path.abspath(file_name)
-                    break
-                else:
-                    user_input = input(str(os.path.abspath(file_name)) + ' is existed，update it?[y/n]:')
+                return os.path.abspath(file_name)
         else:
-            url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
-            try:
-                rr = requests.get(url=url,timeout=timeout)
-            except requests.exceptions.ReadTimeout:
-                raise Timeout("Timeout.")
-            rr.encoding = 'uft-8'
-            xml = open(file_name, "w", encoding="utf-8")
-            xml.write(rr.text)
-            xml.close()
-            print(os.path.abspath(file_name))
-            return os.path.abspath(file_name)
+            pass
+
+        url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
+        try:
+            rr = requests.get(url=url, timeout=timeout)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
+        rr.encoding = 'uft-8'
+        xml = open(file_name, "w", encoding="utf-8")
+        xml.write(rr.text)
+        xml.close()
+        print(os.path.abspath(file_name))
+        return os.path.abspath(file_name)
 
     except Exception as e:
         print(e)
