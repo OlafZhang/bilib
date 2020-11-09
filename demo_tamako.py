@@ -6,16 +6,17 @@
 # -*- coding: utf-8 -*-
 import bilib
 import os
-
-full_text = str("")
-
-def outprint(string):
-    global full_text
-    print(string)
-    full_text += str(string)
-    full_text += "\n"
+from media_id_pool import *
 
 def get_full_info(mediaID,get_dan = False,tofile = False):
+    # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
+    global full_text
+    full_text = str("")
+    def outprint(string):
+        global full_text
+        print(string)
+        full_text += str(string)
+        full_text += "\n"
     base_info = bilib.anime_base_info(mediaID)
     season_id = int(base_info["season_id"])
     episode_info = bilib.anime_episode_info(season_id)
@@ -33,6 +34,29 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
     outprint("是否完结：" + str(base_info["is_finish"]))
     outprint("评分：" + str(base_info["score"]))
     outprint("观看可用性：" + str(base_info["vip_info"]))
+    outprint("-----------数据-----------")
+    outprint("AV号：" + str(base_info["aid"]))
+    outprint("BV号：" + str(base_info["bvid"]))
+    outprint("当前用户最高画质：" + str(base_info["quality_ID"]) + "(" + str(base_info["quality"]) + ")")
+    outprint("media_id(md)：" + str(base_info["media_id"]))
+    outprint("season_id(ss)：" + str(base_info["season_id"]))
+    outprint("tag_id：" + str(base_info["tag_id"]))
+    # 这里的ep号对应最后一集！
+    outprint("最新一集的剧集编号(ep)：" + str(base_info["ep_id"]))
+    outprint("等级编号：" + str(base_info["rating_count"]))
+    outprint("封面图片URL：" + str(base_info["cover_url"]))
+    outprint("介绍页URL：" + str(base_info["share_url"]))
+    outprint("总投币数：" + str(base_info["coins"]))
+    outprint("总弹幕量：" + str(base_info["danmakus"]))
+    outprint("追番数：" + str(base_info["follow"]))
+    outprint("系列追番数：" + str(base_info["series_follow"]))
+    outprint("总播放量：" + str(base_info["views"]))
+    flag = str("")
+    for i in base_info["flag_list"]:
+        flag += str(i)
+        flag += str(" ")
+    outprint("标签：" + str(flag))
+    outprint("可用性：" + str(base_info["vip_info"]))
     outprint("-----------演员-----------")
     actor_list = base_info["actor_list"]
     for name in actor_list:
@@ -63,29 +87,6 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
             outprint(job + " --> " + name)
         else:
             outprint(name)
-    outprint("-----------数据-----------")
-    outprint("AV号：" + str(base_info["aid"]))
-    outprint("BV号：" + str(base_info["bvid"]))
-    outprint("当前用户最高画质：" + str(base_info["quality_ID"]) + "(" + str(base_info["quality"]) + ")")
-    outprint("media_id(md)：" + str(base_info["media_id"]))
-    outprint("season_id(ss)：" + str(base_info["season_id"]))
-    outprint("tag_id：" + str(base_info["tag_id"]))
-    # 这里的ep号对应最后一集！
-    outprint("最新一集的剧集编号(ep)：" + str(base_info["ep_id"]))
-    outprint("等级编号：" + str(base_info["rating_count"]))
-    outprint("封面图片URL：" + str(base_info["cover_url"]))
-    outprint("介绍页URL：" + str(base_info["share_url"]))
-    outprint("总投币数：" + str(base_info["coins"]))
-    outprint("总弹幕量：" + str(base_info["danmakus"]))
-    outprint("追番数：" + str(base_info["follow"]))
-    outprint("系列追番数：" + str(base_info["series_follow"]))
-    outprint("总播放量：" + str(base_info["views"]))
-    flag = str("")
-    for i in base_info["flag_list"]:
-        flag += str(i)
-        flag += str(" ")
-    outprint("标签：" + str(flag))
-    outprint("可用性：" + str(base_info["vip_info"]))
     outprint("-----------剧集-----------")
     no = 1
     for ep_id, ep_info in episode_info.items():
@@ -108,6 +109,15 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
                 target_no = str("0") + str(no)
             else:
                 target_no = str(no)
+            anime_full_name = anime_full_name.replace("\\", " ")
+            anime_full_name = anime_full_name.replace("/", " ")
+            anime_full_name = anime_full_name.replace("?", "？")
+            anime_full_name = anime_full_name.replace(":", "：")
+            anime_full_name = anime_full_name.replace("*", "#")
+            anime_full_name = anime_full_name.replace('"', "'")
+            anime_full_name = anime_full_name.replace('<', "(")
+            anime_full_name = anime_full_name.replace('>', ")")
+            anime_full_name = anime_full_name.replace('|', " ")
             change_name = str(os.getcwd()) + "\\" + str(target_no) + " " + str(anime_full_name) + " danmaku_file.ass"
             os.rename(ass_path,change_name)
         else:
@@ -119,6 +129,15 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
         anime_name = str(base_info["title"]).replace(" ","_")
         anime_name = str(anime_name).replace("　", "_")
         md_no = str("md" + str(base_info["media_id"]))
+        anime_name = anime_name.replace("\\"," ")
+        anime_name = anime_name.replace("/", " ")
+        anime_name = anime_name.replace("?", "？")
+        anime_name = anime_name.replace(":", "：")
+        anime_name = anime_name.replace("*", "#")
+        anime_name = anime_name.replace('"', "'")
+        anime_name = anime_name.replace('<', "(")
+        anime_name = anime_name.replace('>', ")")
+        anime_name = anime_name.replace('|', " ")
         file_name = str(anime_name + "_" + md_no + ".txt")
         file_name = str(os.path.abspath('.') + "\\") + file_name
         txt = open(file_name, "a", encoding="utf-8")
@@ -127,40 +146,10 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
     else:
         pass
 
-# mediaID池
-# 轻音少女系列(大会员)
-kon_1 = 28220978
-kon_2 = 28220984
-# 轻音少女剧场版无法返回清晰度信息，请带上cookie
-kon_movie = 28220988
-
-# 玉子市场系列(免费)
-tamako_market = 116772
-tamako_love_story = 4155
-
-# 吹响吧！上低音号(京吹) 第一季
-enphonium_1 = 1547
-
-# 擅长捉弄的高木同学 第二季(大会员，分集名称有转义字符)
-takagi_2 = 28221403
-
-# 冰菓(大会员，有11.5集)
-hyouka = 3398
-
-# 境界的彼方(大会员)
-beyond_the_boundary = 3365
-
-# 天气之子(降级为大会员，且因为此电影曾触发了大量lib中错误所以决定保留在demo)
-weathering_with_you = 28228734
-
-# 猫和老鼠旧版(免费，最大画质480P)
-tom_and_jerry = 132112
-
-# 环太平洋(大会员)
-pacific_rim = 28227720
-
 # 在这里输入mediaID
 get_full_info(tamako_market,get_dan = False,tofile = True)
+
+
 
 
 
