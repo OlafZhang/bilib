@@ -1,10 +1,10 @@
-# bilib
+# 🍻bilib🍻
 
 整合多个B站API的Python lib
 
 bili + lib = bilib
 
-## 声明
+## ⚠声明
 
     1、截止至2020年11月1日，以下API正常使用，但不确定以后b站是否会改API，我们将尽可能保证在未来使用新的bilibili API的同时兼容您使用bilib编写的代码
     
@@ -12,7 +12,7 @@ bili + lib = bilib
     
     3、由于营销号爬取视频进行再投放的行为相当可耻，故这里不会写关于视频下载的API
 
-## 说明
+## 📢说明
 
     前身为danlib，如果你在我的GitHub找到了danlib，你可以继续使用它，但如果你要改为使用bilib，你需要修改你的代码
     
@@ -26,7 +26,7 @@ bili + lib = bilib
     
     另外，lib中注解可能与README冲突，请以README为准
 
-## 异常
+## ❌异常
 
 现在这个bilib已经包含较精确的错误类型，方便排错和优化自己的代码
 
@@ -152,7 +152,7 @@ bili + lib = bilib
 
 返回：一个数字，此为弹幕文件总行数
 
-#### 请不要配合get_danmaku_raw使用，因为得出的数值不正确
+⚠ 请不要配合get_danmaku_raw使用，因为得出的数值不正确
 
 
 
@@ -301,7 +301,7 @@ bili + lib = bilib
 
 
 
-## 实验性API
+## 😫实验性API
 
 
 ### video_info(id_input)
@@ -324,7 +324,7 @@ bili + lib = bilib
 
 
 
-## 感谢
+## 🎈感谢
 
 本lib部分API参考来自https://www.bilibili.com/read/cv5293665
 
