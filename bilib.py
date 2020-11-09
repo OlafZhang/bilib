@@ -385,7 +385,7 @@ def anime_base_info(media_id):
         series_follow = other_info["result"]["series_follow"]
         views = other_info["result"]["views"]
         try:
-            # 获取介绍信息和是否收费观看
+            # 获取HTML页，检查介绍信息和是否收费观看
             headers = {"User-Agent": ua}
             url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,timeout=timeout)
         except requests.exceptions.ReadTimeout:
@@ -478,10 +478,8 @@ def anime_base_info(media_id):
         # 获得番剧/电影标签
         re_text = text
         flag_raw = str(re.findall('"styles":\[\{.+\}\]', re_text)[0])
-
         flag_raw = flag_raw.split('[')[1]
         flag_raw = flag_raw.split(']')[0]
-
         flag_raw = flag_raw.split("},{")
         flag_list = []
         for raw in flag_raw:
@@ -509,6 +507,33 @@ def anime_base_info(media_id):
         except:
             is_finish = str("不支持")
             is_started = str("不支持")
+        # 获取别名
+        try:
+            re_text = text
+            re_text = str(re.findall(r'"alias":".+"', re_text)[0])
+            alias_raw = re_text.split('"')
+            alias_raw = str(alias_raw[3])
+            alias_raw = alias_raw.replace(r"\\n", ",")
+            alias_raw = alias_raw.replace(r"\n", ",")
+            alias_raw = alias_raw.replace(r"\\u002F", "/")
+            alias_raw = alias_raw.replace(r"\u002F", "/")
+            alias_list = str(alias_raw).split(",")
+        except:
+            alias_list = str("不支持")
+        # 获取开播时间
+        try:
+            re_text = text
+            re_text = str(re.findall(r'"release_date_show":".+"', re_text)[0])
+            showtime_raw = re_text.split('"')
+            showtime_raw = str(showtime_raw[3])
+            showtime_raw = showtime_raw.replace(r"\\n", ",")
+            showtime_raw = showtime_raw.replace(r"\n", ",")
+            showtime_raw = showtime_raw.replace(r"\\u002F", "/")
+            showtime_raw = showtime_raw.replace(r"\u002F", "/")
+            showtime = showtime_raw.replace("开播", "")
+            showtime = showtime.replace("上映", "")
+        except:
+            showtime = "不支持"
 
         # 返回结果，总共使用3个Bilibili API，2个内建API和一个HTML页
         return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "desc": desc,
@@ -517,7 +542,7 @@ def anime_base_info(media_id):
                        "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
                        "tag_id": tag_id, "vip_info": vip_info, "aid" : av_no,"bvid": bv_no,"quality":quality,
                        "quality_ID":quality_ID,"is_finish":is_finish,"is_started":is_started,"actor_list":actor_list,
-                       "staff_list":staff_list,"flag_list":flag_list}
+                       "staff_list":staff_list,"flag_list":flag_list,"alias_list":alias_list,"showtime":showtime}
         return return_dict
     except:
         try:
