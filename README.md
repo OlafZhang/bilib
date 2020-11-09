@@ -32,19 +32,19 @@ bili + lib = bilib
 
 除非特殊情况，接下来在API介绍不再说明错误，具体说明如下
 
-### 1️⃣InfoError(传参异常/未定义异常)
+### 1️⃣ InfoError(传参异常/未定义异常)
     
 一般是因为用户输入了错误的数据，例如没有输入av号的av，以及目前小概率遇到的未定义异常
     
     
     
-### 2️⃣danmakuError(弹幕文件等异常)
+### 2️⃣ danmakuError(弹幕文件等异常)
     
 一般是弹幕文件被删除，或者不符合规范
     
     
     
-### 3️⃣Timeout(请求超时)
+### 3️⃣ Timeout(请求超时)
 
 服务器返回：请求错误。
     
@@ -52,7 +52,7 @@ bili + lib = bilib
     
     
     
-### 4️⃣RequestError(请求错误)
+### 4️⃣ RequestError(请求错误)
     
 服务器返回：啥都木有。
     
@@ -60,7 +60,7 @@ bili + lib = bilib
     
     
     
-### 5️⃣SeemsNothing(返回空数据/传参不正确)
+### 5️⃣ SeemsNothing(返回空数据/传参不正确)
     
 服务器返回：服务调用超时。
     
@@ -68,7 +68,7 @@ bili + lib = bilib
     
     
     
-### 6️⃣RequestRefuse(触发反爬取机制)
+### 6️⃣ RequestRefuse(触发反爬取机制)
         
 服务器返回：请求被拦截。
     
