@@ -8,6 +8,7 @@ import csv
 import re
 import sys
 import time
+import traceback
 
 # 额外安装的包，如果出错，请检查requirements.txt
 # fake_useragent的使用可能会抛出异常，请直接忽略
@@ -62,6 +63,8 @@ def set_timeout(set_time):
         timeout = int(set_time)
     except:
         timeout = 5
+
+
 
 # 获取视频最高清晰度
 # 传入参数：av号,bv号或ep号
@@ -136,6 +139,8 @@ def get_resolution(id_input,getid = False):
         return quality_id
     else:
         return quality
+
+
 
 # 获取视频信息
 # 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
@@ -236,7 +241,7 @@ def video_info(id_input):
         # 返回字典，总共使用1个API和一个HTML页
         return return_dict
     except:
-        message = str(play_info)['message']
+        message = play_info['message']
         if str(message) == str("请求错误"):
             raise RequestError("Request error.")
         elif str(message) == str("啥都木有"):
@@ -247,6 +252,7 @@ def video_info(id_input):
             raise RequestRefuse("Banning.")
         else:
             print(message)
+            traceback.print_exc()
             raise InfoError("Something error.")
 
 
@@ -286,7 +292,7 @@ def anime_episode_info(season_id):
             # 根据剧集编号返回词典
             return_dict[title_no] = dict_list
         except:
-            message = str(play_info)['message']
+            message = play_info['message']
             if str(message) == str("请求错误"):
                 raise RequestError("Request error.")
             elif str(message) == str("啥都木有"):
@@ -297,6 +303,7 @@ def anime_episode_info(season_id):
                 raise RequestRefuse("Banning.")
             else:
                 print(message)
+                traceback.print_exc()
                 raise InfoError("Something error.")
     # 返回一个含字典的大字典，总共使用了1个API
     return return_dict
@@ -314,6 +321,7 @@ def anime_base_info(media_id):
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     play_info = play_info.json()
+    message = play_info['message']
     try:
         area = play_info["result"]["media"]["areas"][0]["name"]
         cover_url = play_info["result"]["media"]["cover"]
@@ -543,25 +551,28 @@ def anime_base_info(media_id):
                        "tag_id": tag_id, "vip_info": vip_info, "aid" : av_no,"bvid": bv_no,"quality":quality,
                        "quality_ID":quality_ID,"is_finish":is_finish,"is_started":is_started,"actor_list":actor_list,
                        "staff_list":staff_list,"flag_list":flag_list,"alias_list":alias_list,"showtime":showtime}
-        return return_dict
+        if return_dict:
+            return return_dict
+        else:
+            raise InfoError("No info.")
     except:
         try:
-            message = str(play_info)['message']
+            if str(message) == str("请求错误"):
+                raise RequestError("Request error.")
+            elif str(message) == str("啥都木有"):
+                raise SeemsNothing("Seems no such info.")
+            elif str(message) == str("服务调用超时"):
+                raise Timeout("Timeout.")
+            elif str(message) == str("请求被拦截"):
+                raise RequestRefuse("Banning.")
+            else:
+                # 目前不太可能出现未知错误
+                print(message)
+                traceback.print_exc()
+                raise InfoError("Something error.")
         except:
-            pass
-        if str(message) == str("请求错误"):
-            raise RequestError("Request error.")
-        elif str(message) == str("啥都木有"):
-            raise SeemsNothing("Seems no such info.")
-        elif str(message) == str("服务调用超时"):
-            raise Timeout("Timeout.")
-        elif str(message) == str("请求被拦截"):
-            raise RequestRefuse("Banning.")
-        else:
-            # 目前不太可能出现未知错误
-            print(message)
+            traceback.print_exc()
             raise InfoError("Something error.")
-
 
 
 
@@ -622,6 +633,8 @@ def user_info(uid_input):
     # 返回字典，总共使用两个API
     return return_dict
 
+
+
 # 获取用户信息 旧版
 # 从作者的爬取项目独立开的API，使用了一个API和一个HTML页，但功能较少，现只做保留，请自行研究
 def user_info_old(uid_input, get_ua=False):
@@ -670,6 +683,8 @@ def user_info_old(uid_input, get_ua=False):
     else:
         return_dict = {"uid_input": uid_input, "name": name, "fans": fans, "following": following, "st_code": st_code}
     return return_dict
+
+
 
 # 获取弹幕(自动转换为可读性较高的csv)
 def get_danmaku(cid_input, reset=False):
@@ -776,6 +791,8 @@ def get_danmaku(cid_input, reset=False):
 
     except Exception as e:
         print(e)
+
+
 
 # 根据csv文件列出所有弹幕
 # 列出的弹幕会被处理，例如转换时间戳
@@ -900,6 +917,8 @@ def listall_danmaku(file_path, stamp=False):
         file_path.close()
         return return_thing
 
+
+
 # 数弹幕行数
 # 虽然没什么难的，但是意义在于辅助弹幕文件的遍历
 def count_danmaku(file_path):
@@ -911,11 +930,12 @@ def count_danmaku(file_path):
     file_path = open(str(file_path), 'r', encoding='utf-16')
     return len(file_path.readlines())
 
+
+
 # 获取弹幕(原始信息，即xml)
 # 由于此API设计初衷是配合ass转换工具的，所以没有单独做xml转csv的API
 # 另外，为配合转换工具，设置了UTF-8编码而非UTF-16
 # 如果需要数据分析，请直接使用get_danmaku()
-
 def get_danmaku_raw(cid_input, reset=False):
     try:
         file_name = str(str(cid_input) + '.xml')
@@ -946,6 +966,8 @@ def get_danmaku_raw(cid_input, reset=False):
 
     except Exception as e:
         print(e)
+
+
 
 # 弹幕文件(xml)转字幕文件(ass)
 # 对于某些不支持弹幕的播放器可以用这个API
