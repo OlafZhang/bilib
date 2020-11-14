@@ -6,6 +6,7 @@
 # -*- coding: utf-8 -*-
 import bilib
 import os
+import time
 from media_id_pool import *
 
 def get_full_info(mediaID,get_dan = False,tofile = False):
@@ -20,6 +21,8 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
     base_info = bilib.anime_base_info(mediaID)
     season_id = int(base_info["season_id"])
     episode_info = bilib.anime_episode_info(season_id)
+    now_time = str(time.strftime('%Y-%m-%d,%H:%M:%S', time.localtime(time.time())))
+    outprint("-----此信息于" + str(now_time) + "生成-----")
     outprint("-----------大纲-----------")
     outprint("名称：" + str(base_info["title"]))
     anime_full_name = str(base_info["title"])
@@ -129,6 +132,8 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
             anime_full_name = anime_full_name.replace('|', " ")
             change_name = str(os.getcwd()) + "\\" + str(target_no) + " " + str(anime_full_name) + " danmaku_file.ass"
             os.rename(ass_path,change_name)
+            os.remove(str(cid_no) + str(".xml"))
+            os.remove(str(cid_no) + str(".csv"))
         else:
             pass
         no += 1
@@ -160,7 +165,6 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
 # tofile为真时导出全部信息到一个txt
 # 目前没有测试Linux
 get_full_info(tamako_market,get_dan = False,tofile = False)
-
 
 
 
