@@ -111,6 +111,7 @@ def get_resolution(id_input,getid = False):
     else:
         pass
 
+    # 自动(0)不应该出现在清晰度信息里
     if quality_id.isdigit():
         quality_id = int(quality_id)
         if quality_id == 125:
@@ -468,21 +469,23 @@ def anime_base_info(media_id):
         human_raw = str(re.findall(r'"actors":".+"', re_text)[0])
         human_raw = human_raw.split('"')
         re_text = str(human_raw[3])
-        re_text = re_text.replace(r"\\n", ",")
-        re_text = re_text.replace(r"\n", ",")
+        re_text = re_text.replace(r"\\n", "。")
+        re_text = re_text.replace(r"\n", "。")
         re_text = re_text.replace(r"\\u002F", "/")
         re_text = re_text.replace(r"\u002F", "/")
-        actor_list = str(re_text).split(",")
+        re_text = re_text.replace(r"\t", "")
+        re_text = re_text.replace(r"\\t", "")
+        actor_list = str(re_text).split("。")
         # 获取staff
         re_text = text
         staff_raw = str(re.findall(r'"staff":".+"', re_text)[0])
         staff_raw = staff_raw.split('"')
         re_text = str(staff_raw[3])
-        re_text = re_text.replace(r"\\n", ",")
-        re_text = re_text.replace(r"\n", ",")
+        re_text = re_text.replace(r"\\n", "。")
+        re_text = re_text.replace(r"\n", "。")
         re_text = re_text.replace(r"\\u002F", "/")
         re_text = re_text.replace(r"\u002F", "/")
-        staff_list = str(re_text).split(",")
+        staff_list = str(re_text).split("。")
         # 获得番剧/电影标签
         re_text = text
         flag_raw = str(re.findall('"styles":\[\{.+\}\]', re_text)[0])
