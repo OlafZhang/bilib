@@ -124,7 +124,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 | uid | UID |  |
 | fans | 粉丝数 |  |
 | following | 关注数 |  |
-| sex | 性别 | 男，女，保密 |
+| sex | 性别 | 男/女/保密 |
 | level | 等级 |  |
 | face_url | 头像URL |  |
 | sign | 个性签名 | 可以为空值 |
