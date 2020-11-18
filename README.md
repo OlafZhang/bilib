@@ -94,8 +94,16 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：要求返回爬取此用户数据用到的User Agent(get_ua)，默认不返回UA（False）
 
-返回：字典，形式为return_dict = {"uid_input": 用户输入的UID, "name": 昵称, "fans": 粉丝数, "following": 关注数, "st_code": HTTP状态码, "ua": User Agent}
-    
+返回：字典，参数如下:
+
+| 参数名(key) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| uid_input | 用户输入的UID |  |
+| name | 昵称 |  |
+| fans | 粉丝数 |  |
+| following | 关注数 |  |
+| st_code | HTTP状态码 | 目前只遇到200，404，412 |
+| ua | User Agent | 爬取时使用的UA |
     
     
 ### ⛏```user_info(uid_input)```
@@ -108,7 +116,21 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典，形式为return_dict = {"name": 昵称, "uid": UID, "fans": 粉丝量, "following": 关注量, "sex": 性别, "level": 等级, "face_url": 头像URL, "sign": 个性签名, "birthday": 生日, "coins": 硬币，可能是获币数量, "vip_type": 是否为大会员且为哪种大会员}
+返回：字典，参数如下
+
+| 参数名(key) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| name | 昵称 |  |
+| uid | UID |  |
+| fans | 粉丝数 |  |
+| following | 关注数 |  |
+| sex | 性别 | 男，女，保密 |
+| level | 等级 |  |
+| face_url | 头像URL |  |
+| sign | 个性签名 | 可以为空值 |
+| birthday | 生日 | 可以为空值 |
+| coins | 硬币 | 意义不明，可能是获币数量 |
+| vip_type | 是否为大会员 | 空值/大会员/年度大会员 |
 
 补充：由于愚人节会临时将大会员改为小会员，bilib已做好相应对策，但可能会失效，故在此提醒
 
@@ -138,8 +160,21 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：返回现实时间的时间戳而非转化的时间（stamp），默认返回转化的时间（False）
 
-返回：字典，key为序号(int),value分别为：视频内发送时间，弹幕类型，弹幕字号，弹幕颜色，现实发送时间，弹幕池，用户ID（被加密），rowID，发送内容（如果是高级弹幕，还会在这里包含一些参数）。如果遇到了全新的弹幕类型，会不处理直接返回
+返回：字典，key为序号(int),value为列表，参数如下：
 
+| 列表编号 | 解释 | 备注 |
+| :---:| :---: | :---: |
+| 0 | 视频内发送时间 |  |
+| 1 | 弹幕类型 |  |
+| 2 | 弹幕字号 |  |
+| 3 | 弹幕颜色 |  |
+| 4 | 现实发送时间 | |
+| 5 | 弹幕池 |  |
+| 6 | 用户ID（被加密） |  |
+| 7 | rowID |  |
+| 8 | 发送内容 | 如果是高级弹幕，还会在这里包含一些参数 |
+
+如果遇到了全新的弹幕类型，会不处理，返回原生数据
 
 
 ### ⛏```count_danmaku(file_path)```
@@ -216,11 +251,41 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典， {"title": 标题, "type": 类型, "area": 地区, "share_url": 介绍页URL（并不是播放页URL）, "desc":简介,"cover_url": 介绍页封面URL,"media_id": md号, "ep_id": 剧集编号, "episode": 集数, "rating_count": 等级编号，猜测是总排行榜的RANK,"score": 评分, "season_id": 番剧ID, "coins": 总投币数, "danmakus": 总弹幕量, "follow": 追番数,"series_follow": 系列追番数, "views": 总播放量,"tag_id" : 标签ID,"vip_info": 免费/大会员/付费，"aid" : av号,"bvid": bv号,"quality":最高质量,"quality_ID":最高质量对应的编号,"is_finish":是否完结,"is_started":是否开播,"actor_list":演员/声优列表,"staff_list":STAFF列表,"flag_list":标签列表,"alias_list":别称列表,"showtime":开播/上映时间}
+返回：字典， 参数如下:
 
-    ep_id是对于单集番剧才有的概念，这里的ep_id是最后一集的
+| 参数名(key) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| title | 标题 | |
+| type | 类型 | |
+| area | 地区 |  |
+| share_url | 介绍页URL | 并不是播放页URL，此URL含mediaID |
+| desc | 简介 | “xxx译制”信息会被删除 |
+| cover_url | 介绍页封面URL| |
+| media_id | md号 | |
+| ep_id | 剧集编号 | 此ep号为最后一集的 |
+| episode | 集数 | 对于一些电影来说则是上映时间（例如“2018-01-18上映”），请注意过滤 |
+| rating_count | 等级编号 | 猜测是总排行榜的RANK |
+| score | 评分 | |
+| season_id | 番剧ID | |
+| coins | 总投币数 | |
+| danmakus | 总弹幕量| |
+| follow | 追番数 | |
+| series_follow | 系列追番数 | |
+| views | 总播放量 | |
+| tag_id | 标签ID | |
+| vip_info | 免费/大会员/付费 | 有时不是很准，在修复 |
+| aid | av号 | 对于番剧/电影意义不大 |
+| bvid | bv号 | 对于番剧/电影意义不大 |
+| quality | 最高质量 | |
+| quality_ID | 最高画质编号 | 用于辅助分析 |
+| is_finish | 是否完结 |  |
+| is_started | 是否开播 | |
+| actor_list | 演员/声优列表 | 这是一个列表 |
+| staff_list | STAFF列表 | 这是一个列表 |
+| flag_list | 标签列表 | 这是一个列表 |
+| alias_list | 别称列表 | 这是一个列表 |
+| showtime | 开播/上映时间 | |
 
-    episode对于番剧只能是总集数，但是对于一些电影来说则是上映时间（例如“2018-01-18上映”），请注意过滤
 
  🎞质量编号科普：
  
@@ -271,10 +336,18 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典，key为集编号（String，因为在冰菓遇到了11.5，而我不想混合使用float），value为一个字典，格式： {"aid" : av号, "cid" : 弹幕池编号cid, "ep_id" : 剧集编号, "title_long" : 当前集长标题, "cover_url" : 当前集封面URL, "share_url" : 当前集播放页URL}。
+返回：字典，key为集编号（str而非int，因为在冰菓遇到了11.5）,value为字典，参数如下:
+
+| 参数名(key) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| aid | av号 |  |
+| cid | cid号 | 弹幕池编号 |
+| ep_id | 剧集编号 |  |
+| title_long | 当前集长标题 |  |
+| cover_url | 当前集封面URL |  |
+| share_url | 当前集播放页URL | 此URL含epID或seasonID |
 
     另外说明：目前测试了单季不带剧场版番剧（如冰菓），单季带剧场版番剧（如玉子市场），多季番剧（如JOJO的奇妙冒险 第五季），均没有遇到问题，已配置反爬取告警。仍然存在潜在bug。
-
 
 
 
@@ -286,7 +359,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：getid，返回质量编号(True)而非清晰度描述(False)
 
-返回：字符，清晰度描述或质量编号
+返回：字符串，清晰度描述或质量编号
 
     另外说明：由于同时支持视频和某些番剧，故单独做了此API，作为备份，已集成到video_info()，anime_base_info()则使用了另外的方法
     
@@ -313,7 +386,27 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 选择的传参：无
 
-返回：字典，{"aid": av号, "bvid": bv号, "cid": 弹幕池编号cid, "title": 视频标题, "desc": 视频描述, "owner_name": up主昵称， "owner_uid": up主的UID, "view": 观看量, "danmaku": 弹幕量, "reply": 评论量, "favorite": 收藏量,"coin": 投币量, "share": 分享量, "like": 点赞量, "quality": 最高画质,"quality_id": 最高画质编号}
+返回：字典，参数如下:
+
+| 参数名(key) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| aid | av号 |  |
+| bvid | bv号 |  |
+| cid | cid号 | 弹幕池编号 |
+| title | 视频标题 |  |
+| desc | 视频描述 |  |
+| owner_name | up主昵称 |  |
+| owner_uid | up主的UID |  |
+| view | 观看量 |  |
+| danmaku | 弹幕量 |  |
+| reply | 评论量 |  |
+| favorite | 收藏量 |  |
+| coin | 投币量 |  |
+| share | 分享量 |  |
+| like | 点赞量 |  |
+| quality | 最高画质 |  |
+| quality_id | 最高画质编号 | 用于辅助分析 |
+
 
     另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常，不会返回联合投稿的stuff
 
