@@ -9,7 +9,7 @@ import os
 import time
 from media_id_pool import *
 
-def get_full_info(mediaID,get_dan = False,tofile = False):
+def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
     global full_text
     full_text = str("")
@@ -23,6 +23,7 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
     episode_info = bilib.anime_episode_info(season_id)
     now_time = str(time.strftime('%Y-%m-%d,%H:%M:%S', time.localtime(time.time())))
     outprint("-----此信息于" + str(now_time) + "生成-----")
+    outprint(" ")
     outprint("-----------大纲-----------")
     outprint("名称：" + str(base_info["title"]))
     anime_full_name = str(base_info["title"])
@@ -132,8 +133,11 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
             anime_full_name = anime_full_name.replace('|', " ")
             change_name = str(os.getcwd()) + "\\" + str(target_no) + " " + str(anime_full_name) + " danmaku_file.ass"
             os.rename(ass_path,change_name)
-            os.remove(str(cid_no) + str(".xml"))
-            os.remove(str(cid_no) + str(".csv"))
+            if cleanup:
+                os.remove(str(cid_no) + str(".xml"))
+                os.remove(str(cid_no) + str(".csv"))
+            else:
+                pass
         else:
             pass
         no += 1
@@ -153,7 +157,12 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
         anime_name = anime_name.replace('>', ")")
         anime_name = anime_name.replace('|', " ")
         file_name = str(anime_name + "_" + md_no + ".txt")
-        file_name = str(os.path.abspath('.') + "\\") + file_name
+        import platform
+        sysstr = platform.system()
+        if sysstr == "Windows":
+            file_name = str(os.path.abspath('.') + "\\") + file_name
+        else:
+            file_name = str(os.path.abspath('.') + "/") + file_name
         txt = open(file_name, "a", encoding="utf-8")
         txt.write(full_text)
         txt.close()
@@ -163,8 +172,8 @@ def get_full_info(mediaID,get_dan = False,tofile = False):
 # 在这里输入mediaID
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-# 目前没有测试Linux
-get_full_info(tamako_market,get_dan = False,tofile = False)
+get_full_info(tamako_market,get_dan = False,tofile = False,cleanup = True)
+
 
 
 
