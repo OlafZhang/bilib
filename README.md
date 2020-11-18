@@ -84,7 +84,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### user_info_old(uid_input, get_ua=False)
+### ⛏user_info_old(uid_input, get_ua=False)
 
 这是旧的API，新API在下面
 
@@ -98,7 +98,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
     
     
     
-### user_info(uid_input)
+### ⛏user_info(uid_input)
 
 这是新的API，相比于旧的需要爬取一个API和一个HTML，新的直接使用两个API获得数据，更节省流量
 
@@ -114,7 +114,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### get_danmaku(cid_input, reset=False)
+### ⛏get_danmaku(cid_input, reset=False)
 
 使用UCS-2(UTF-16)替换UTF-8编解码。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
 
@@ -128,7 +128,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### listall_danmaku(file_path, stamp=False)
+### ⛏listall_danmaku(file_path, stamp=False)
 
 修复UnicodeEncodeError，使用UCS-2的特殊字符可能不能在IDLE显示，PyCharm正常显示
 
@@ -142,7 +142,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### count_danmaku(file_path)
+### ⛏count_danmaku(file_path)
 
 功能：获取弹幕文件行数
 
@@ -156,7 +156,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### get_danmaku_raw(cid_input, reset=False)
+### ⛏get_danmaku_raw(cid_input, reset=False)
 
     由于此API设计初衷是配合ass转换工具的，所以没有单独做xml转csv的API
 
@@ -174,7 +174,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### raw2ass(file_path)
+### ⛏raw2ass(file_path)
 
     需要调用[Niconvert](https://github.com/muzuiget/niconvert)
 
@@ -192,7 +192,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### anime_base_info(media_id)
+### ⛏anime_base_info(media_id)
 
     注意，这里的desc和video_info的desc性质不同，不能混用
 
@@ -268,7 +268,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### anime_episode_info(season_id)
+### ⛏anime_episode_info(season_id)
 
 功能：获取指定番剧/电影的av,cid,标题等高级信息，以及每集的信息
 
@@ -304,7 +304,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 ## 😫实验性API
 
 
-### video_info(id_input)
+### ⛏video_info(id_input)
 
     不太推荐在番剧使用此API，除bv号和av号外，其它数据均可通过anime_base_info(media_id)获取
     
