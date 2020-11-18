@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="94014d32-e1e6-4b30-b40f-aebbb784d26c" name="默认的" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -204,11 +207,11 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="270" y="61" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1605424659662" />
-    <state x="623" y="227" width="840" height="679" key="search.everywhere.popup" timestamp="1604889156211">
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1605666734545">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="623" y="227" width="840" height="679" key="search.everywhere.popup/-1920.-9.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604889156211" />
     <state x="498" y="180" width="672" height="539" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1604841435090" />
-    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1604706819619" />
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1605666734545" />
   </component>
 </project>
