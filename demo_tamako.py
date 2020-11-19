@@ -29,6 +29,7 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     outprint(" ")
     outprint("-----------大纲-----------")
     outprint("名称：" + str(base_info["title"]))
+    outprint("原名：" + str(base_info["origin_name"]))
     anime_full_name = str(base_info["title"])
     alias = str("")
     for i in base_info["alias_list"]:

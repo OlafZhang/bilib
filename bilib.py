@@ -586,6 +586,18 @@ def anime_base_info(media_id):
         except:
             showtime = "不支持"
 
+        # 获取原名
+        try:
+            re_text = text
+            re_text = str(re.findall(r'"origin_name":".+"', re_text)[0])
+            origin_name_raw = re_text.split('"')
+            origin_name_raw = str(origin_name_raw[3])
+            origin_name_raw = origin_name_raw.replace(r"\\n", ",")
+            origin_name_raw = origin_name_raw.replace(r"\n", ",")
+            origin_name_raw = origin_name_raw.replace(r"\\u002F", "/")
+            origin_name = origin_name_raw.replace(r"\u002F", "/")
+        except:
+            origin_name = "不支持"
         # 返回结果，总共使用3个Bilibili API，2个内建API和一个HTML页
         return_dict = {"title": title, "type": type, "area": area, "share_url": share_url, "desc": desc,
                        "cover_url": cover_url, "media_id": media_id, "ep_id": ep_id, "episode": episode,
@@ -593,7 +605,8 @@ def anime_base_info(media_id):
                        "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
                        "tag_id": tag_id, "vip_info": vip_info, "aid" : av_no,"bvid": bv_no,"quality":quality,
                        "quality_ID":quality_ID,"is_finish":is_finish,"is_started":is_started,"actor_list":actor_list,
-                       "staff_list":staff_list,"flag_list":flag_list,"alias_list":alias_list,"showtime":showtime}
+                       "staff_list":staff_list,"flag_list":flag_list,"alias_list":alias_list,"showtime":showtime,
+                       "origin_name":origin_name}
         if return_dict:
             return return_dict
         else:
