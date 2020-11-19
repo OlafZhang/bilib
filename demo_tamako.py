@@ -8,6 +8,9 @@ import bilib
 import os
 import time
 from media_id_pool import *
+# pip install opencc-python-reimplemented
+# 用于强制转简体，方便集中管理
+import opencc
 
 def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
@@ -67,6 +70,7 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     outprint("追番数：" + str(base_info["follow"]))
     outprint("系列追番数：" + str(base_info["series_follow"]))
     outprint("总播放量：" + str(base_info["views"]))
+    cc = opencc.OpenCC('t2s')
     if str(type) == str("番剧"):
         outprint("-----------声优-----------")
     else:
@@ -75,13 +79,13 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     for name in actor_list:
         if str(":") in str(name):
             name = name.split(":")
-            actor = name[1]
-            character = name[0]
+            actor = cc.convert(str(name[1]))
+            character = cc.convert(str(name[0]))
             outprint(character + " --> " + actor)
         elif str("：") in str(name):
             name = name.split("：")
-            actor = name[1]
-            character = name[0]
+            actor = cc.convert(str(name[1]))
+            character = cc.convert(str(name[0]))
             outprint(character + " --> " + actor)
         else:
             outprint(name)
@@ -90,13 +94,13 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     for name in staff_list:
         if str(":") in str(name):
             name = name.split(":")
-            job = name[0]
-            name = name[1]
+            job = cc.convert(str(name[0]))
+            name = cc.convert(str(name[1]))
             outprint(job + " --> " + name)
         elif str("：") in str(name):
             name = name.split("：")
-            job = name[0]
-            name = name[1]
+            job = cc.convert(str(name[0]))
+            name = cc.convert(str(name[1]))
             outprint(job + " --> " + name)
         else:
             outprint(name)
