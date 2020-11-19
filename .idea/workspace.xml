@@ -31,7 +31,7 @@
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/bili_crawling" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.demo_tamako">
+  <component name="RunManager" selected="Python.k">
     <configuration name="bilib" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="bilib" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -74,7 +74,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="json_text" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="k" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="bilib" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -82,11 +82,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/niconvert-master" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/json_text.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/niconvert-master/k.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -139,11 +139,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.k" />
         <item itemvalue="Python.demo_tamako" />
         <item itemvalue="Python.bilib" />
         <item itemvalue="Python.time_test" />
         <item itemvalue="Python.text" />
-        <item itemvalue="Python.json_text" />
       </list>
     </recent_temporary>
   </component>
@@ -167,30 +167,30 @@
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="740" y="266" key="FileChooserDialogImpl/0.0.1920.1050@0.0.1920.1050" timestamp="1605686776442" />
-    <state width="1015" height="469" key="GridCell.Tab.0.bottom" timestamp="1605755435580">
+    <state width="1015" height="469" key="GridCell.Tab.0.bottom" timestamp="1605761976011">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1105" height="616" key="GridCell.Tab.0.bottom/-1920.-9.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604903540377" />
     <state width="1015" height="469" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1605431068987" />
-    <state width="1015" height="469" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1605755435580" />
-    <state width="1015" height="469" key="GridCell.Tab.0.center" timestamp="1605755435580">
+    <state width="1015" height="469" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1605761976011" />
+    <state width="1015" height="469" key="GridCell.Tab.0.center" timestamp="1605761976011">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1105" height="616" key="GridCell.Tab.0.center/-1920.-9.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604903540377" />
     <state width="1015" height="469" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1605431068986" />
-    <state width="1015" height="469" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1605755435580" />
-    <state width="1015" height="469" key="GridCell.Tab.0.left" timestamp="1605755435580">
+    <state width="1015" height="469" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1605761976011" />
+    <state width="1015" height="469" key="GridCell.Tab.0.left" timestamp="1605761976011">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1105" height="616" key="GridCell.Tab.0.left/-1920.-9.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604903540377" />
     <state width="1015" height="469" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1605431068986" />
-    <state width="1015" height="469" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1605755435580" />
-    <state width="1015" height="469" key="GridCell.Tab.0.right" timestamp="1605755435580">
+    <state width="1015" height="469" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1605761976011" />
+    <state width="1015" height="469" key="GridCell.Tab.0.right" timestamp="1605761976011">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1105" height="616" key="GridCell.Tab.0.right/-1920.-9.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604903540377" />
     <state width="1015" height="469" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1605431068987" />
-    <state width="1015" height="469" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1605755435580" />
+    <state width="1015" height="469" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1605761976011" />
     <state width="1515" height="265" key="GridCell.Tab.1.bottom" timestamp="1604846487811">
       <screen x="0" y="0" width="1536" height="834" />
     </state>

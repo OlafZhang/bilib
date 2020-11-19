@@ -4,7 +4,7 @@
 
 bili + lib = bilib
 
-![image](https://github.com/OlafZhang/bilib/blob/main/back.jpg)
+![image](./back.jpg)
 
 使用Python3.6.8开发，主要配合以下的模块运行:
 
