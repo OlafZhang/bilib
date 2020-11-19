@@ -156,7 +156,7 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
         anime_name = anime_name.replace('<', "(")
         anime_name = anime_name.replace('>', ")")
         anime_name = anime_name.replace('|', " ")
-        file_name = str(anime_name + "_" + md_no + ".txt")
+        file_name = str(md_no + "_" + anime_name + ".txt")
         import platform
         sysstr = platform.system()
         if sysstr == "Windows":
@@ -173,8 +173,6 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
 get_full_info(tamako_market,get_dan = False,tofile = False,cleanup = True)
-
-
 
 
 
