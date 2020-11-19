@@ -410,7 +410,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
-### ```get_resolution(id_input,getid = False)```
+### ⛏```get_resolution(id_input,getid = False)```
 
 💡仅表示游客支持的最高质量，需要传入cookie才能保证数据正确
 
@@ -465,7 +465,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 | coin | 投币量 |  |
 | share | 分享量 |  |
 | like | 点赞量 |  |
-| quality | 最高画质 |  |
+| quality | 最高画质 | 仅表示游客和非大会员支持的最高画质 |
 | quality_id | 最高画质编号 | 用于辅助分析 |
 
 
