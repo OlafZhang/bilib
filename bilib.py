@@ -271,41 +271,81 @@ def anime_episode_info(season_id):
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     # 读取剧集数量
-    episode_list = len(play_info["result"]["main_section"]["episodes"])
-    return_dict = {}
-    # 剧集遍历
-    for index in range(0, episode_list):
-        try:
-            # 剧集索引号,不一定是剧集编号
-            index = int(index)
-            aid = play_info["result"]["main_section"]["episodes"][index]["aid"]
-            cid = play_info["result"]["main_section"]["episodes"][index]["cid"]
-            # ep_id，每集独立存在的编号
-            ep_id = play_info["result"]["main_section"]["episodes"][index]["id"]
-            cover_url = play_info["result"]["main_section"]["episodes"][index]["cover"]
-            share_url = play_info["result"]["main_section"]["episodes"][index]["share_url"]
-            # 真正的剧集编号，必须是string
-            title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
-            # 剧集标题
-            title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
-            dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
-                         "share_url": share_url}
-            # 根据剧集编号返回词典
-            return_dict[title_no] = dict_list
-        except:
-            message = play_info['message']
-            if str(message) == str("请求错误"):
-                raise RequestError("Request error.")
-            elif str(message) == str("啥都木有"):
-                raise SeemsNothing("Seems no such info.")
-            elif str(message) == str("服务调用超时"):
-                raise Timeout("Timeout.")
-            elif str(message) == str("请求被拦截"):
-                raise RequestRefuse("Banning.")
-            else:
-                print(message)
-                traceback.print_exc()
-                raise InfoError("Something error.")
+    try:
+        episode_list = len(play_info["result"]["main_section"]["episodes"])
+        return_dict = {}
+        # 剧集遍历
+        for index in range(0, episode_list):
+            try:
+                # 剧集索引号,不一定是剧集编号
+                index = int(index)
+                aid = play_info["result"]["main_section"]["episodes"][index]["aid"]
+                cid = play_info["result"]["main_section"]["episodes"][index]["cid"]
+                # ep_id，每集独立存在的编号
+                ep_id = play_info["result"]["main_section"]["episodes"][index]["id"]
+                cover_url = play_info["result"]["main_section"]["episodes"][index]["cover"]
+                share_url = play_info["result"]["main_section"]["episodes"][index]["share_url"]
+                # 真正的剧集编号，必须是string
+                title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
+                # 剧集标题
+                title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
+                dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
+                             "share_url": share_url}
+                # 根据剧集编号返回词典
+                return_dict[title_no] = dict_list
+            except:
+                message = play_info['message']
+                if str(message) == str("请求错误"):
+                    raise RequestError("Request error.")
+                elif str(message) == str("啥都木有"):
+                    raise SeemsNothing("Seems no such info.")
+                elif str(message) == str("服务调用超时"):
+                    raise Timeout("Timeout.")
+                elif str(message) == str("请求被拦截"):
+                    raise RequestRefuse("Banning.")
+                else:
+                    print(message)
+                    traceback.print_exc()
+                    raise InfoError("Something error.")
+    except:
+        # 此处针对2020年11月30日开播的Love Live! 剧场版导致的bug而修复的(当时没有开播)
+        # 可能在后续不支持，之后会修复
+        episode_list = len(play_info["result"]["section"][0]["episodes"])
+        return_dict = {}
+        # 剧集遍历
+        for index in range(0, episode_list):
+            try:
+                # 剧集索引号,不一定是剧集编号
+                index = int(index)
+                aid = play_info["result"]["section"][0]["episodes"][index]["aid"]
+                cid = play_info["result"]["section"][0]["episodes"][index]["cid"]
+                # ep_id，每集独立存在的编号
+                ep_id = play_info["result"]["section"][0]["episodes"][index]["id"]
+                cover_url = play_info["result"]["section"][0]["episodes"][index]["cover"]
+                share_url = play_info["result"]["section"][0]["episodes"][index]["share_url"]
+                # 真正的剧集编号，必须是string
+                title_no = str(play_info["result"]["section"][0]["episodes"][index]["title"])
+                # 剧集标题
+                title_long = str(play_info["result"]["section"][0]["episodes"][index]["long_title"])
+                dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
+                             "share_url": share_url}
+                # 根据剧集编号返回词典
+                return_dict[title_no] = dict_list
+            except:
+                message = play_info['message']
+                if str(message) == str("请求错误"):
+                    raise RequestError("Request error.")
+                elif str(message) == str("啥都木有"):
+                    raise SeemsNothing("Seems no such info.")
+                elif str(message) == str("服务调用超时"):
+                    raise Timeout("Timeout.")
+                elif str(message) == str("请求被拦截"):
+                    raise RequestRefuse("Banning.")
+                else:
+                    print(message)
+                    traceback.print_exc()
+                    raise InfoError("Something error.")
+
     # 返回一个含字典的大字典，总共使用了1个API
     return return_dict
 
