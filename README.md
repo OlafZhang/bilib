@@ -86,7 +86,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### ⛏```user_info_old(uid_input, get_ua=False)```
 
-这是旧的API，新API在下面
+💡这是旧的API，新API在下面
 
 功能： 获取一个用户的基本信息（粉丝，关注，UID，昵称）
 
@@ -108,7 +108,9 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
     
 ### ⛏```user_info(uid_input)```
 
-这是新的API，相比于旧的需要爬取一个API和一个HTML，新的直接使用两个API获得数据，更节省流量
+💡这是新的API
+
+相比于旧的需要爬取一个API和一个HTML，新的直接使用两个API获得数据，更节省流量
 
 功能： 获取一个用户的详细信息（粉丝，关注，UID，昵称）
 
@@ -138,7 +140,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### ⛏```get_danmaku(cid_input, reset=False)```
 
-使用UCS-2(UTF-16)替换UTF-8编解码。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
+💡使用UCS-2(UTF-16)替换UTF-8编解码。UCS-2编码弹幕的表现：类似某些supreme，awsl等艺术字弹幕
 
 功能： 获取一个视频的弹幕，包括番剧/电影（最多返回8000条）
 
@@ -152,7 +154,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### ⛏```listall_danmaku(file_path, stamp=False)```
 
-修复UnicodeEncodeError，使用UCS-2的特殊字符可能不能在IDLE显示，PyCharm正常显示
+💡已经修复UnicodeEncodeError，使用UCS-2的特殊字符可能不能在IDLE显示，PyCharm正常显示
 
 功能：处理弹幕文件，并输出
 
@@ -229,7 +231,9 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 ### ⛏```anime_base_info(media_id)```
 
-#### 此API为本次开发重点，经历多次改动，现功能性相当强，可以用作番剧信息收集或声优信息整理
+#### 💡此API为本次开发重点
+
+经历多次改动，现功能性相当强，可以用作番剧信息收集或声优信息整理
 
 简单说明:
 
@@ -276,7 +280,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 | vip_info | 免费/大会员/付费 | 有时不是很准，在修复 |
 | aid | av号 | 对于番剧/电影意义不大 |
 | bvid | bv号 | 对于番剧/电影意义不大 |
-| quality | 最高质量 | |
+| quality | 最高质量 | 仅表示游客支持的最高质量，需要传入cookie才能保证数据正确 |
 | quality_ID | 最高画质编号 | 用于辅助分析 |
 | is_finish | 是否完结 |  |
 | is_started | 是否开播 | |
@@ -352,6 +356,8 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 ### ```get_resolution(id_input,getid = False)```
+
+💡仅表示游客支持的最高质量，需要传入cookie才能保证数据正确
 
 功能：获取视频最高清晰度
 
