@@ -28,7 +28,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/bili_crawling" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.demo_tamako">
@@ -159,10 +159,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="740" y="266" key="FileChooserDialogImpl" timestamp="1604713399417">
+    <state x="740" y="266" key="FileChooserDialogImpl" timestamp="1605686776442">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="740" y="266" key="FileChooserDialogImpl/0.0.1920.1050@0.0.1920.1050" timestamp="1604713399417" />
+    <state x="740" y="266" key="FileChooserDialogImpl/0.0.1920.1050@0.0.1920.1050" timestamp="1605686776442" />
     <state width="1015" height="469" key="GridCell.Tab.0.bottom" timestamp="1605517421504">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
