@@ -4,6 +4,22 @@
 
 bili + lib = bilib
 
+![image](https://github.com/OlafZhang/bilib/blob/main/back.jpg)
+
+使用Python3.6.8开发，主要配合以下的模块运行:
+
+
+| 模块 | 备注 |
+| :---:| :---: |
+| csv | 配合弹幕文件 | 
+| re | 配合bs4 |
+| requests | 用于所有请求，可能需要安装 |
+| traceback | 显示报错信息 |
+| bs4 | 用于查找HTML页信息，需要安装 |
+| fake_useragent | 用于伪造UA，需要安装(可能会报错，但不影响使用) |
+
+
+
 ## ⚠声明
 
     1、截止至2020年11月1日，以下API正常使用，但不确定以后b站是否会改API，我们将尽可能保证在未来使用新的bilibili API的同时兼容您使用bilib编写的代码
@@ -19,8 +35,6 @@ bili + lib = bilib
     这个lib可以帮助你完成用户基本信息（粉丝量关注数等）和弹幕（需提供cid）的爬取
     
     实验性功能：获取视频信息，获取番剧/电影信息和章节列表(虽然被我放到了前面但是遇到某些番剧就是会崩)
-    
-    除弹幕功能以bs4为核心外，其它功能均以requests为核心，你可能还需要安装fake_useragent和csv包来让bilib正常工作
     
     请勿将此lib用于非法用途（包括敏感数据爬取和DoS/DDoS攻击），作者将不承担任何责任，使用此lib视为已遵守此规则
     
