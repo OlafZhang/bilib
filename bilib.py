@@ -525,6 +525,8 @@ def anime_base_info(media_id):
         re_text = re_text.replace(r"\n", "。")
         re_text = re_text.replace(r"\\u002F", "/")
         re_text = re_text.replace(r"\u002F", "/")
+        re_text = re_text.replace(r"\t", "")
+        re_text = re_text.replace(r"\\t", "")
         staff_list = str(re_text).split("。")
         # 获得番剧/电影标签
         re_text = text

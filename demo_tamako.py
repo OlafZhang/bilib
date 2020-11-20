@@ -140,7 +140,10 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
             os.rename(ass_path,change_name)
             if cleanup:
                 os.remove(str(cid_no) + str(".xml"))
-                os.remove(str(cid_no) + str(".csv"))
+                try:
+                    os.remove(str(cid_no) + str(".csv"))
+                except:
+                    pass
             else:
                 pass
         else:
