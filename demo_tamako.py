@@ -121,7 +121,6 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
         if get_dan:
             cid_no = int(ep_info["cid"])
             danmaku_path = bilib.get_danmaku_raw(cid_no)
-            bilib.get_danmaku(cid_no)
             ass_path = bilib.raw2ass(danmaku_path)
             if len(str(no)) == 1:
                 target_no = str("0") + str(no)
@@ -140,10 +139,15 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
             os.rename(ass_path,change_name)
             if cleanup:
                 os.remove(str(cid_no) + str(".xml"))
-                try:
-                    os.remove(str(cid_no) + str(".csv"))
-                except:
-                    pass
+            else:
+                pass
+            # 如果爬取集超过30(24+6OVA情况)，降低速度，之后到50和100也会降低速度
+            if int(target_no) > 100:
+                time.sleep(5)
+            elif int(target_no) > 50:
+                time.sleep(2)
+            elif int(target_no) > 30:
+                time.sleep(1)
             else:
                 pass
         else:
@@ -180,7 +184,10 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
 # 在这里输入mediaID
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-get_full_info(tamako_market,get_dan = False,tofile = False,cleanup = True)
+get_full_info(tamako_market,get_dan = False,tofile = False,cleanup = False)
+
+
+
 
 
 
