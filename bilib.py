@@ -64,7 +64,10 @@ def set_timeout(set_time):
     except:
         timeout = 5
 
-
+# 默认没有cookie，应用到所有requests.get()
+# 由于带入cookie有些番剧还是不能得到正确消息，故不做cookie模块
+cookies = ""
+with_cookies = False
 
 # 获取视频最高清晰度
 # 传入参数：av号,bv号或ep号
@@ -91,7 +94,7 @@ def get_resolution(id_input,getid = False):
             main_url = str("https://www.bilibili.com/bangumi/play/" + str(id_input))
         else:
             main_url = str("https://www.bilibili.com/video/" + str(id_input))
-        main_url = requests.get(main_url, headers=headers, timeout=timeout)
+        main_url = requests.get(main_url, headers=headers, timeout=timeout, cookies = cookies)
     except:
         raise Timeout("Timeout.")
     quality = str("不支持")
@@ -165,9 +168,9 @@ def video_info(id_input):
     # 返回的结果全部来自此API
     try:
         if mode == "bv":
-            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers,timeout=timeout)
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input), headers=headers,timeout=timeout, cookies = cookies)
         elif mode == "av":
-            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input), headers=headers,timeout=timeout)
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input), headers=headers,timeout=timeout, cookies = cookies)
         else:
             raise InfoError("You should input 'av' or 'bv'.")
     except requests.exceptions.ReadTimeout:
@@ -191,7 +194,7 @@ def video_info(id_input):
         headers = {"User-Agent": ua}
         try:
             main_url = str("https://www.bilibili.com/video/" + str(bvid))
-            main_url = requests.get(main_url,headers = headers,timeout = timeout)
+            main_url = requests.get(main_url,headers = headers,timeout = timeout, cookies = cookies)
         except:
             raise Timeout("Timeout.")
         soup = BeautifulSoup(main_url.text, "html.parser")
@@ -266,7 +269,7 @@ def anime_episode_info(season_id):
     # 返回的结果全部来自此API
     try:
         play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
-                                 headers=headers,timeout=timeout)
+                                 headers=headers,timeout=timeout, cookies = cookies)
         play_info = play_info.json()
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
@@ -358,7 +361,7 @@ def anime_base_info(media_id):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果基本来自此API
     try:
-        play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers,timeout=timeout)
+        play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers,timeout=timeout, cookies = cookies)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     play_info = play_info.json()
@@ -387,7 +390,7 @@ def anime_base_info(media_id):
         # 获取tagID，此参数可以获得番剧/电影的相关推荐，如其它相关番剧和二创
         try:
             tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
-                                    headers=headers,timeout=timeout)
+                                    headers=headers,timeout=timeout, cookies = cookies)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
         try:
@@ -407,7 +410,7 @@ def anime_base_info(media_id):
         cid = str(episode_info[key]["cid"])
         try:
             quality_info = requests.get("https://api.bilibili.com/pgc/player/web/playurl?aid=" + str(av_no) + "&cid=" + str(cid),
-                                    headers=headers, timeout=timeout)
+                                    headers=headers, timeout=timeout, cookies = cookies)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
 
@@ -424,7 +427,7 @@ def anime_base_info(media_id):
         # 根据seasonID求总投币数，追番数等信息
         try:
             other_info = requests.get("https://api.bilibili.com/pgc/web/season/stat?season_id=" + str(season_id),
-                                      headers=headers,timeout=timeout)
+                                      headers=headers,timeout=timeout, cookies = cookies)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
         other_info = other_info.json()
@@ -436,7 +439,7 @@ def anime_base_info(media_id):
         try:
             # 获取HTML页，检查介绍信息和是否收费观看
             headers = {"User-Agent": ua}
-            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,timeout=timeout)
+            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,timeout=timeout, cookies = cookies)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
         soup = BeautifulSoup(url.text, "html.parser")
@@ -499,6 +502,10 @@ def anime_base_info(media_id):
                     vip_info = str("付费")
                 elif str("免费") == str(vip_info):
                     vip_info = str("免费")
+                elif str("限时免费") == str(vip_info):
+                    vip_info = str("限免")
+                elif str("限免") == str(vip_info):
+                    vip_info = str("限免")
                 else:
                     # 由于付费的提示比较多样，所以放在最后
                     vip_info = str("大会员/付费")
@@ -642,7 +649,7 @@ def user_info(uid_input):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果基本来自此API
     try:
-        info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers,timeout=timeout)
+        info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers,timeout=timeout, cookies = cookies)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     info_get = info_get.json()
@@ -680,7 +687,7 @@ def user_info(uid_input):
         vip_type == str("None")
     try:
         # 获取关注/粉丝量
-        fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,timeout=timeout)
+        fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,timeout=timeout, cookies = cookies)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     fans = fans.json()
@@ -700,7 +707,7 @@ def user_info_old(uid_input, get_ua=False):
     ua = str(UserAgent().random)
     headers = {"User-Agent": ua}
     try:
-        name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers,timeout=timeout)
+        name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers,timeout=timeout, cookies = cookies)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
@@ -765,7 +772,7 @@ def get_danmaku(cid_input, reset=False):
         bvIndex = url.find('BV')
         id = url[bvIndex:]
         try:
-            rr = requests.get(url=url,timeout=timeout)
+            rr = requests.get(url=url,timeout=timeout, cookies = cookies)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
         rr.encoding = 'uft-16'
@@ -1012,7 +1019,7 @@ def get_danmaku_raw(cid_input, reset=False):
 
         url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
         try:
-            rr = requests.get(url=url, timeout=timeout)
+            rr = requests.get(url=url, timeout=timeout, cookies = cookies)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
         rr.encoding = 'uft-8'
