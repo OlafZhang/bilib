@@ -1062,9 +1062,9 @@ def raw2ass(file_path):
 # 最多返回20条
 def search_anime(keyword):
     return_dict = {}
-    # 搜索，拿到season_id
     ua = str(UserAgent().random)
     headers = {"User-Agent": ua}
+    # 搜索，拿到season_id
     search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword),headers=headers, timeout=timeout, cookies = cookies)
     if str(search_info.status_code) == str("404"):
         return return_dict
@@ -1076,6 +1076,7 @@ def search_anime(keyword):
     for x in soup.find_all('script'):
         if str("window.__INITIAL_STATE__=") in str(x.string):
             text = str(x.string)
+            print(text)
             break
         else:
             pass
@@ -1093,6 +1094,7 @@ def search_anime(keyword):
             season_id = re.findall("ss\d+", string)[0]
             string = string.split(r'class="keyword"')[1]
             string = string.split(r'","org_title":"')[0]
+            string = string.split(r'"')[0]
             # 跳转到播放页，拿到season_id
             md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id),headers=headers, timeout=timeout, cookies = cookies)
             md_info = md_info.text
@@ -1102,4 +1104,3 @@ def search_anime(keyword):
         except:
             continue
     return return_dict
-
