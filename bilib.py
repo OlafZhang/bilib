@@ -1076,7 +1076,8 @@ def search_anime(keyword):
     for x in soup.find_all('script'):
         if str("window.__INITIAL_STATE__=") in str(x.string):
             text = str(x.string)
-            print(text)
+            # 由于不稳定，将bs4输出注释以方便调试
+            #print(text)
             break
         else:
             pass
