@@ -3,24 +3,29 @@
 # 同时下载全部弹幕文件，转换为ass后重命名
 # 这是一个API用的比较全面的demo，可供参考
 
-# -*- coding: utf-8 -*-
-import bilib
 import os
 import time
-from media_id_pool import *
+
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
 import opencc
 
-def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
+# -*- coding: utf-8 -*-
+import bilib
+from media_id_pool import *
+
+
+def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
     global full_text
     full_text = str("")
+
     def outprint(string):
         global full_text
         print(string)
         full_text += str(string)
         full_text += "\n"
+
     base_info = bilib.anime_base_info(mediaID)
     season_id = int(base_info["season_id"])
     episode_info = bilib.anime_episode_info(season_id)
@@ -136,7 +141,7 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
             anime_full_name = anime_full_name.replace('>', ")")
             anime_full_name = anime_full_name.replace('|', " ")
             change_name = str(os.getcwd()) + "\\" + str(target_no) + " " + str(anime_full_name) + " danmaku_file.ass"
-            os.rename(ass_path,change_name)
+            os.rename(ass_path, change_name)
             if cleanup:
                 os.remove(str(cid_no) + str(".xml"))
             else:
@@ -156,10 +161,10 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     if tofile:
         global anime_name
         global md_no
-        anime_name = str(base_info["title"]).replace(" ","_")
+        anime_name = str(base_info["title"]).replace(" ", "_")
         anime_name = str(anime_name).replace("　", "_")
         md_no = str("md" + str(base_info["media_id"]))
-        anime_name = anime_name.replace("\\"," ")
+        anime_name = anime_name.replace("\\", " ")
         anime_name = anime_name.replace("/", " ")
         anime_name = anime_name.replace("?", "？")
         anime_name = anime_name.replace(":", "：")
@@ -181,17 +186,8 @@ def get_full_info(mediaID,get_dan = False,tofile = False,cleanup=True):
     else:
         pass
 
+
 # 在这里输入mediaID
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-get_full_info(tamako_market,get_dan = False,tofile = False,cleanup = False)
-
-
-
-
-
-
-
-
-
-
+get_full_info(tamako_market, get_dan=False, tofile=False, cleanup=False)
