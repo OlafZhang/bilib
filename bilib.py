@@ -1061,7 +1061,7 @@ def raw2ass(file_path):
 # 目前只支持搜索番剧，输入关键词返回字典，含有md号
 def search_anime(keyword):
     return_dict = {}
-    # 搜索，并跳转到含season_id播放页(一次跳转)
+    # 搜索，拿到season_id
     ua = str(UserAgent().random)
     headers = {"User-Agent": ua}
     search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword),headers=headers, timeout=timeout, cookies = cookies)
@@ -1089,10 +1089,10 @@ def search_anime(keyword):
     re_text = re_text.split("media_bangumi")
     for string in re_text:
         try:
-            # 拿到season_id，准备二次跳转到media_id
             season_id = re.findall("ss\d+", string)[0]
             string = string.split(r'class="keyword"')[1]
             string = string.split(r'","org_title":"')[0]
+            # 跳转到播放页，拿到season_id
             md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id),headers=headers, timeout=timeout, cookies = cookies)
             md_info = md_info.text
             media_id = re.findall("md\d+", md_info)[0]
