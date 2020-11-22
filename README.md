@@ -16,7 +16,7 @@ bili + lib = bilib
 | requests | 用于所有请求，可能需要安装 |
 | traceback | 显示报错信息 |
 | bs4 | 用于查找HTML页信息，需要安装 |
-| fake_useragent | 用于伪造UA，需要安装(可能会报错，但不影响使用) |
+| fake_useragent | 用于伪造UA，需要安装 |
 
 
 
@@ -92,6 +92,46 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 
 
+## 💦demo
+
+这个仓库有两个demo: demo_tamako.py 和 demo_takagi.py
+
+两个都把bilib番剧和弹幕相关方法用的比较完全，同时也可用于协助番剧信息爬取和收集
+
+它们都可以获得番剧信息，番剧弹幕收集
+
+### ```demo_tamako.py```
+
+方法：传入md号(不带md)
+
+优点：除非遇到404，412和错误的md号，不可能出现异常，稳定性较好，不仅仅支持番剧
+
+缺点：不够智能，只能认md号
+
+### ```demo_takagi.py```
+
+继承自demo_tamako.py，在执行demo_tamako.py的方法前，把番剧名转换为md号，再传入
+
+方法：传入番剧名称(越准确越好)
+
+优点：收集数据更快，不必去URL抓md号
+
+缺点：仅支持番剧，不如demo_tamako.py稳定，结果大于2时除非能全字匹配，否则会报错(考虑让用户选择)
+
+demo中的方法```get_full_info()```有以下传参
+
+get_dan=False, tofile=False, cleanup=True
+
+| 参数名 | 解释 | 默认值 | 备注 |
+| :---: | :---: | :---: | :---: |
+| mediaID | md号 | 无，需要用户传参 | 仅在demo_tamako.py有效 |
+| anime_keyword | 番剧关键字 | 无，需要用户传参 | 仅在demo_takagi.py有效 |
+| get_dan | 获取所有集的弹幕(ass) | False | 格式为"集数 番剧名称 danmaku_file.ass" |
+| tofile | 导出番剧信息到一个txt文件 | False | 格式为"md号_番剧名称.txt" |
+| cleanup | 清理获取弹幕时的xml文件 | True | 仅get_dan为True时有效 |
+
+
+
 ## 😄稳定功能的API
 
 这部分包含了我从2020年5月开始调试的代码，目前爬取100w+用户数据和100多部番剧/电影后仍能稳定工作
@@ -111,7 +151,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 #### 返回：字典，参数如下:
 
 | 参数名(key) | 解释 | 备注 |
-| :---:| :---: | :---: |
+| :---: | :---: | :---: |
 | uid_input | 用户输入的UID |  |
 | name | 昵称 |  |
 | fans | 粉丝数 |  |
