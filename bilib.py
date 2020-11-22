@@ -87,7 +87,7 @@ def get_resolution(id_input,getid = False):
             id_input = str("ep") + str(id_input[2:])
     else:
         raise InfoError("You should input av/bv/ep.")
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     headers = {"User-Agent": ua}
     try:
         if mode == str("ep"):
@@ -150,7 +150,7 @@ def get_resolution(id_input,getid = False):
 # 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
 # 而av号和bv号对番剧/电影来说没有意义
 def video_info(id_input):
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     id_input = str(id_input)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 判断用户输入的是av号还是bv号
@@ -263,7 +263,7 @@ def video_info(id_input):
 
 # 番剧/电影剧集信息（返回每集的cid，封面URL等，cid可用于爬取弹幕）
 def anime_episode_info(season_id):
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     id_input = str(season_id)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果全部来自此API
@@ -356,7 +356,7 @@ def anime_episode_info(season_id):
 
 # 番剧/电影基本信息（返回seasonID,以便请求剧集的详情）
 def anime_base_info(media_id):
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     id_input = str(media_id)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果基本来自此API
@@ -645,7 +645,7 @@ def anime_base_info(media_id):
 # 这个是实验性API，理论效果更好，功能更多，流量开销更小
 def user_info(uid_input):
     uid_input = int(uid_input)
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果基本来自此API
     try:
@@ -704,7 +704,7 @@ def user_info(uid_input):
 # 从作者的爬取项目独立开的API，使用了一个API和一个HTML页，但功能较少，现只做保留，请自行研究
 def user_info_old(uid_input, get_ua=False):
     uid_input = int(uid_input)
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     headers = {"User-Agent": ua}
     try:
         name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers,timeout=timeout, cookies = cookies)
@@ -1062,7 +1062,7 @@ def raw2ass(file_path):
 # 最多返回20条
 def search_anime(keyword):
     return_dict = {}
-    ua = str(UserAgent().random)
+    ua = str(UserAgent(use_cache_server=False).random)
     headers = {"User-Agent": ua}
     # 搜索，拿到season_id
     search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword),headers=headers, timeout=timeout, cookies = cookies)
@@ -1093,7 +1093,11 @@ def search_anime(keyword):
     for string in re_text:
         try:
             season_id = re.findall("ss\d+", string)[0]
-            string = string.split(r'class="keyword"')[1]
+            try:
+                #在爬取eva的时候出现了奇怪的bug，class=keyword关键字不止一个
+                string = string.split(r'class="keyword"')[2]
+            except:
+                string = string.split(r'class="keyword"')[1]
             string = string.split(r'","org_title":"')[0]
             string = string.split(r'"')[0]
             # 跳转到播放页，拿到season_id
