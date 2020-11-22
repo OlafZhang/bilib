@@ -1059,6 +1059,7 @@ def raw2ass(file_path):
 
 # 搜索番剧(beta)
 # 目前只支持搜索番剧，输入关键词返回字典，含有md号
+# 最多返回20条
 def search_anime(keyword):
     return_dict = {}
     # 搜索，拿到season_id
