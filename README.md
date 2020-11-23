@@ -131,7 +131,7 @@ demo中的方法```get_full_info()```有以下传参
 
 | 参数名 | 解释 | 默认值 | 备注 |
 | :---: | :---: | :---: | :---: |
-| keyword | 关键字 | 无，需要用户传参 | 在demo_takagi.py为自动将md号传参到get_full_info() |
+| keyword | 关键字 | 无，需要用户传参 | 自动将md号传参到get_full_info() |
 | wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选), False时则全部爬取 |
 | strict | 严格匹配模式 | True | 传参到search_anime(), 注意事项见search_anime()介绍 |
 
