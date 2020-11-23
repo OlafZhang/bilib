@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 基于demo_tamako.py二次开发，传入番剧名称而不是md号
 # 继承demo_tamako.py的方法，但是在运行前会先转换md号，再传入api，更智能，但也存在不少异常bug
 # 本质上这两个demo是一样的
@@ -8,41 +9,82 @@ import time
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
 import opencc
-
-# -*- coding: utf-8 -*-
 import bilib
-from media_id_pool import *
+import sys
 
 # 相比demo_tamako.py多一个异常和方法
 class NoResult(Exception):
     pass
 
-def anime2md(keyword):
+def anime2md(keyword,wait=True):
+    return_list = []
     result = bilib.search_anime(keyword)
     if len(result) == 0:
         raise NoResult("No Result")
     elif len(result) == 1:
         for anime,md_id in result.items():
             md_output = int(str(md_id).replace("md",""))
-            return md_output
+            return_list.append(int(md_output))
+            return return_list
     else:
         for anime,md_id in result.items():
             # 全字匹配
             if str(anime) == str(keyword):
                 md_output = int(str(md_id).replace("md", ""))
-                return md_output
+                return_list.append(int(md_output))
+                return return_list
             else:
                 pass
-        choose_no = 1
-        # 无法全字匹配，显示所有结果，然后报错
+        choose_no = 0
+        choose_list = []
+        # 无法全字匹配，显示所有结果
         for anime,md_id in result.items():
-            print(str(choose_no) + ": " + str(anime) + "(" + str(md_id) + ")")
+            if str("僅限") in str(anime):
+                continue
+            else:
+                pass
+            choose_item = str(str(choose_no) + ": " + str(anime) + "(" + str(md_id) + ")")
+            print(choose_item)
+            choose_list.append(choose_item)
             choose_no += 1
-        raise NoResult("You should choose one.")
+        print(str(choose_no) + ": " + "choose ALL.")
+        choose_no += 1
+        print(str(choose_no) + ": " + "drop ALL.")
+        if wait:
+            user_choose = str(input("Choose one:"))
+        else:
+            print("Finded " + str(len(choose_list)) + " item(s) with keyword '" + str(keyword) + "', auto choose all.")
+            user_choose = str(len(choose_list) + 1)
+        if user_choose.isdigit():
+            if int(user_choose) == int(len(choose_list) + 2):
+                print("Drop all...")
+                return return_list
+            elif int(user_choose) == int(len(choose_list) + 1):
+                print("Choose all...")
+                for anime, md_id in result.items():
+                    return_list.append(int(str(md_id).replace("md", "")))
+                return return_list
+            else:
+                if int(user_choose) < int(len(choose_list)):
+                    user_get = choose_list[int(user_choose)]
+                    print("Choose: " + user_get)
+                    user_get = user_get.split("(md")[1]
+                    user_get = user_get.replace(")","")
+                    return_list.append(int(user_get))
+                    return return_list
+                else:
+                    print("Input error, will choose all.")
+                    for anime, md_id in result.items():
+                        return_list.append(int(str(md_id).replace("md", "")))
+                    return return_list
+        else:
+            print("Input error, will choose all.")
+            for anime, md_id in result.items():
+                return_list.append(int(str(md_id).replace("md", "")))
+            return return_list
 
-def get_full_info(anime_keyword, get_dan=False, tofile=False, cleanup=True):
+def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
-    mediaID = anime2md(anime_keyword)
 
     global full_text
     full_text = str("")
@@ -121,7 +163,7 @@ def get_full_info(anime_keyword, get_dan=False, tofile=False, cleanup=True):
             character = cc.convert(str(name[0]))
             outprint(character + " --> " + actor)
         else:
-            outprint(name)
+            outprint(cc.convert(str(name)))
     outprint("----------工作人员----------")
     staff_list = base_info["staff_list"]
     for name in staff_list:
@@ -136,7 +178,7 @@ def get_full_info(anime_keyword, get_dan=False, tofile=False, cleanup=True):
             name = cc.convert(str(name[1]))
             outprint(job + " --> " + name)
         else:
-            outprint(name)
+            outprint(cc.convert(str(name)))
     outprint("-----------剧集-----------")
     no = 1
     for ep_id, ep_info in episode_info.items():
@@ -213,9 +255,15 @@ def get_full_info(anime_keyword, get_dan=False, tofile=False, cleanup=True):
     else:
         pass
 
-
+md_list = []
 
 # 在这里输入番剧名称
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-get_full_info("玉子市场", get_dan=False, tofile=False, cleanup=False)
+md_list = anime2md("公主连结",wait = False)
+
+if len(md_list) == 0:
+    print("No result")
+else:
+    for animeMD in md_list:
+        get_full_info(animeMD, get_dan=False, tofile=False, cleanup=False)
