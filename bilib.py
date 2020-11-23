@@ -1098,24 +1098,27 @@ def search_anime(keyword):
     re_text = re_text.replace(r"\u002F", "\\")
     re_text = re_text.replace(r"\u003E", "")
     re_text = re_text.replace("\\", "")
-    re_text = re_text.split("media_bangumi")
+    re_text = re_text.split('"type":"media_bangumi","title"')
     for string in re_text:
         try:
             season_id = re.findall("ss\d+", string)[0]
             try:
-                # 在爬取eva的时候出现了奇怪的bug，class=keyword关键字不止一个
-                stringA = string.split(r'class="keyword"')[1]
-                stringA = stringA.split(r'","org_title":"')[0]
-                stringA = stringA.split(r'"')[0]
-                stringB = string.split(r'class="keyword"')[2]
+                # 一次排除无关结果
+                # 爬取eva出现了奇怪的异常
+                stringB = string.split('class="keyword"')[2]
+                stringA = string.split('class="keyword"')[1]
                 stringB = stringB.split(r'","org_title":"')[0]
-                stringB = stringB.split(r'"')[0]
-                string = stringA + str(" ") + stringB
+                stringA = stringA.replace(':"', '')
+                string = stringA + " " + stringB
             except:
-                string = string.split(r'class="keyword"')[1]
                 string = string.split(r'","org_title":"')[0]
-                string = string.split(r'"')[0]
-
+                string = string.replace(':"', '')
+                string = string.replace(' class="keyword"', '')
+            # 二次排除无关结果
+            if bool(re.search(keyword, string, re.IGNORECASE)):
+                pass
+            else:
+                continue
             # 跳转到播放页，拿到season_id
             md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
                                    timeout=timeout, cookies=cookies)
