@@ -264,7 +264,7 @@ md_list = []
 # 在这里输入番剧名称
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-md_list = anime2md("公主连结", wait=True,strict=False)
+md_list = anime2md("高达", wait=True,strict=False)
 
 if len(md_list) == 0:
     print("No result")

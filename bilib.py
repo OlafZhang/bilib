@@ -1081,6 +1081,17 @@ def search_anime(keyword,strict = True):
         raise RequestRefuse("Banning.")
     else:
         pass
+    # 留一个坑，这一段用于确定查询结果页数
+    page = re.findall("共\d+条数据", search_info.text)[0]
+    page = str(page).replace("共","")
+    page = int(str(page).replace("条数据", ""))
+    page_head = page // 20
+    page_tail = page % 20
+    if page_tail != 0:
+        page = page_head + 1
+    else:
+        page = page_head
+    
     soup = BeautifulSoup(search_info.text, "html.parser")
     for x in soup.find_all('script'):
         if str("window.__INITIAL_STATE__=") in str(x.string):
