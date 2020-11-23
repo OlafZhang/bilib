@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 这是一个demo，演示如何通过一个番剧的media ID(介绍页以md开头的数字)获取番剧详细信息，包括season_id,av,bv,cid等等
 # 此 media ID 有多个，默认为玉子市场TV版
 # 同时下载全部弹幕文件，转换为ass后重命名
@@ -10,7 +11,6 @@ import time
 # 用于强制转简体，方便集中管理
 import opencc
 
-# -*- coding: utf-8 -*-
 import bilib
 from media_id_pool import *
 
@@ -94,7 +94,7 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
             character = cc.convert(str(name[0]))
             outprint(character + " --> " + actor)
         else:
-            outprint(name)
+            outprint(cc.convert(str(name)))
     outprint("----------工作人员----------")
     staff_list = base_info["staff_list"]
     for name in staff_list:
@@ -109,7 +109,7 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
             name = cc.convert(str(name[1]))
             outprint(job + " --> " + name)
         else:
-            outprint(name)
+            outprint(cc.convert(str(name)))
     outprint("-----------剧集-----------")
     no = 1
     for ep_id, ep_info in episode_info.items():
