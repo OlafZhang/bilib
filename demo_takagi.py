@@ -9,25 +9,27 @@ import time
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
 import opencc
+
 import bilib
-import sys
+
 
 # 相比demo_tamako.py多一个异常和方法
 class NoResult(Exception):
     pass
 
-def anime2md(keyword,wait=True):
+
+def anime2md(keyword, wait=True):
     return_list = []
     result = bilib.search_anime(keyword)
     if len(result) == 0:
         raise NoResult("No Result")
     elif len(result) == 1:
-        for anime,md_id in result.items():
-            md_output = int(str(md_id).replace("md",""))
+        for anime, md_id in result.items():
+            md_output = int(str(md_id).replace("md", ""))
             return_list.append(int(md_output))
             return return_list
     else:
-        for anime,md_id in result.items():
+        for anime, md_id in result.items():
             # 全字匹配
             if str(anime) == str(keyword):
                 md_output = int(str(md_id).replace("md", ""))
@@ -38,7 +40,7 @@ def anime2md(keyword,wait=True):
         choose_no = 0
         choose_list = []
         # 无法全字匹配，显示所有结果
-        for anime,md_id in result.items():
+        for anime, md_id in result.items():
             if str("僅限") in str(anime):
                 continue
             else:
@@ -69,7 +71,7 @@ def anime2md(keyword,wait=True):
                     user_get = choose_list[int(user_choose)]
                     print("Choose: " + user_get)
                     user_get = user_get.split("(md")[1]
-                    user_get = user_get.replace(")","")
+                    user_get = user_get.replace(")", "")
                     return_list.append(int(user_get))
                     return return_list
                 else:
@@ -82,6 +84,7 @@ def anime2md(keyword,wait=True):
             for anime, md_id in result.items():
                 return_list.append(int(str(md_id).replace("md", "")))
             return return_list
+
 
 def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
@@ -255,12 +258,13 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     else:
         pass
 
+
 md_list = []
 
 # 在这里输入番剧名称
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-md_list = anime2md("公主连结",wait = False)
+md_list = anime2md("公主连结", wait=True)
 
 if len(md_list) == 0:
     print("No result")
