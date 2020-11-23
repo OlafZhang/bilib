@@ -116,21 +116,20 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 优点：收集数据更快，不必去URL抓md号
 
-缺点：仅支持番剧，不如demo_tamako.py稳定，结果大于2时除非能全字匹配，否则会报错(考虑让用户选择)
+缺点：仅支持番剧，不如demo_tamako.py稳定，结果大于2时要么能全字匹配，要么让用户选择
 
 demo中的方法```get_full_info()```有以下传参
 
-get_dan=False, tofile=False, cleanup=True
-
 | 参数名 | 解释 | 默认值 | 备注 |
 | :---: | :---: | :---: | :---: |
-| mediaID | md号 | 无，需要用户传参 | 仅在demo_tamako.py有效 |
-| anime_keyword | 番剧关键字 | 无，需要用户传参 | 仅在demo_takagi.py有效 |
+| mediaID | md号 | 无，需要用户传参 | 仅在demo_tamako.py有效,demo_takagi.py为自动传参 |
 | get_dan | 获取所有集的弹幕(ass) | False | 格式为"集数 番剧名称 danmaku_file.ass" |
 | tofile | 导出番剧信息到一个txt文件 | False | 格式为"md号_番剧名称.txt" |
 | cleanup | 清理获取弹幕时的xml文件 | True | 仅get_dan为True时有效 |
 
+另外,在```demo_takagi.py```有一个方法```anime2md(keyword,wait = False)```
 
+keyword为番剧的关键字,wait为真时,遇到多结果要求用户输入,假时则全部爬取
 
 ## 😄稳定功能的API
 
@@ -297,6 +296,10 @@ get_dan=False, tofile=False, cleanup=True
 
 
 ### ⛏```anime_base_info(media_id)```
+
+⚠ 在极个别爬取冷门番剧(例如没有评分)时会因为```anime_episode_info```中API不返回任何值导致bilib报错(Something error)
+
+考虑到这可能是一个不太重要的bug,故暂时不修复
 
 #### 💡此API为本次开发重点
 
