@@ -122,15 +122,18 @@ demo中的方法```get_full_info()```有以下传参
 
 | 参数名 | 解释 | 默认值 | 备注 |
 | :---: | :---: | :---: | :---: |
-| mediaID | md号 | 无，需要用户传参 | 仅在demo_tamako.py有效,demo_takagi.py为自动传参 |
-| strict | 严格匹配模式 | True | 仅在demo_takagi.py有效,传参到search_anime(),真时返回结果必须含有关键字,反之亦然,注意,开启严格模式虽然会提高准确性,但输入别名等情况时将不会返回结果 |
+| mediaID | md号 | 无，需要用户传参 | demo_tamako.py为手动传参,demo_takagi.py为自动传参 |
 | get_dan | 获取所有集的弹幕(ass) | False | 格式为"集数 番剧名称 danmaku_file.ass" |
 | tofile | 导出番剧信息到一个txt文件 | False | 格式为"md号_番剧名称.txt" |
 | cleanup | 清理获取弹幕时的xml文件 | True | 仅get_dan为True时有效 |
 
-另外,在```demo_takagi.py```有一个方法```anime2md(keyword,wait = False)```
+另外,在```demo_takagi.py```有一个方法```anime2md()```
 
-keyword为番剧的关键字,wait为真时,遇到多结果要求用户输入,假时则全部爬取
+| 参数名 | 解释 | 默认值 | 备注 |
+| :---: | :---: | :---: | :---: |
+| keyword | 关键字 | 无，需要用户传参 | 在demo_takagi.py为自动传参到get_full_info() |
+| wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选),False时则全部爬取 |
+| strict | 严格匹配模式 | True | 传参到search_anime(),注意事项见search_anime()介绍 |
 
 ## 😄稳定功能的API
 
