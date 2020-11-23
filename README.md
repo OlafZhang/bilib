@@ -116,7 +116,7 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 优点：收集数据更快，不必去URL抓md号
 
-缺点：仅支持番剧，不如demo_tamako.py稳定，结果大于2时要么能全字匹配，要么让用户选择
+缺点：仅支持番剧，不如demo_tamako.py稳定，结果大于2时要么能全字匹配，要么让用户选择(也可以自动全爬取)
 
 demo中的方法```get_full_info()```有以下传参
 
@@ -131,9 +131,9 @@ demo中的方法```get_full_info()```有以下传参
 
 | 参数名 | 解释 | 默认值 | 备注 |
 | :---: | :---: | :---: | :---: |
-| keyword | 关键字 | 无，需要用户传参 | 在demo_takagi.py为自动传参到get_full_info() |
-| wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选),False时则全部爬取 |
-| strict | 严格匹配模式 | True | 传参到search_anime(),注意事项见search_anime()介绍 |
+| keyword | 关键字 | 无，需要用户传参 | 在demo_takagi.py为自动将md号传参到get_full_info() |
+| wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选), False时则全部爬取 |
+| strict | 严格匹配模式 | True | 传参到search_anime(), 注意事项见search_anime()介绍 |
 
 ## 😄稳定功能的API
 
