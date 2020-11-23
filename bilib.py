@@ -1068,7 +1068,7 @@ def raw2ass(file_path):
 # 搜索番剧(beta)
 # 目前只支持搜索番剧，输入关键词返回字典，含有md号
 # 最多返回20条
-def search_anime(keyword):
+def search_anime(keyword,strict = True):
     return_dict = {}
     ua = str(UserAgent(use_cache_server=False).random)
     headers = {"User-Agent": ua}
@@ -1114,11 +1114,14 @@ def search_anime(keyword):
                 string = string.split(r'","org_title":"')[0]
                 string = string.replace(':"', '')
                 string = string.replace(' class="keyword"', '')
-            # 二次排除无关结果
-            if bool(re.search(keyword, string, re.IGNORECASE)):
-                pass
+            # 严格模式二次排除无关结果
+            if strict:
+                if bool(re.search(keyword, string, re.IGNORECASE)):
+                    pass
+                else:
+                    continue
             else:
-                continue
+                pass
             # 跳转到播放页，拿到season_id
             md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
                                    timeout=timeout, cookies=cookies)

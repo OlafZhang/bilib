@@ -18,9 +18,9 @@ class NoResult(Exception):
     pass
 
 
-def anime2md(keyword, wait=True):
+def anime2md(keyword, wait=True, strict=True):
     return_list = []
-    result = bilib.search_anime(keyword)
+    result = bilib.search_anime(keyword,strict = strict)
     if len(result) == 0:
         raise NoResult("No Result")
     elif len(result) == 1:
@@ -264,7 +264,7 @@ md_list = []
 # 在这里输入番剧名称
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-md_list = anime2md("公主连结", wait=True)
+md_list = anime2md("公主连结", wait=True,strict=False)
 
 if len(md_list) == 0:
     print("No result")
