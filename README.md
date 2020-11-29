@@ -4,6 +4,8 @@
 
 bili + lib = bilib
 
+可能会开发Go版本(因为Python对多线程和高并发支持不友好)
+
 ![cover](./back.jpg)
 
 使用Python3.6.8开发，主要配合以下的模块运行:
