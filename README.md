@@ -20,6 +20,8 @@ bili + lib = bilib
 | bs4 | 用于查找HTML页信息，需要安装 |
 | fake_useragent | 用于伪造UA，需要安装 |
 
+注意，现在已经彻底修复fake_useragent带来的各种问题，请一同下载fake_useragent_0.1.11.json，并与bilib.py放在同一目录
+
 
 
 ## ⚠声明
@@ -144,15 +146,6 @@ demo中的方法```get_full_info()```有以下传参
 ### ```set_timeout(set_time)```
 
 设置所有requests.get()的超时时间，默认超时时间为5(秒)
-
-
-### ```set_cache(cache)```
-
-设置fake_useragent是否先爬取服务器的UA列表(True)或者使用本机缓存(False)
-
-使用缓存的前提：缓存被清理后至少使用一次fake_useragent
-
-默认为不更新(False)，如果你是第一次使用fake_useragent，请先设置为True
 
 
 

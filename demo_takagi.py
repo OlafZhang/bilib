@@ -264,7 +264,7 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
 md_list = []
 
 # 在这里输入番剧名称
-md_list = anime2md("高达", wait=True,strict=False)
+md_list = anime2md("洲崎西", wait=True,strict=False)
 
 if len(md_list) == 0:
     print("No result")
@@ -273,4 +273,4 @@ else:
         # 还可以在这里确定额外的参数
         # get_dan为真时下载弹幕文件
         # tofile为真时导出全部信息到一个txt
-        get_full_info(animeMD, get_dan=False, tofile=False, cleanup=False)
+        get_full_info(animeMD, get_dan=False, tofile=False, cleanup=True)
