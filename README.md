@@ -135,7 +135,7 @@ demo中的方法```get_full_info()```有以下传参
 | wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选)， False时则全部爬取 |
 | strict | 严格匹配模式 | True | 传参到search_anime()， 注意事项见search_anime()介绍 |
 
-## bilib 额外选项
+## 🔌额外选项
 
 在bilib中，你可能需要设置其它参数，故这里有两个方法
 
