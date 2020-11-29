@@ -8,3 +8,4 @@ __pycache__/bilib.cpython-38.pyc
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/bilib.iml
+go_beta/test.go
