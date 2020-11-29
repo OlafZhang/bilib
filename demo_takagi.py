@@ -109,14 +109,22 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     outprint("原名：" + str(base_info["origin_name"]))
     anime_full_name = str(base_info["title"])
     alias = str("")
-    for i in base_info["alias_list"]:
-        alias += str(i)
-        alias += str(" ")
+    alias_list = base_info["alias_list"]
+    for i in range(0, len(alias_list)):
+        alias += str(alias_list[i])
+        if i == len(alias_list) - 1:
+            pass
+        else:
+            alias += str(", ")
     outprint("别称：" + str(alias))
     flag = str("")
-    for i in base_info["flag_list"]:
-        flag += str(i)
-        flag += str(" ")
+    flag_list = base_info["flag_list"]
+    for i in range(0, len(flag_list)):
+        flag += str(flag_list[i])
+        if i == len(flag_list) - 1:
+            pass
+        else:
+            flag += str(", ")
     outprint("标签：" + str(flag))
     outprint("简介：" + str(base_info["desc"]))
     outprint("地区：" + str(base_info["area"]))
@@ -270,4 +278,5 @@ if len(md_list) == 0:
     print("No result")
 else:
     for animeMD in md_list:
+        # 还可以在这里确定额外的参数
         get_full_info(animeMD, get_dan=False, tofile=False, cleanup=False)
