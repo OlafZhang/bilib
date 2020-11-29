@@ -192,7 +192,6 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     else:
         pass
 
-
 # 在这里输入mediaID
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt

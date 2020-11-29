@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# 基于demo_tamako.py二次开发，传入番剧名称而不是md号
 # 继承demo_tamako.py的方法，但是在运行前会先转换md号，再传入api，更智能，但也存在不少异常bug
 # 本质上这两个demo是一样的
 
@@ -265,8 +264,6 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
 md_list = []
 
 # 在这里输入番剧名称
-# get_dan为真时下载弹幕文件
-# tofile为真时导出全部信息到一个txt
 md_list = anime2md("高达", wait=True,strict=False)
 
 if len(md_list) == 0:
@@ -274,4 +271,6 @@ if len(md_list) == 0:
 else:
     for animeMD in md_list:
         # 还可以在这里确定额外的参数
+        # get_dan为真时下载弹幕文件
+        # tofile为真时导出全部信息到一个txt
         get_full_info(animeMD, get_dan=False, tofile=False, cleanup=False)
