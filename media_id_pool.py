@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# coding:utf-8
 # 存储一些番剧/电影的mediaID池
 
 # 轻音少女(大会员)

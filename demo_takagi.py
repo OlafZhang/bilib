@@ -5,18 +5,15 @@
 
 import os
 import time
+import bilib
 
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
 import opencc
 
-import bilib
-
-
 # 相比demo_tamako.py多一个异常和方法
 class NoResult(Exception):
     pass
-
 
 def anime2md(keyword, wait=True, strict=True):
     return_list = []
@@ -84,7 +81,6 @@ def anime2md(keyword, wait=True, strict=True):
             for anime, md_id in result.items():
                 return_list.append(int(str(md_id).replace("md", "")))
             return return_list
-
 
 def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出
@@ -265,7 +261,6 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
         txt.close()
     else:
         pass
-
 
 md_list = []
 

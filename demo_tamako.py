@@ -6,14 +6,12 @@
 
 import os
 import time
+import bilib
+from media_id_pool import *
 
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
 import opencc
-
-import bilib
-from media_id_pool import *
-
 
 def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     # 配合outprint，将print内容暂时存储在一个字符串，稍后输出

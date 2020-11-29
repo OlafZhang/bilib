@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-# coding:utf-8
 
-import csv
 # 这是一个lib，引用大量B站API，目前用户信息和弹幕工作正常，其它存在潜在的bug
 # bilib = bili + lib
+import csv
 import os
 import re
 import sys
@@ -82,6 +81,7 @@ with_cookies = False
 # 如果仍然无效，请先切换回来
 use_cache_server = False
 
+
 # 设置fake_useragent是否使用服务器的UA列表
 def set_cache(cache):
     global use_cache_server
@@ -89,6 +89,7 @@ def set_cache(cache):
         use_cache_server = cache
     except:
         use_cache_server = False
+
 
 # 获取视频最高清晰度
 # 传入参数：av号,bv号或ep号
@@ -1080,7 +1081,7 @@ def raw2ass(file_path):
 # 搜索番剧(beta)
 # 目前只支持搜索番剧，输入关键词返回字典，含有md号
 # 最多返回20条
-def search_anime(keyword,strict = True):
+def search_anime(keyword, strict=True):
     return_dict = {}
     ua = str(UserAgent(use_cache_server=use_cache_server).random)
     headers = {"User-Agent": ua}
@@ -1095,7 +1096,7 @@ def search_anime(keyword,strict = True):
         pass
     # 留一个坑，这一段用于确定查询结果页数
     page = re.findall("共\d+条数据", search_info.text)[0]
-    page = str(page).replace("共","")
+    page = str(page).replace("共", "")
     page = int(str(page).replace("条数据", ""))
     page_head = page // 20
     page_tail = page % 20
@@ -1103,7 +1104,7 @@ def search_anime(keyword,strict = True):
         page = page_head + 1
     else:
         page = page_head
-    
+
     soup = BeautifulSoup(search_info.text, "html.parser")
     for x in soup.find_all('script'):
         if str("window.__INITIAL_STATE__=") in str(x.string):
