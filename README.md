@@ -135,6 +135,25 @@ demo中的方法```get_full_info()```有以下传参
 | wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选)， False时则全部爬取 |
 | strict | 严格匹配模式 | True | 传参到search_anime()， 注意事项见search_anime()介绍 |
 
+## bilib 额外选项
+
+在bilib中，你可能需要设置其它参数，故这里有两个方法
+
+### ```set_timeout(set_time)```
+
+设置所有requests.get()的超时时间，默认超时时间为5(秒)
+
+
+### ```set_cache(cache)```
+
+设置fake_useragent是否先爬取服务器的UA列表(True)或者使用本机缓存(False)
+
+使用缓存的前提：缓存被清理后至少使用一次fake_useragent
+
+默认为不更新(False)，如果你是第一次使用fake_useragent，请先设置为True
+
+
+
 ## 😄稳定功能的API
 
 这部分包含了我从2020年5月开始调试的代码，目前爬取100w+用户数据和100多部番剧/电影后仍能稳定工作
