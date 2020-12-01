@@ -9,3 +9,4 @@ __pycache__/bilib.cpython-38.pyc
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/bilib.iml
 go_beta/test.go
+__pycache__/write_database.cpython-38.pyc
