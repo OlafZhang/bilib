@@ -3,14 +3,12 @@ import bilib
 import time
 import opencc
 from media_id_pool import *
-from write_database import *
+
+cc = opencc.OpenCC('t2s')
+db = pymysql.connect("localhost","root","123456","bili",charset='utf8')
 
 def write_into_database(mediaID):
-    cc = opencc.OpenCC('t2s')
-    db = pymysql.connect("localhost","root","123456","bili")
-
     mediaID = mediaID
-
     find_mediaID = db.cursor()
     data_exist = find_mediaID.execute("select * from anime where media_id = " + str(mediaID))
     if data_exist == 0:
@@ -196,3 +194,102 @@ def write_into_database(mediaID):
 
     except Exception:
         db.rollback()
+
+def find_actor(actor_name,fuzzy = False):
+    find = db.cursor()
+    if fuzzy:
+        data_exist = find.execute("select * from actor where `actor` like '%" + str(actor_name) + "%'")
+    else:
+        data_exist = find.execute("select * from actor where `actor` = '" + str(actor_name) + "'")
+    if data_exist == 0:
+        print('没有在数据库查询到名为"' + str(actor_name) + '"的声优。')
+        find.close()
+        if not fuzzy:
+            print("模糊搜索未开启，请尝试模糊搜索")
+        else:
+            pass
+        return
+    else:
+        pass
+    actor_list = list(find.fetchall())
+    find.close()
+    count = len(actor_list)
+    print("查询到" + str(count) + "条结果")
+    print("声优：" + str(actor_name))
+    for item in actor_list:
+        character = str(item[2])
+        anime = str(item[1])
+        print(character + " - 《" + anime + "》")
+    
+
+def find_character(character_name,fuzzy = False):
+    character_name = str(character_name)
+    find = db.cursor()
+    if fuzzy:
+        data_exist = find.execute("select * from actor where `character` like '%" + str(character_name) + "%'")
+    else:
+        data_exist = find.execute("select * from actor where `character` = '" + str(character_name) + "'")
+    if data_exist == 0:
+        print('没有在数据库查询到名为"' + str(character_name) + '"的角色。')
+        find.close()
+        if not fuzzy:
+            print("模糊搜索未开启，请尝试模糊搜索")
+        else:
+            pass
+        return
+    else:
+        pass
+    character_list = list(find.fetchall())
+    find.close()
+    result_list = []
+    count = 0
+    for item in character_list:
+        if str(item[2]) in result_list:
+            pass
+        else:
+            result_list.append(str(item[2]))
+        count += 1
+    print("查询到" + str(count) + "条有关\"" + str(character_name) +"\"的结果")
+    print(" ")
+    find.close()
+    for item in result_list:
+        anime = ""
+        cv = ""
+        count = 0
+        character_name = str(item)
+        find = db.cursor()
+        data = find.execute("select * from actor where `character` = '" + str(character_name) + "'")
+        data_list = list(find.fetchall())
+        for item in data_list:
+            anime += str("《" + item[1] + "》")
+            anime += str("、")
+            count += 1
+        cv = str(data_list[0][3])
+        character = str(data_list[0][2])
+        anime_info = anime[0:len(anime)-1]
+        print("查询到" + str(count) + "条有关\"" + str(character_name) +"\"的结果")
+        print("角色\"" + str(character_name) + "\"出自" + str(anime_info) + "，其声优是 " + str(cv))
+    
+        find = db.cursor()
+        data_exist = find.execute("select * from actor where `actor` = '" + str(cv) + "'")
+        actor_list = list(find.fetchall())
+        find.close()
+        count = len(actor_list) - count
+        if count == 0:
+            print('没有在数据库查询到声优为 ' + str(cv) + ' 的其它角色。')
+            find.close()
+        else:
+            pass
+        print("根据此声优，查询到" + str(count) + "条结果")
+        for item in actor_list:
+            character = str(item[2])
+            anime = str(item[1])
+            if character == character_name:
+                continue
+            elif character_name in character:
+                continue
+            else:
+                print(character + " - 《" + anime + "》")
+        print("           ")
+    return
+            
