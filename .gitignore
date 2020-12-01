@@ -10,3 +10,4 @@ __pycache__/bilib.cpython-38.pyc
 .idea/bilib.iml
 go_beta/test.go
 __pycache__/write_database.cpython-38.pyc
+__pycache__/database.cpython-38.pyc
