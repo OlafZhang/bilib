@@ -8,6 +8,7 @@ import os
 import time
 import bilib
 from media_id_pool import *
+from write_database import *
 
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
@@ -93,12 +94,37 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
             name = name.split(":")
             actor = cc.convert(str(name[1]))
             character = cc.convert(str(name[0]))
-            outprint(character + " --> " + actor)
+            # 针对"POP子和PIPI美的日常"(md11712)做了专项优化(虽然不优化不会报错或排版异常)
+            if str("、") in str(actor):
+                actor = actor.replace(" ","")
+                actor = actor.replace("，", "、")
+                actor_list = actor.split("、")
+                for part_actor in actor_list:
+                    outprint(character + " --> " + part_actor)
+            elif str("/") in str(actor):
+                actor = actor.replace(" ","")
+                actor_list = actor.split("/")
+                for part_actor in actor_list:
+                    outprint(character + " --> " + part_actor)
+            else:
+                outprint(character + " --> " + actor)
         elif str("：") in str(name):
             name = name.split("：")
             actor = cc.convert(str(name[1]))
             character = cc.convert(str(name[0]))
-            outprint(character + " --> " + actor)
+            if str("、") in str(actor):
+                actor = actor.replace(" ", "")
+                actor = actor.replace("，", "、")
+                actor_list = actor.split("、")
+                for part_actor in actor_list:
+                    outprint(character + " --> " + part_actor)
+            elif str("/") in str(actor):
+                actor = actor.replace(" ", "")
+                actor_list = actor.split("/")
+                for part_actor in actor_list:
+                    outprint(character + " --> " + part_actor)
+            else:
+                outprint(character + " --> " + actor)
         else:
             outprint(cc.convert(str(name)))
     outprint("----------工作人员----------")
