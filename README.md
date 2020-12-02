@@ -110,7 +110,8 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 它们都可以获得番剧信息，番剧弹幕收集
 
- ```demo_tamako.py```
+ 📕 ```demo_tamako.py```
+ -----
 
 * 方法：传入md号(不带md)
 
@@ -118,7 +119,8 @@ HTTP 412，服务器已启动反爬机制，请稍后尝试。
 
 * 缺点：不够智能，只能认md号
 
- ```demo_takagi.py```
+ 📙 ```demo_takagi.py```
+ -----
 
 继承自demo_tamako.py，在执行demo_tamako.py的方法前，把番剧名转换为md号，再传入
 
@@ -152,7 +154,8 @@ demo中的方法```get_full_info()```有以下传参
 
 在bilib中，你可能需要设置其它参数，故这里有若干个方法
 
-```set_timeout(set_time)```
+⛏ ```set_timeout(set_time)```
+-----
 
 设置所有requests.get()的超时时间，默认超时时间为5(秒)
 
