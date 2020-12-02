@@ -14,7 +14,9 @@ def write_into_database(mediaID):
     if data_exist == 0:
         pass
     else:
-        print("Data existed.")
+        get_result = str(list(find_mediaID.fetchall())[0][1])
+        print(str(mediaID) + ": Data existed.(" + get_result + ")")
+        find_mediaID.close()
         return
 
     try:
@@ -22,18 +24,23 @@ def write_into_database(mediaID):
         season_id = int(base_info["season_id"])
         episode_info = bilib.anime_episode_info(season_id)
     except:
-        print("No info")
+        print(str(mediaID) + ": No info")
 
     try:
         write_timestamp = str(int(time.time()))
         database_cursor = db.cursor()
+        quality_ID = str(base_info["quality_ID"])
+        if quality_ID.isdigit():
+            pass
+        else:
+            quality_ID = str("0")
         command = str('insert into anime values(%s,"%s","%s","%s","%s","%s","%s","%s","%s",%s,%s,%s,%s,%s,%s,%s,%s,%s,"%s","%s","%s","%s",%s,"%s","%s","%s",%s)' %
                    (str(base_info["media_id"]),str(base_info["title"]),str(base_info["origin_name"]),str(base_info["type"])
                     ,str(base_info["area"]),str(base_info["share_url"]),str(base_info["desc"]),str(base_info["cover_url"])
                     ,str(base_info["episode"]),str(base_info["rating_count"]),str(base_info["score"]),str(base_info["season_id"])
                     ,str(base_info["coins"]),str(base_info["danmakus"]),str(base_info["follow"]),str(base_info["series_follow"])
                     ,str(base_info["views"]),str(base_info["tag_id"]),str(base_info["vip_info"]),str(base_info["aid"])
-                    ,str(base_info["bvid"]),str(base_info["quality"]),str(base_info["quality_ID"]),str(base_info["is_finish"])
+                    ,str(base_info["bvid"]),str(base_info["quality"]),quality_ID,str(base_info["is_finish"])
                     ,str(base_info["is_started"]),str(base_info["showtime"]),str(write_timestamp)))
         database_cursor.execute(command)
         db.commit()
@@ -42,6 +49,12 @@ def write_into_database(mediaID):
 
         alias_list = base_info["alias_list"]
         for alias in alias_list:
+            if str(alias) == str(""):
+                continue
+            elif str(" ") in str(alias):
+                continue
+            else:
+                pass
             database_cursor = db.cursor()
             command = str('insert into alias values(%s,"%s","%s")' % (str(base_info["media_id"]),str(base_info["title"]),str(alias)))
             database_cursor.execute(command)
@@ -54,6 +67,12 @@ def write_into_database(mediaID):
                 name = name.split(":")
                 actor = cc.convert(str(name[1]))
                 character = cc.convert(str(name[0]))
+                actor = actor.replace(" ","")
+                character = character.replace(" ","")
+                if str("篇") in character:
+                    continue
+                else:
+                    pass
                 if str("、") in str(actor):
                     actor = actor.replace(" ", "")
                     actor = actor.replace("，", "、")
@@ -89,6 +108,12 @@ def write_into_database(mediaID):
                 name = name.split("：")
                 actor = cc.convert(str(name[1]))
                 character = cc.convert(str(name[0]))
+                actor = actor.replace(" ","")
+                character = character.replace(" ","")
+                if str("篇") in character:
+                    continue
+                else:
+                    pass
                 if str("、") in str(actor):
                     actor = actor.replace(" ", "")
                     actor = actor.replace("，", "、")
@@ -122,6 +147,7 @@ def write_into_database(mediaID):
             else:
                 database_cursor = db.cursor()
                 character = str(" ")
+                actor = actor.replace(" ","")
                 command = str('insert into actor values(%s,"%s","%s","%s")' % (
                     str(base_info["media_id"]), str(base_info["title"]), str(character), str(actor)))
                 database_cursor.execute(command)
@@ -189,7 +215,7 @@ def write_into_database(mediaID):
             db.commit()
             database_cursor.close()
 
-        print("Done.")
+        print(str(mediaID) + ": Done.(" + str(base_info["title"]) + ")")
         return
 
     except Exception:
@@ -214,12 +240,24 @@ def find_actor(actor_name,fuzzy = False):
     actor_list = list(find.fetchall())
     find.close()
     count = len(actor_list)
-    print("查询到" + str(count) + "条结果")
-    print("声优：" + str(actor_name))
+    print("@查询到" + str(count) + "条结果")
+    print("|- 搜索内容：" + str(actor_name))
+    result_actor = []
     for item in actor_list:
-        character = str(item[2])
-        anime = str(item[1])
-        print(character + " - 《" + anime + "》")
+        if str(item[3]) in result_actor:
+            continue
+        else:
+            result_actor.append(str(item[3]))
+    for lock_actor in result_actor:
+        print("|--- 声优：" + str(lock_actor))
+        for item in actor_list:
+            if str(item[3]) == str(lock_actor):
+                pass
+            else:
+                continue
+            character = str(item[2])
+            anime = str(item[1])
+            print("      |--- " + character + " - 《" + anime + "》")
     
 
 def find_character(character_name,fuzzy = False):
@@ -249,10 +287,13 @@ def find_character(character_name,fuzzy = False):
         else:
             result_list.append(str(item[2]))
         count += 1
-    print("查询到" + str(count) + "条有关\"" + str(character_name) +"\"的结果")
-    print(" ")
+    if fuzzy:
+        print("@ 模糊查询到" + str(count) + "条有关\"" + str(character_name) +"\"的结果")
+    else:
+        pass
     find.close()
     for item in result_list:
+        print("|")
         anime = ""
         cv = ""
         count = 0
@@ -260,36 +301,60 @@ def find_character(character_name,fuzzy = False):
         find = db.cursor()
         data = find.execute("select * from actor where `character` = '" + str(character_name) + "'")
         data_list = list(find.fetchall())
+        data_anime_used = []
         for item in data_list:
+            if str(item[1]) in data_anime_used:
+                continue
+            else:
+                pass
+            data_anime_used.append(str(item[1]))
             anime += str("《" + item[1] + "》")
             anime += str("、")
             count += 1
-        cv = str(data_list[0][3])
-        character = str(data_list[0][2])
-        anime_info = anime[0:len(anime)-1]
-        print("查询到" + str(count) + "条有关\"" + str(character_name) +"\"的结果")
-        print("角色\"" + str(character_name) + "\"出自" + str(anime_info) + "，其声优是 " + str(cv))
-    
-        find = db.cursor()
-        data_exist = find.execute("select * from actor where `actor` = '" + str(cv) + "'")
-        actor_list = list(find.fetchall())
-        find.close()
-        count = len(actor_list) - count
-        if count == 0:
-            print('没有在数据库查询到声优为 ' + str(cv) + ' 的其它角色。')
-            find.close()
-        else:
-            pass
-        print("根据此声优，查询到" + str(count) + "条结果")
-        for item in actor_list:
-            character = str(item[2])
-            anime = str(item[1])
-            if character == character_name:
-                continue
-            elif character_name in character:
+        print("--- 查询到" + str(count) + "条有关\"" + str(character_name) +"\"的结果")
+        cv_list = []
+        for i in range(0,len(data_list)):
+            cv = str(data_list[i][3])
+            if cv in cv_list:
                 continue
             else:
-                print(character + " - 《" + anime + "》")
-        print("           ")
+                cv_list.append(cv)
+            character = str(data_list[i][2])
+            anime_info = anime[0:len(anime)-1]
+            print("  @ 角色\"" + str(character_name) + "\"出自" + str(anime_info) + "，其声优是 " + str(cv))
+    
+            find = db.cursor()
+            data_exist = find.execute("select * from actor where `actor` = '" + str(cv) + "'")
+            actor_list = list(find.fetchall())
+            find.close()
+            count = 0
+            for thing in actor_list:
+                if str(thing[1]) in str(anime_info) and str(thing[2]) == str(character_name):
+                    continue
+                else:
+                    count += 1
+            if count == 0:
+                print('   没有在数据库查询到声优为 ' + str(cv) + ' 的其它角色。')
+                find.close()
+            else:
+                print("  @ 根据此声优，查询到" + str(count) + "条结果")
+                for item in actor_list:
+                    character = str(item[2])
+                    part_anime = str(item[1])
+                    if str(anime) in str(anime_info) and str(character) in str(character_name):
+                        continue
+                    else:
+                        pass
+                    if character == character_name:
+                        continue
+                    elif character_name in character:
+                        continue
+                    else:
+                        print("  |--- " + character + " - 《" + part_anime + "》")
+                print("           ")
     return
-            
+
+write_into_database(28229860)
+write_into_database(28228440)
+find_character("卡塔丽娜",fuzzy=True)
+
