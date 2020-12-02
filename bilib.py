@@ -716,57 +716,6 @@ def user_info(uid_input):
     return return_dict
 
 
-# 获取用户信息 旧版
-# 从作者的爬取项目独立开的API，使用了一个API和一个HTML页，但功能较少，现只做保留，请自行研究
-def user_info_old(uid_input, get_ua=False):
-    uid_input = int(uid_input)
-    ua = str(UserAgent(path=ua_json).random)
-    headers = {"User-Agent": ua}
-    try:
-        name = requests.get("https://space.bilibili.com/" + str(uid_input), headers=headers, timeout=timeout,
-                            cookies=cookies)
-    except requests.exceptions.ReadTimeout:
-        raise Timeout("Timeout.")
-    headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    if name.status_code != 200:
-        if name.status_code == 412:
-            raise RequestRefuse("HTTP 412 error.")
-        else:
-            st_code = name.status_code
-            connect_ok = False
-    else:
-        st_code = name.status_code
-        connect_ok = True
-    try:
-        try:
-            fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,
-                                timeout=timeout)
-        except requests.exceptions.ReadTimeout:
-            raise Timeout("Timeout.")
-        fans = fans.json()
-        following = fans['data']['following']
-        fans = fans['data']['follower']
-    except:
-        raise RequestRefuse("You might be banned now, because we can not get info from API for now.")
-
-    if not connect_ok:
-        name = "'(##BLANK_USER##)'"
-    else:
-        try:
-            name = name.text
-            name = name.split('<title>')
-            name = str(name[1])
-            name = name.split('的个人空间 - 哔哩哔哩 ( ゜- ゜)つロ 乾杯~ Bilibili</title>')  ###主要防止某些神经病用特殊的昵称导致爬取异常
-            name = str(name[0])
-        except:
-            name = "'(##WDNMD_USER##)'"
-    if get_ua:
-        return_dict = {"uid_input": uid_input, "name": name, "fans": fans, "following": following, "st_code": st_code,
-                       "ua": ua}
-    else:
-        return_dict = {"uid_input": uid_input, "name": name, "fans": fans, "following": following, "st_code": st_code}
-    return return_dict
-
 
 # 获取弹幕(自动转换为可读性较高的csv)
 def get_danmaku(cid_input, reset=False):
@@ -1169,7 +1118,7 @@ def search_anime(keyword, strict=True):
     return return_dict
 
 
-# 搜索视频功能，返回一个字典，包含标题，BV号，播放量，up主和发布时间
+# 搜索视频功能，返回包含字典的列表，字典含标题，BV号，播放量，up主和发布时间
 def search_video(keyword):
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
