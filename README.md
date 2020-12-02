@@ -4,7 +4,7 @@
 
 bili + lib = bilib
 
-**注：** 2020.12.2，此代码除错误可能不够妥当，不带后台、tag搜索、下载(不打算写)外，功能已经完善，现可正式使用
+**注：** 2020.12.2，此代码除错误可能不够妥当，不带后台相关、tag搜索、下载(写了，但不放)外，功能已经完善，现可正式使用
 
 ![cover](./back.jpg)
 
@@ -371,7 +371,7 @@ demo中的方法```get_full_info()```有以下传参
 | share_url | 介绍页URL | 并不是播放页URL，此URL含mediaID | https://www.bilibili.com/bangumi/media/md116772 |
 | desc | 简介 | “xxx译制”信息会被删除 | 座落某个小镇的兔子商店街上，有一间日式饼店，住着一位... ... |
 | cover_url | 介绍页封面URL| | http://i0.hdslb.com/bfs/bangumi/67da3dae76e526a925b78b1d8abe21c870333491.jpg |
-| media_id | md号 | | 116772 |
+| media_id | md号 | 每部番剧唯一 | 116772 |
 | ep_id | 剧集编号 | 此ep号为最后一集的 | 234499 |
 | episode | 集数 | 对于一些电影来说则是上映时间（例如“2018-01-18上映”），请注意过滤 | 全12话 |
 | rating_count | 等级编号 | 猜测是总排行榜的RANK | 21343 |
@@ -384,8 +384,8 @@ demo中的方法```get_full_info()```有以下传参
 | views | 总播放量 | | 21325692 |
 | tag_id | 标签ID | bilibili用于向用户推送其它番剧/电影或此番剧/电影的二创 | 278208 |
 | vip_info | 免费/大会员/付费 | 有时不是很准，在修复 | 免费 |
-| aid | av号 | 对于番剧/电影意义不大 | av27045209 |
-| bvid | bv号 | 对于番剧/电影意义不大 | BV1fs41177WY |
+| aid | av号 | **第一集**或**全集**的av号 | av27045209 |
+| bvid | bv号 | **第一集**或**全集**的bv号 | BV1fs41177WY |
 | quality | 最高质量 | 一般表示游客支持的最高质量 | 1080P 高码率 |
 | quality_ID | 最高画质编号 | 用于辅助分析 | 112 |
 | is_finish | 是否完结 |  | 是 |
@@ -397,6 +397,9 @@ demo中的方法```get_full_info()```有以下传参
 | showtime | 开播/上映时间 | | 2013年1月9日 |
 | origin_name | 原名 | 语言为来源地区所使用的默认语言，国漫等大陆作品会返回不支持 | たまこまーけっと |
 
+对于比较早的番剧(测试《玉子市场》)，番剧所有集**都在一个av号下**，对于新出的番剧(测试《公主连结Re:Dive》)，**每集**都有**单独的av号**
+
+如果你要做类似下载等同时需要av号和cid号的场景，请使用```anime_episode_info(season_id)```中的数据
 
  **🎞 质量编号科普：**
  
@@ -443,7 +446,11 @@ demo中的方法```get_full_info()```有以下传参
 | cover_url | 当前集封面URL |  | http://i0.hdslb.com/bfs/bangumi/a2bbb9e95ed53d5ff85a7a2cca7524a9c8455edd.jpg |
 | share_url | 当前集播放页URL | 此URL含epID或seasonID | https://www.bilibili.com/bangumi/play/ep21278 |
 
-    另外说明：目前所有在media_id_pool.py的番剧全部通过测试，已配置反爬取告警。仍然存在潜在bug。
+对于比较早的番剧(测试《玉子市场》)，番剧所有集**都在一个av号下**，对于新出的番剧(测试《公主连结Re:Dive》)，**每集**都有**单独的av号**
+
+如果你要做类似下载等同时需要av号和cid号的场景，请使用```anime_episode_info(season_id)```中的数据
+
+* 另外说明：目前所有在media_id_pool.py的番剧全部通过测试，已配置反爬取告警。仍然存在潜在bug。
 
 
 
@@ -571,7 +578,15 @@ demo中的方法```get_full_info()```有以下传参
 
 感谢[Niconvert](https://github.com/muzuiget/niconvert)
 
-同时也感谢自己Firefox的开发者工具和自己的Python 3.6.8和PyCharm 2019.3.3（认真）
+同时也感谢自己和自己的：
+
+* Python 3.8.6
+
+* PyCharm 2019.3.3
+
+* Visual Studio Code 1.51.1
+
+* Firefox的开发者工具
 
 也感谢B站不把我打死（确信）
 

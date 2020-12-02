@@ -66,8 +66,9 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
     outprint("评分：" + str(base_info["score"]))
     outprint("观看可用性：" + str(base_info["vip_info"]))
     outprint("-----------数据-----------")
-    outprint("AV号：" + str(base_info["aid"]))
-    outprint("BV号：" + str(base_info["bvid"]))
+    # 这里的av号对应第一集！
+    outprint("第一集/全集 AV号：" + str(base_info["aid"]))
+    outprint("第一集/全集 BV号：" + str(base_info["bvid"]))
     outprint("当前用户最高画质：" + str(base_info["quality_ID"]) + "(" + str(base_info["quality"]) + ")")
     outprint("media_id(md)：" + str(base_info["media_id"]))
     outprint("season_id(ss)：" + str(base_info["season_id"]))
