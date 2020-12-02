@@ -14,7 +14,7 @@ import opencc
 class NoResult(Exception):
     pass
 
-def anime2md(keyword, wait=True, strict=True):
+def anime2md(keyword, wait=True, strict=True ,unreachable=False):
     return_list = []
     result = bilib.search_anime(keyword,strict = strict)
     if len(result) == 0:
@@ -37,10 +37,13 @@ def anime2md(keyword, wait=True, strict=True):
         choose_list = []
         # 无法全字匹配，显示所有结果
         for anime, md_id in result.items():
-            if str("僅限") in str(anime):
-                continue
-            else:
+            if unreachable:
                 pass
+            else:
+                if str("僅限") in str(anime):
+                    continue
+                else:
+                    pass
             choose_item = str(str(choose_no) + ": " + str(anime) + "(" + str(md_id) + ")")
             print(choose_item)
             choose_list.append(choose_item)
@@ -54,10 +57,10 @@ def anime2md(keyword, wait=True, strict=True):
             print("Finded " + str(len(choose_list)) + " item(s) with keyword '" + str(keyword) + "', auto choose all.")
             user_choose = str(len(choose_list) + 1)
         if user_choose.isdigit():
-            if int(user_choose) == int(len(choose_list) + 2):
+            if int(user_choose) == int(len(choose_list) + 1):
                 print("Drop all...")
                 return return_list
-            elif int(user_choose) == int(len(choose_list) + 1):
+            elif int(user_choose) == int(len(choose_list)):
                 print("Choose all...")
                 for anime, md_id in result.items():
                     return_list.append(int(str(md_id).replace("md", "")))
@@ -289,7 +292,7 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
 md_list = []
 
 # 在这里输入番剧名称
-md_list = anime2md("洲崎西", wait=True,strict=False)
+md_list = anime2md("高达", wait=True,strict=False,unreachable=True)
 
 if len(md_list) == 0:
     print("No result")

@@ -1085,67 +1085,87 @@ def search_anime(keyword, strict=True):
         raise RequestRefuse("Banning.")
     else:
         pass
-    # 留一个坑，这一段用于确定查询结果页数
-    page = re.findall("共\d+条数据", search_info.text)[0]
-    page = str(page).replace("共", "")
-    page = int(str(page).replace("条数据", ""))
-    page_head = page // 20
-    page_tail = page % 20
-    if page_tail != 0:
-        page = page_head + 1
-    else:
-        page = page_head
+    search_raw = str(search_info.text)
+    page = str(re.findall('numPages\":\\d,\"',search_raw)[0])
+    page = str(page.replace(':',''))
+    page = str(page.replace(',', ''))
+    page = int(page.split('"')[1])
+    result_list_raw = re.findall('ss\\d+/\\?from=search\" title=\".+?\" target=\"_blank\" ',search_raw)
+    title_list = []
+    for id in range(0,len(result_list_raw)):
+        raw = result_list_raw[id]
+        season_id = str(str(raw).split("/")[0])
+        title = str(str(raw).split("title=")[1])
+        title = str(title.split("target=")[0])
+        title = title.replace(" ","")
+        title = str(title.replace('"',''))
+        if title in title_list:
+            continue
+        else:
+            title_list.append(title)
 
-    soup = BeautifulSoup(search_info.text, "html.parser")
-    for x in soup.find_all('script'):
-        if str("window.__INITIAL_STATE__=") in str(x.string):
-            text = str(x.string)
-            # 由于不稳定，将bs4输出注释以方便调试
-            # print(text)
-            break
+        if strict:
+            if bool(re.search(keyword, title, re.IGNORECASE)):
+                pass
+            else:
+                continue
         else:
             pass
-    re_text = text
-    re_text = re_text.replace(r"\u003E", "")
-    re_text = re_text.replace(r"\u003Cem", "")
-    re_text = re_text.replace(r"\u003C", "")
-    re_text = re_text.replace(r"\u002Fem", "")
-    re_text = re_text.replace(r"\u002F", "\\")
-    re_text = re_text.replace(r"\u003E", "")
-    re_text = re_text.replace("\\", "")
-    re_text = re_text.split('"type":"media_bangumi","title"')
-    for string in re_text:
-        try:
-            season_id = re.findall("ss\d+", string)[0]
-            try:
-                # 一次排除无关结果
-                # 爬取eva出现了奇怪的异常
-                stringB = string.split('class="keyword"')[2]
-                stringA = string.split('class="keyword"')[1]
-                stringB = stringB.split(r'","org_title":"')[0]
-                stringA = stringA.replace(':"', '')
-                string = stringA + " " + stringB
-            except:
-                string = string.split(r'","org_title":"')[0]
-                string = string.replace(':"', '')
-                string = string.replace(' class="keyword"', '')
-            # 严格模式二次排除无关结果
-            if strict:
-                if bool(re.search(keyword, string, re.IGNORECASE)):
-                    pass
-                else:
-                    continue
+            # 跳转到播放页，拿到season_id
+        md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
+                                   timeout=timeout, cookies=cookies)
+        md_info = md_info.text
+        media_id = re.findall("md\d+", md_info)[0]
+        return_dict[title] = media_id
+    print("1 / " + str(page))
+    if page == 1:
+        pass
+    else:
+        time.sleep(5)
+        for request_page in range(2, page + 1):
+            search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
+                                       , headers=headers,timeout=timeout, cookies=cookies)
+            if str(search_info.status_code) == str("404"):
+                return return_dict
+            elif str(search_info.status_code) == str("412"):
+                return return_dict
+                raise RequestRefuse("Banning.")
             else:
                 pass
-            # 跳转到播放页，拿到season_id
-            md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
-                                   timeout=timeout, cookies=cookies)
-            md_info = md_info.text
-            media_id = re.findall("md\d+", md_info)[0]
-            anime = string
-            return_dict[anime] = media_id
-        except:
-            continue
+            search_raw = str(search_info.text)
+            result_list_raw = re.findall('ss\\d+/\\?from=search\" title=\".+?\" target=\"_blank\" ', search_raw)
+            title_list = []
+            for id in range(0, len(result_list_raw)):
+                raw = result_list_raw[id]
+                season_id = str(str(raw).split("/")[0])
+                title = str(str(raw).split("title=")[1])
+                title = str(title.split("target=")[0])
+                title = title.replace(" ", "")
+                title = str(title.replace('"', ''))
+                if title in title_list:
+                    continue
+                else:
+                    title_list.append(title)
+
+                if strict:
+                    if bool(re.search(keyword, title, re.IGNORECASE)):
+                        pass
+                    else:
+                        continue
+                else:
+                    pass
+                    # 跳转到播放页，拿到season_id
+                md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
+                                       timeout=timeout, cookies=cookies)
+                md_info = md_info.text
+                media_id = re.findall("md\d+", md_info)[0]
+                return_dict[title] = media_id
+            print(str(request_page) + " / " + str(page))
+            if request_page == page:
+                pass
+            else:
+                time.sleep(5)
+
     return return_dict
 
 
@@ -1185,10 +1205,10 @@ def search_video(keyword):
         write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback}
         return_list.append(write_dict)
     print("1 / " + str(page))
-    time.sleep(5)
     if page == 1:
         pass
     else:
+        time.sleep(5)
         for request_page in range(2,page + 1):
             headers = {"User-Agent": ua}
             search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
