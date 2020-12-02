@@ -9,6 +9,7 @@ import sys
 import time
 import traceback
 import platform
+
 sysstr = platform.system()
 
 # 额外安装的包，如果出错，请检查requirements.txt
@@ -69,16 +70,17 @@ def set_timeout(set_time):
     except:
         timeout = 5
 
+
 if sysstr == "Windows":
     ua_json = os.getcwd() + '\\fake_useragent_0.1.11.json'
 else:
     ua_json = os.getcwd() + '/fake_useragent_0.1.11.json'
 
-
 # 默认没有cookie，应用到所有requests.get()
 # 由于带入cookie有些番剧还是不能得到正确消息，故不做cookie模块
 cookies = ""
 with_cookies = False
+
 
 # 获取视频最高清晰度
 # 传入参数：av号,bv号或ep号
@@ -1145,3 +1147,86 @@ def search_anime(keyword, strict=True):
         except:
             continue
     return return_dict
+
+
+# 搜索视频功能，返回一个字典，包含标题，BV号，播放量，up主和发布时间
+def search_video(keyword):
+    return_list = []
+    ua = str(UserAgent(path=ua_json).random)
+    headers = {"User-Agent": ua}
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword), headers=headers,
+                               timeout=timeout, cookies=cookies)
+    if str(search_info.status_code) == str("404"):
+        return return_list
+    elif str(search_info.status_code) == str("412"):
+        raise RequestRefuse("Banning.")
+    else:
+        pass
+    search_txt = search_info.text
+    page = str(re.findall("numPages\":\\d*?,\"", search_txt)[0])
+    page = page.replace(":", "")
+    page = page.replace(",", "")
+    page = int(page.split('"')[1])
+    if page == 0:
+        raise SeemsNothing("No result.")
+    bv_title_list = re.findall("/BV.*?\\?from=search\" title=\".+?\"", search_txt)
+    time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
+    name_list_raw = re.findall('class="up-name">.*?<', search_txt)
+    playback_list_raw = re.findall(',"play":\d*,"', search_txt)
+    for id in range(0,len(bv_title_list)):
+        raw_text = bv_title_list[id]
+        bv = str(str(raw_text).split("?")[0]).replace("/","")
+        title = str(str(raw_text).split("title=")[1]).replace('"',"")
+        title = title.replace('<em class="keyword">',"")
+        title = str(title.replace('</em>', ""))
+        put_time = str(time_list[id])
+        up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
+        playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
+        write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback}
+        return_list.append(write_dict)
+    print("1 / " + str(page))
+    time.sleep(5)
+    if page == 1:
+        pass
+    else:
+        for request_page in range(2,page + 1):
+            headers = {"User-Agent": ua}
+            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
+                                       headers=headers,timeout=timeout, cookies=cookies)
+            if str(search_info.status_code) == str("404"):
+                return return_list
+            elif str(search_info.status_code) == str("412"):
+                return return_list
+                raise RequestRefuse("Banning." )
+            else:
+                pass
+            search_txt = search_info.text
+            page = str(re.findall("numPages\":\\d*?,\"", search_txt)[0])
+            page = page.replace(":", "")
+            page = page.replace(",", "")
+            page = int(page.split('"')[1])
+            if page == 0:
+                raise SeemsNothing("No result.")
+            bv_title_list = re.findall("/BV.*?\\?from=search\" title=\".+?\"", search_txt)
+            time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
+            name_list_raw = re.findall('class="up-name">.*?<', search_txt)
+            playback_list_raw = re.findall(',"play":\d*,"', search_txt)
+            for id in range(0, len(bv_title_list)):
+                raw_text = bv_title_list[id]
+                bv = str(str(raw_text).split("?")[0]).replace("/", "")
+                title = str(str(raw_text).split("title=")[1]).replace('"', "")
+                title = title.replace('<em class="keyword">', "")
+                title = str(title.replace('</em>', ""))
+                put_time = str(time_list[id])
+                up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
+                playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
+                write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback}
+                return_list.append(write_dict)
+            print(str(request_page) + " / " + str(page))
+            if request_page == page:
+                pass
+            else:
+                time.sleep(5)
+    return return_list
+
+
