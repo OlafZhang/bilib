@@ -1070,8 +1070,8 @@ def search_anime(keyword, strict=True):
     if page == 1:
         pass
     else:
-        time.sleep(5)
         for request_page in range(2, page + 1):
+            time.sleep(5)
             search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
                                        , headers=headers,timeout=timeout, cookies=cookies)
             if str(search_info.status_code) == str("404"):
@@ -1110,11 +1110,6 @@ def search_anime(keyword, strict=True):
                 media_id = re.findall("md\d+", md_info)[0]
                 return_dict[title] = media_id
             print(str(request_page) + " / " + str(page))
-            if request_page == page:
-                pass
-            else:
-                time.sleep(5)
-
     return return_dict
 
 
@@ -1157,8 +1152,8 @@ def search_video(keyword):
     if page == 1:
         pass
     else:
-        time.sleep(5)
         for request_page in range(2,page + 1):
+            time.sleep(5)
             headers = {"User-Agent": ua}
             search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
                                        headers=headers,timeout=timeout, cookies=cookies)
@@ -1192,8 +1187,4 @@ def search_video(keyword):
                 write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback}
                 return_list.append(write_dict)
             print(str(request_page) + " / " + str(page))
-            if request_page == page:
-                pass
-            else:
-                time.sleep(5)
     return return_list
