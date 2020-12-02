@@ -150,6 +150,7 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
             outprint(str(ep_id))
         outprint("集标题：" + str(ep_info["title_long"]))
         outprint("剧集编号(ep)：" + str(ep_info["ep_id"]))
+        outprint("av号：" + str(ep_info["aid"]))
         outprint("弹幕cid：" + str(ep_info["cid"]))
         outprint("封面图片URL：" + str(ep_info["cover_url"]))
         outprint("播放页URL：" + str(ep_info["share_url"]))
