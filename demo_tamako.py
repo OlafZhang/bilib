@@ -8,7 +8,7 @@ import os
 import time
 import bilib
 from media_id_pool import *
-from write_database import *
+from database import *
 
 # pip install opencc-python-reimplemented
 # 用于强制转简体，方便集中管理
