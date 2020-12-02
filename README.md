@@ -540,7 +540,7 @@ demo中的方法```get_full_info()```有以下传参
 
 ### ⛏```search_anime(keyword, strict = True)```
 
-    此API因本人一个视频项目应运而生，基于轻音少女搜索结果开发
+    此API因本人一个视频项目应运而生
     
     由于本人最近学会正则表达式，故稳定性提高，但仍然有可能因为反爬取导致奇怪的bug
 
@@ -565,7 +565,7 @@ demo中的方法```get_full_info()```有以下传参
 
 
 
-### ⛏```search_anime(keyword)```
+### ⛏```search_video(keyword)```
 
     此API为有需要做统计类视频的同学奠定基础
 
