@@ -162,6 +162,7 @@ def get_resolution(id_input, getid=False):
 # 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
 # 而av号和bv号对番剧/电影来说没有意义
 def video_info(id_input):
+    return_dict = {}
     ua = str(UserAgent(path=ua_json).random)
     id_input = str(id_input)
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
@@ -191,12 +192,17 @@ def video_info(id_input):
         raise Timeout("Timeout.")
     play_info = play_info.json()
     try:
+        total_page = int(play_info['data']['videos'])
         aid = play_info['data']['aid']
         bvid = play_info['data']['bvid']
+        type_id = play_info['data']['tid']
+        type_name = play_info['data']['tname']
+        pic_url = play_info['data']['pic']
+        put_time = play_info['data']['pubdate']
+        ctime = play_info['data']['ctime']
         title = play_info['data']['title']
         desc = play_info['data']['desc']
-        owner_name = play_info['data']['owner']["name"]
-        owner_uid = play_info['data']['owner']["mid"]
+        state = play_info['data']['state']
         view = play_info['data']["stat"]['view']
         danmaku = play_info['data']["stat"]['danmaku']
         reply = play_info['data']["stat"]['reply']
@@ -204,7 +210,21 @@ def video_info(id_input):
         coin = play_info['data']["stat"]['coin']
         share = play_info['data']["stat"]['share']
         like = play_info['data']["stat"]['like']
-        cid = play_info['data']["cid"]
+        now_rank = play_info['data']["stat"]['now_rank']
+        # his为历史最高全站排名
+        his_rank = play_info['data']["stat"]['his_rank']
+        # 互动视频才有效，为分数
+        evaluation = play_info['data']["stat"]['evaluation']
+        owner_name = play_info['data']['owner']["name"]
+        owner_uid = play_info['data']['owner']["mid"]
+        owner_face = play_info['data']['owner']["face"]
+
+        return_dict = {"aid": aid, "bvid": bvid, "type_id":type_id,"type_name":type_name,"pic_url":pic_url,"put_time":put_time,
+                        "ctime":ctime, "title": title, "desc": desc,"state":state,"evaluation":evaluation,"owner_name": owner_name,
+                       "owner_uid": owner_uid, "owner_face":owner_face,"view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
+                       "coin": coin, "share": share, "like": like, "now_rank":now_rank,"his_rank":his_rank}
+
+
         headers = {"User-Agent": ua}
         try:
             main_url = str("https://www.bilibili.com/video/" + str(bvid))
@@ -252,11 +272,56 @@ def video_info(id_input):
                 break
             else:
                 pass
+        return_dict[str("quality")] = quality
+        return_dict[str("quality_id")] = quality_id
+        staff_page = 0
+        staff_dict = {}
+        while True:
+            try:
+                uid = play_info['data']["staff"][staff_page]["mid"]
+                work = play_info['data']["staff"][staff_page]["title"]
+                name = play_info['data']["staff"][staff_page]["name"]
+                face_url = play_info['data']["staff"][staff_page]["face"]
+                # vip为2是年度大会员，1为大会员
+                vip_type = play_info['data']["staff"][staff_page]["vip"]["type"]
+                # 是否有小闪电，有为1，没有为0
+                is_famous = play_info['data']["staff"][staff_page]["official"]["role"]
+                famous_name = play_info['data']["staff"][staff_page]["official"]["title"]
+                follower = play_info['data']["staff"][staff_page]["follower"]
+                part_dict = {"uid":uid,"work":work,"name":name,"face_url":face_url,"vip_type":vip_type,"is_famous":is_famous,"famous_name":famous_name,"follower":follower}
+                staff_dict[str(staff_page)] = part_dict
+                staff_page += 1
+            except KeyError:
+                break
+            except IndexError:
+                break
+        return_dict["staff"] = staff_dict
+        page = 0
+        video_dict = {}
+        while page <= total_page:
+            try:
+                cid =  play_info['data']["pages"][page]["cid"]
+                name = play_info['data']["pages"][page]["part"]
+                ep = play_info['data']["pages"][page]["page"]
+                duration = play_info['data']["pages"][page]["duration"]
+                vid = play_info['data']["pages"][page]["vid"]
+                weblink = play_info['data']["pages"][page]["weblink"]
+                width = play_info['data']["pages"][page]["dimension"]["width"]
+                height = play_info['data']["pages"][page]["dimension"]["height"]
+                rotate = play_info['data']["pages"][page]["dimension"]["rotate"]
+                part_dict = {"cid":cid,"name":name,"ep":ep,"duration":duration,"vid":vid,"weblink":weblink,"width":width,"height":height,"rotate":rotate}
+                video_dict[str(page)] = part_dict
+                page += 1
+            except KeyError:
+                if page == 0:
+                    page += 1
+                    continue
+                else:
+                    break
+            except IndexError:
+                break
+        return_dict["video"] = video_dict
 
-        return_dict = {"aid": aid, "bvid": bvid, "cid": cid, "title": title, "desc": desc, "owner_name": owner_name,
-                       "owner_uid": owner_uid, "view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
-                       "coin": coin, "share": share, "like": like, "quality": quality, "quality_id": quality_id}
-        # 返回字典，总共使用1个API和一个HTML页
         return return_dict
     except:
         message = play_info['message']
