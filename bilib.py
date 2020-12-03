@@ -310,7 +310,7 @@ def video_info(id_input):
                 height = play_info['data']["pages"][page]["dimension"]["height"]
                 rotate = play_info['data']["pages"][page]["dimension"]["rotate"]
                 part_dict = {"cid":cid,"name":name,"ep":ep,"duration":duration,"vid":vid,"weblink":weblink,"width":width,"height":height,"rotate":rotate}
-                video_dict[str(page)] = part_dict
+                video_dict[int(page)] = part_dict
                 page += 1
             except KeyError:
                 if page == 0:
