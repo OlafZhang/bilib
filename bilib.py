@@ -222,7 +222,7 @@ def video_info(id_input):
         return_dict = {"aid": aid, "bvid": bvid, "type_id":type_id,"type_name":type_name,"pic_url":pic_url,"put_time":put_time,
                         "ctime":ctime, "title": title, "desc": desc,"state":state,"evaluation":evaluation,"owner_name": owner_name,
                        "owner_uid": owner_uid, "owner_face":owner_face,"view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
-                       "coin": coin, "share": share, "like": like, "now_rank":now_rank,"his_rank":his_rank}
+                       "coin": coin, "share": share, "like": like, "now_rank":now_rank,"his_rank":his_rank,"total_page":total_page}
 
 
         headers = {"User-Agent": ua}
