@@ -81,3 +81,4 @@ niconvert-master/niconvert/libsite/__pycache__/bilibili.cpython-38.pyc
 niconvert-master/niconvert/libsite/__pycache__/filters.cpython-38.pyc
 niconvert-master/niconvert/libsite/__pycache__/producer.cpython-38.pyc
 niconvert-master/niconvert/fndcli/__pycache__/main.cpython-38.pyc
+*.pyc

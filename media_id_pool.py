@@ -18,6 +18,24 @@ jojo_3_ep2 = 28223483
 jojo_4 = 140552
 jojo_5 = 135652
 
+# 斩服少女(大会员)
+kill_la_kill = 419
+
+# 某科学的超电磁炮(大会员)
+railgun_1 = 425
+
+# 未闻花名(大会员)
+ano_hana = 835
+
+# CLANNAD(免费)
+clannad = 1177
+
+# EVA(免费)
+eva = 1635
+
+# 夏目友人帐(大会员)
+natsume = 1660
+
 # Love Live(免费，包含Sunshine)
 ll_1 = 3068
 ll_2 = 3071
@@ -76,6 +94,10 @@ beyond_the_boundary = 3365
 # 另外，与《声之形》一样，剧场版以电影记录在服务器，而非番剧
 violet_evergarden = 8892
 violet_movie = 28226644
+
+# 声之形(大会员)
+# 以电影记录在服务器，而非番剧
+shape_of_voice = 12116
 
 # 中二病也要谈恋爱(大会员)
 chunibyo_1 = 4340

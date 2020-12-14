@@ -62,6 +62,7 @@ def write_into_database(mediaID):
             database_cursor.close()
 
         actor_list = base_info["actor_list"]
+        after_input_user = False
         for name in actor_list:
             if str(":") in str(name):
                 name = name.split(":")
@@ -146,7 +147,9 @@ def write_into_database(mediaID):
                     database_cursor.close()
             else:
                 database_cursor = db.cursor()
-                character = str(" ")
+                actor = cc.convert(str(name))
+                character = str("#未定义角色名#")
+                after_input_user = True
                 actor = actor.replace(" ","")
                 command = str('insert into actor values(%s,"%s","%s","%s")' % (
                     str(base_info["media_id"]), str(base_info["title"]), str(character), str(actor)))
@@ -216,8 +219,9 @@ def write_into_database(mediaID):
             database_cursor.close()
 
         print(str(mediaID) + ": Done.(" + str(base_info["title"]) + ")")
+        if after_input_user:
+            print("Now you should search some character name, some of them in database is NONE.")
         return
-
     except Exception:
         db.rollback()
 
@@ -321,12 +325,22 @@ def find_character(character_name,fuzzy = False):
                 cv_list.append(cv)
             character = str(data_list[i][2])
             anime_info = anime[0:len(anime)-1]
-            print("  @ 角色\"" + str(character_name) + "\"出自" + str(anime_info) + "，其声优是 " + str(cv))
-    
+            print("  @ 角色\"" + str(character_name) + "\"出自" + str(anime_info) + "，其声优是 " + str(cv),end="")
             find = db.cursor()
             data_exist = find.execute("select * from actor where `actor` = '" + str(cv) + "'")
             actor_list = list(find.fetchall())
             find.close()
+            find_full = db.cursor()
+            full = find_full.execute("select * from full_actor where `name` = '" + str(cv) + "'")
+            if int(full) == 0:
+                print("，此声优看起来不在完整声优数据库中。")
+            else:
+                print("，此声优在完整声优数据库中。")
+                finded = list(find_full.fetchall())
+                is_alive = finded[0][4]
+                if int(is_alive) == 0:
+                    print("    。。。且此声优已故，R.I.P.")
+            find_full.close()
             count = 0
             for thing in actor_list:
                 if str(thing[1]) in str(anime_info) and str(thing[2]) == str(character_name):
@@ -354,7 +368,4 @@ def find_character(character_name,fuzzy = False):
                 print("           ")
     return
 
-write_into_database(28229860)
-write_into_database(28228440)
-find_character("卡塔丽娜",fuzzy=True)
-
+find_character("小鸟游",fuzzy=True)

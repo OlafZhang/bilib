@@ -222,4 +222,5 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
 # 在这里输入mediaID
 # get_dan为真时下载弹幕文件
 # tofile为真时导出全部信息到一个txt
-get_full_info(tamako_market, get_dan=False, tofile=False, cleanup=False)
+get_full_info(tamako_market, get_dan=False, tofile=False, cleanup=True)
+
