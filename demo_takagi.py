@@ -221,6 +221,7 @@ def get_full_info(mediaID, get_dan=False, tofile=False, cleanup=True):
             outprint("第" + str(ep_id) + "集")
         else:
             outprint(str(ep_id))
+        outprint("所属大类：" + str(ep_info["type_name"]))
         outprint("集标题：" + str(ep_info["title_long"]))
         outprint("剧集编号(ep)：" + str(ep_info["ep_id"]))
         outprint("av号：" + str(ep_info["aid"]))

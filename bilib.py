@@ -360,6 +360,7 @@ def anime_episode_info(season_id):
             try:
                 # 剧集索引号,不一定是剧集编号
                 index = int(index)
+                type_name = play_info["result"]["main_section"]["title"]
                 aid = play_info["result"]["main_section"]["episodes"][index]["aid"]
                 cid = play_info["result"]["main_section"]["episodes"][index]["cid"]
                 # ep_id，每集独立存在的编号
@@ -370,8 +371,8 @@ def anime_episode_info(season_id):
                 title_no = str(play_info["result"]["main_section"]["episodes"][index]["title"])
                 # 剧集标题
                 title_long = str(play_info["result"]["main_section"]["episodes"][index]["long_title"])
-                dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
-                             "share_url": share_url}
+                dict_list = {"type_name":type_name,"aid": aid, "cid": cid, "ep_id": ep_id,
+                            "title_long": title_long, "cover_url": cover_url,"share_url": share_url}
                 # 根据剧集编号返回词典
                 return_dict[title_no] = dict_list
             except:
@@ -398,6 +399,8 @@ def anime_episode_info(season_id):
             try:
                 # 剧集索引号,不一定是剧集编号
                 index = int(index)
+                type_name = play_info["result"]["section"]["title"]
+                aid = play_info["result"]["section"][0]["episodes"][index]["aid"]
                 aid = play_info["result"]["section"][0]["episodes"][index]["aid"]
                 cid = play_info["result"]["section"][0]["episodes"][index]["cid"]
                 # ep_id，每集独立存在的编号
@@ -408,8 +411,8 @@ def anime_episode_info(season_id):
                 title_no = str(play_info["result"]["section"][0]["episodes"][index]["title"])
                 # 剧集标题
                 title_long = str(play_info["result"]["section"][0]["episodes"][index]["long_title"])
-                dict_list = {"aid": aid, "cid": cid, "ep_id": ep_id, "title_long": title_long, "cover_url": cover_url,
-                             "share_url": share_url}
+                dict_list = {"type_name":type_name,"aid": aid, "cid": cid, "ep_id": ep_id,
+                            "title_long": title_long, "cover_url": cover_url,"share_url": share_url}
                 # 根据剧集编号返回词典
                 return_dict[title_no] = dict_list
             except:
@@ -426,6 +429,30 @@ def anime_episode_info(season_id):
                     print(message)
                     traceback.print_exc()
                     raise InfoError("Something error.")
+    # 尝试遍历番剧下其它内容（如PV，CM，广播剧等）
+    try:
+        # 虽然不至于有8个分集，但以防万一
+        for main_index in range(0,9):
+            episode_list = len(play_info["result"]["section"][main_index]["episodes"])
+            side_title = play_info["result"]["section"][main_index]["title"]
+            for index in range(0, episode_list):
+                # 剧集索引号,不一定是剧集编号
+                index = int(index)
+                aid = play_info["result"]["section"][main_index]["episodes"][index]["aid"]
+                cid = play_info["result"]["section"][main_index]["episodes"][index]["cid"]
+                # ep_id，每集独立存在的编号
+                ep_id = play_info["result"]["section"][main_index]["episodes"][index]["id"]
+                cover_url = play_info["result"]["section"][main_index]["episodes"][index]["cover"]
+                share_url = play_info["result"]["section"][main_index]["episodes"][index]["share_url"]
+                # 在demo中可能会出现错误的描述，但不影响输出
+                title_no = str(play_info["result"]["section"][main_index]["episodes"][index]["title"])
+                title_long = str(play_info["result"]["section"][main_index]["episodes"][index]["long_title"])
+                dict_list = {"type_name":side_title,"aid": aid, "cid": cid, "ep_id": ep_id, 
+                            "title_long": title_long, "cover_url": cover_url,"share_url": share_url}
+                # 根据剧集编号返回词典
+                return_dict[title_no] = dict_list
+    except:
+        pass
 
     # 返回一个含字典的大字典，总共使用了1个API
     return return_dict
@@ -700,9 +727,8 @@ def anime_base_info(media_id):
                        "danmakus": danmakus, "follow": follow, "series_follow": series_follow, "views": views,
                        "tag_id": tag_id, "vip_info": vip_info, "aid": av_no, "bvid": bv_no, "quality": quality,
                        "quality_ID": quality_ID, "is_finish": is_finish, "is_started": is_started,
-                       "actor_list": actor_list,
-                       "staff_list": staff_list, "flag_list": flag_list, "alias_list": alias_list, "showtime": showtime,
-                       "origin_name": origin_name}
+                       "actor_list": actor_list,"staff_list": staff_list, "flag_list": flag_list, 
+                       "alias_list": alias_list, "showtime": showtime, "origin_name": origin_name}
         if return_dict:
             return return_dict
         else:
