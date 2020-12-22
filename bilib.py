@@ -1313,6 +1313,7 @@ def video_comment(aid,page = 1):
         this_dict = {}
         this_floor = i
         ctime = this_floor["ctime"]
+        like = this_floor["like"]
         mid = this_floor["member"]["mid"]
         uname = this_floor["member"]["uname"]
         sex = this_floor["member"]["sex"]
@@ -1328,6 +1329,7 @@ def video_comment(aid,page = 1):
             for item in replies_item:
                 part_dict = {}
                 part_ctime = item["ctime"]
+                part_like = item["like"]
                 part_mid = item["member"]["mid"]
                 part_uname = item["member"]["uname"]
                 part_sex = item["member"]["sex"]
@@ -1335,14 +1337,14 @@ def video_comment(aid,page = 1):
                 part_message = item["content"]["message"]
                 part_up_like = item["up_action"]["like"]
                 part_up_reply = item["up_action"]["reply"]
-                part_dict = {"ctime":part_ctime,"mid":part_mid,"uname":part_uname,"sex":part_sex,
+                part_dict = {"ctime":part_ctime,"like":part_like,"mid":part_mid,"uname":part_uname,"sex":part_sex,
                 "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":up_reply}
                 part_index += 1
                 floor_dict[part_index] = part_dict
             replies_item = floor_dict
         up_like = this_floor["up_action"]["like"]
         up_reply = this_floor["up_action"]["reply"]
-        this_dict = {"ctime":ctime,"mid":mid,"uname":uname,"sex":sex,"sign":sign,"message":message,"replies_item":replies_item,
+        this_dict = {"ctime":ctime,"like":like,"mid":mid,"uname":uname,"sex":sex,"sign":sign,"message":message,"replies_item":replies_item,
                     "up_like":up_like,"up_reply":up_reply,"total_page":total_page}
         return_dict[index] = this_dict
         index += 1
