@@ -1301,6 +1301,8 @@ def video_comment(aid,page = 1):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     result = requests.get("https://api.bilibili.com/x/v2/reply?type=1&oid=" + str(id_input) + "&pn=" + str(page))
     result = result.json()
+
+    # 主评论区域
     this_page_count = result["data"]["page"]["size"]
     total_count = result["data"]["page"]["count"]
     total_page = total_count // 20
@@ -1313,7 +1315,9 @@ def video_comment(aid,page = 1):
         this_dict = {}
         this_floor = i
         ctime = this_floor["ctime"]
+        rpid = this_floor["rpid"]
         like = this_floor["like"]
+        rcount = this_floor["rcount"]
         mid = this_floor["member"]["mid"]
         uname = this_floor["member"]["uname"]
         sex = this_floor["member"]["sex"]
@@ -1329,6 +1333,7 @@ def video_comment(aid,page = 1):
             for item in replies_item:
                 part_dict = {}
                 part_ctime = item["ctime"]
+                part_rpid = item["rpid"]
                 part_like = item["like"]
                 part_mid = item["member"]["mid"]
                 part_uname = item["member"]["uname"]
@@ -1337,15 +1342,110 @@ def video_comment(aid,page = 1):
                 part_message = item["content"]["message"]
                 part_up_like = item["up_action"]["like"]
                 part_up_reply = item["up_action"]["reply"]
-                part_dict = {"ctime":part_ctime,"like":part_like,"mid":part_mid,"uname":part_uname,"sex":part_sex,
-                "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":part_up_reply}
+                part_dict = {"ctime":part_ctime,"rpid":part_rpid,"like":part_like,"mid":part_mid,"uname":part_uname,"sex":part_sex,
+                            "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":part_up_reply}
                 part_index += 1
                 floor_dict[part_index] = part_dict
             replies_item = floor_dict
         up_like = this_floor["up_action"]["like"]
         up_reply = this_floor["up_action"]["reply"]
-        this_dict = {"ctime":ctime,"like":like,"mid":mid,"uname":uname,"sex":sex,"sign":sign,"message":message,"replies_item":replies_item,
-                    "up_like":up_like,"up_reply":up_reply,"total_page":total_page}
+        this_dict = {"ctime":ctime,"like":like,"rpid":rpid,"rcount":rcount,"mid":mid,"uname":uname,"sex":sex,
+                    "sign":sign,"message":message,"replies_item":replies_item,"up_like":up_like,"up_reply":up_reply,
+                    "total_page":total_page}
         return_dict[index] = this_dict
         index += 1
+    try:
+        # 热评区域
+        index = 1
+        for i in result["data"]["hots"]:
+            this_dict = {}
+            this_floor = i
+            ctime = this_floor["ctime"]
+            rpid = this_floor["rpid"]
+            like = this_floor["like"]
+            rcount = this_floor["rcount"]
+            mid = this_floor["member"]["mid"]
+            uname = this_floor["member"]["uname"]
+            sex = this_floor["member"]["sex"]
+            sign = this_floor["member"]["sign"]
+            message = this_floor["content"]["message"]
+            replies_item = this_floor["replies"]
+            total_page = total_page
+            if str(replies_item) == str("None"):
+                pass
+            else:
+                floor_dict = {}
+                part_index = 0
+                for item in replies_item:
+                    part_dict = {}
+                    part_ctime = item["ctime"]
+                    part_rpid = item["rpid"]
+                    part_like = item["like"]
+                    part_mid = item["member"]["mid"]
+                    part_uname = item["member"]["uname"]
+                    part_sex = item["member"]["sex"]
+                    part_sign = item["member"]["sign"]
+                    part_message = item["content"]["message"]
+                    part_up_like = item["up_action"]["like"]
+                    part_up_reply = item["up_action"]["reply"]
+                    part_dict = {"ctime":part_ctime,"rpid":part_rpid,"like":part_like,"mid":part_mid,"uname":part_uname,"sex":part_sex,
+                                "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":part_up_reply}
+                    part_index += 1
+                    floor_dict[part_index] = part_dict
+                replies_item = floor_dict
+            up_like = this_floor["up_action"]["like"]
+            up_reply = this_floor["up_action"]["reply"]
+            this_dict = {"ctime":ctime,"like":like,"rpid":rpid,"rcount":rcount,"mid":mid,"uname":uname,"sex":sex,
+                        "sign":sign,"message":message,"replies_item":replies_item,"up_like":up_like,"up_reply":up_reply,
+                        "total_page":total_page}
+            return_dict[str("HOT") + str(index)] = this_dict
+            index += 1
+    except KeyError:
+        pass
+
+    try:
+        # 置顶区域
+        this_dict = {}
+        this_floor = result["data"]["upper"]["top"]
+        ctime = this_floor["ctime"]
+        rpid = this_floor["rpid"]
+        like = this_floor["like"]
+        rcount = this_floor["rcount"]
+        mid = this_floor["member"]["mid"]
+        uname = this_floor["member"]["uname"]
+        sex = this_floor["member"]["sex"]
+        sign = this_floor["member"]["sign"]
+        message = this_floor["content"]["message"]
+        replies_item = this_floor["replies"]
+        total_page = total_page
+        if str(replies_item) == str("None"):
+            pass
+        else:
+            floor_dict = {}
+            part_index = 0
+            for item in replies_item:
+                part_dict = {}
+                part_ctime = item["ctime"]
+                part_rpid = item["rpid"]
+                part_like = item["like"]
+                part_mid = item["member"]["mid"]
+                part_uname = item["member"]["uname"]
+                part_sex = item["member"]["sex"]
+                part_sign = item["member"]["sign"]
+                part_message = item["content"]["message"]
+                part_up_like = item["up_action"]["like"]
+                part_up_reply = item["up_action"]["reply"]
+                part_dict = {"ctime":part_ctime,"rpid":part_rpid,"like":part_like,"mid":part_mid,"uname":part_uname,"sex":part_sex,
+                                "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":part_up_reply}
+                part_index += 1
+                floor_dict[part_index] = part_dict
+            replies_item = floor_dict
+        up_like = this_floor["up_action"]["like"]
+        up_reply = this_floor["up_action"]["reply"]
+        this_dict = {"ctime":ctime,"like":like,"rpid":rpid,"rcount":rcount,"mid":mid,"uname":uname,"sex":sex,
+                        "sign":sign,"message":message,"replies_item":replies_item,"up_like":up_like,"up_reply":up_reply,
+                        "total_page":total_page}
+        return_dict[str("UPPER")] = this_dict
+    except KeyError:
+        pass
     return return_dict
