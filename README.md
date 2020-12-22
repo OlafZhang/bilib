@@ -21,6 +21,8 @@ bili + lib = bilib
 
 注意，现在已经彻底修复fake_useragent带来的各种问题，请一同下载fake_useragent_0.1.11.json，并与bilib.py放在同一目录
 
+此仓库的fake_useragent_0.1.11.json已完全移除IE相关的UA，不使用可能会造成爬取遇到异常
+
 
 
 ⚠ 声明
