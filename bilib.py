@@ -1338,7 +1338,7 @@ def video_comment(aid,page = 1):
                 part_up_like = item["up_action"]["like"]
                 part_up_reply = item["up_action"]["reply"]
                 part_dict = {"ctime":part_ctime,"like":part_like,"mid":part_mid,"uname":part_uname,"sex":part_sex,
-                "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":up_reply}
+                "sign":part_sign,"message":part_message,"up_like":part_up_like,"up_reply":part_up_reply}
                 part_index += 1
                 floor_dict[part_index] = part_dict
             replies_item = floor_dict
