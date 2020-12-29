@@ -537,6 +537,7 @@ demo中的方法```get_full_info()```有以下传参
 | ctime | *未知参数* | 时间戳 |
 | title | 视频标题 |  |
 | desc | 视频描述 |  |
+| argue_msg | 视频提醒信息 | 例如“视频内含有危险行为，请勿模仿” |
 | state | 状态 | 推测被封杀的视频是另外的数值，正常是0 |
 | evaluation | 评分描述 | 仅互动视频有此参数 |
 | owner_name | up主昵称 |  |
