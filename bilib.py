@@ -215,12 +215,14 @@ def video_info(id_input):
         his_rank = play_info['data']["stat"]['his_rank']
         # 互动视频才有效，为分数
         evaluation = play_info['data']["stat"]['evaluation']
+        # 视频提醒，如视频中含有危险动作，以示警告
+        argue_msg = play_info['data']["stat"]['argue_msg']
         owner_name = play_info['data']['owner']["name"]
         owner_uid = play_info['data']['owner']["mid"]
         owner_face = play_info['data']['owner']["face"]
 
         return_dict = {"aid": aid, "bvid": bvid, "type_id":type_id,"type_name":type_name,"pic_url":pic_url,"put_time":put_time,
-                        "ctime":ctime, "title": title, "desc": desc,"state":state,"evaluation":evaluation,"owner_name": owner_name,
+                        "ctime":ctime, "title": title, "desc": desc,"argue_msg":argue_msg,"state":state,"evaluation":evaluation,"owner_name": owner_name,
                        "owner_uid": owner_uid, "owner_face":owner_face,"view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
                        "coin": coin, "share": share, "like": like, "now_rank":now_rank,"his_rank":his_rank,"total_page":total_page}
 
