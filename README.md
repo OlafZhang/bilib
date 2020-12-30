@@ -6,7 +6,7 @@ bili + lib = bilib
 
 **注：** 2020.12.2，此代码除错误可能不够妥当，不带后台相关、tag搜索、下载(写了，但不放)外，功能已经完善，现可正式使用
 
-[![](http://github.com/OlafZhang/bilib/raw/master/back.jpg)](http://github.com/OlafZhang/bilib/raw/master/back.jpg)
+![image](http://github.com/OlafZhang/bilib/raw/master/images/back.jpg)
 
 
 使用Python3.8.6开发，主要配合以下的模块运行:
