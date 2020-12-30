@@ -62,7 +62,75 @@ bili + lib = bilib
 
 确实字典返回内容很多，但已经做到了最低难度
 
+🧻 JSON（续上）
+===
 
+api.bilibili.com下几乎所有API均返回JSON格式，bilib将JSON重新格式化为字典，这里是一段将bilib某方法返回结果重新JSON格式化的代码：
+
+    import json
+    import bilib
+    input = bilib.anime_base_info(28229676)
+    print(json.dumps(input,ensure_ascii=False,indent=4,separators=(',',':')))
+
+    控制台输出>>>
+    {
+        "title":"总之就是非常可爱",
+        "type":"番剧",
+        "area":"日本",
+        "share_url":"https://www.bilibili.com/bangumi/media/md28229676",
+        "desc":"由崎星空对神秘美少女——司一见钟情。面对星空决死的告白，她的回答是“如果你愿意和我结婚，那我就跟你交往”？！充满了星空与司的爱，可爱&高贵的新婚生活开始了！",
+        "cover_url":"http://i0.hdslb.com/bfs/bangumi/image/3b97bfc609e08417eb391ef975a8648c28c55e04.png",
+        "media_id":28229676,
+        "ep_id":341255,
+        "episode":"全12话",
+        "rating_count":65293,
+        "score":9.5,
+        "season_id":34230,
+        "coins":1273408,
+        "danmakus":1799536,
+        "follow":3999810,
+        "series_follow":3997683,
+        "views":97200286,
+        "tag_id":7011428,
+        "vip_info":"大会员/付费",
+        "aid":"av499874852",
+        "bvid":"BV1pK411N7xH",
+        "quality":"1080P 高码率",
+        "quality_ID":112,
+        "is_finish":"是",
+        "is_started":"是",
+        "actor_list":[
+            "由崎司：鬼头明里",
+            "由崎星空：榎木淳弥",
+            "有栖川要：芹泽优",
+            "有栖川绫：上坂堇",
+            "键之寺千岁：小原好美"
+        ],
+        "staff_list":[
+            "原作：畑健二郎",
+            "导演：博史池畠",
+            "总编剧：兵头一步",
+            "角色设计：佐佐木政胜",
+            "道具设计：岩畑刚一",
+            "色彩设计：歌川律子",
+            "美术监督：涩谷幸弘",
+            "音响监督：本山哲",
+            "音乐：ENDO.",
+            "动画制作：SevenArcs"
+        ],
+        "flag_list":[
+            "日常",
+            "恋爱",
+            "漫画改"
+        ],
+        "alias_list":[
+            ""
+        ],
+        "showtime":"2020年10月3日",
+        "origin_name":"トニカクカワイイ"
+    }
+
+不用过于在意JSON和字典，只需要调用方法返回的字典的key即可
 
 ❌ 异常
 ===
@@ -196,7 +264,7 @@ demo中的方法```get_full_info()```有以下传参
     demo_tamako.py对应《玉子市场》的北白川玉子。在年糕方面研究专注，但有点傻乎乎的。
     所以此demo仅接受md号传参，但稳定性极好。
 
-    demo_takagi.py对应《擅长捉弄的高木同学》的高木同学。虽和玉子都属于人妻型，但高木明显更机灵。
+    demo_takagi.py对应《擅长捉弄的高木同学》的高木同学。虽和玉子都属于类似人妻型，但高木明显更机灵。
     所以此demo可接受番剧名称传参。
 
     demo_yui.py对应《轻音少女》的平泽唯。在自己的演唱会上能说会道，但非常大条和呆。
