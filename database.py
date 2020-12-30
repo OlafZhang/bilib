@@ -340,6 +340,10 @@ def find_character(character_name,fuzzy = False):
                 is_alive = finded[0][4]
                 if int(is_alive) == 0:
                     print("    。。。且此声优已故，R.I.P.")
+                elif int(is_alive) == 2:
+                    print("    。。。且此声优已隐退声优界")
+                else:
+                    pass
             find_full.close()
             count = 0
             for thing in actor_list:
@@ -368,4 +372,48 @@ def find_character(character_name,fuzzy = False):
                 print("           ")
     return
 
-find_character("小鸟游",fuzzy=True)
+def find_anime(title,fuzzy = False):
+    title = str(title)
+    find = db.cursor()
+    if fuzzy:
+        data_exist = find.execute("select * from actor where `title` like '%" + str(title) + "%'")
+    else:
+        data_exist = find.execute("select * from actor where `character` = '" + str(title) + "'")
+    if data_exist == 0:
+        print('没有在数据库查询到名为"' + str(character_name) + '"的番剧/电影。')
+        find.close()
+        if not fuzzy:
+            print("模糊搜索未开启，请尝试模糊搜索")
+        else:
+            pass
+        return
+    else:
+        pass
+    anime_list = list(find.fetchall())
+    anime_result_list = []
+    for i in anime_list:
+        if str(i[1]) in anime_result_list:
+            pass
+        else:
+            anime_result_list.append(str(i[1]))
+    if fuzzy:
+        print("@ 模糊查询到" + str(len(anime_result_list)) + "条有关\"" + str(title) + "\"的结果")
+    else:
+        print("@ 查询到" + str(len(anime_result_list)) + "条有关\"" + str(title) + "\"的结果")
+    for anime_name in anime_result_list:
+        print("--- 《" + str(anime_name) +"》")
+        for item in anime_list:
+            if str(item[1]) == str(anime_name):
+                print(str("     ") +str(item[2])  + " --> " + str(item[3]))
+            else:
+                pass
+        for item in anime_list:
+            if str(item[1]) == str(anime_name):
+                find_character(str(item[2]),fuzzy=False)
+            else:
+                pass
+    find.close()
+
+find_character("由崎司",fuzzy=True)
+
+
