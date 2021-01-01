@@ -380,7 +380,7 @@ def find_anime(title,fuzzy = False):
     else:
         data_exist = find.execute("select * from actor where `character` = '" + str(title) + "'")
     if data_exist == 0:
-        print('没有在数据库查询到名为"' + str(character_name) + '"的番剧/电影。')
+        print('没有在数据库查询到名为"' + str(title) + '"的番剧/电影。')
         find.close()
         if not fuzzy:
             print("模糊搜索未开启，请尝试模糊搜索")
