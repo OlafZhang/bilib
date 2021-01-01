@@ -289,6 +289,8 @@ demo中的方法```get_full_info()```有以下传参
 
 * 返回：弹幕文件的绝对路径，文件为csv，直接使用cid命名，同时打印绝对路径
 
+可能会报错"cid error, check cid."，一般是此视频没有弹幕或cid错误。
+
 
 
 ⛏ ```listall_danmaku(file_path, stamp=False)```
@@ -650,7 +652,7 @@ video中，key为编号，value为详细信息的字典
 
 
 
-⛏ ```search_video(keyword)```
+⛏ ```search_video_all(keyword)```
 -----
 
 此API为有需要做统计类视频的同学奠定基础
@@ -677,7 +679,9 @@ video中，key为编号，value为详细信息的字典
 
 * 报错：没有查到会返回空列表(无论是不是404)，412会抛出异常，并导出未完成的列表
 
+另外还有一个方法```search_video(keyword,page=1)```,可以指定爬取页
 
+相比```search_video_all(keyword)```爬取全部更自由，但不能返回总页数
 
 😫 实验性API
 ===
