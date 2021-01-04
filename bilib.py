@@ -1120,10 +1120,8 @@ def raw2ass(file_path):
 # 搜索媒体(beta)
 # 默认搜索番剧，输入关键词返回字典，含有md号
 # 返回所有能找到的结果
-bangumi = str("bangumi")
-other = str("pgc")
 
-def search_media(keyword, strict=True ,type = bangumi):
+def search_media(keyword, strict=True ,type = "bangumi"):
     return_dict = {}
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
