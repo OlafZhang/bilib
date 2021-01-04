@@ -196,7 +196,7 @@ demo中的方法```get_full_info()```有以下传参
 | :---: | :---: | :---: | :---: |
 | keyword | 关键字 | 无，需要用户传参 | 自动将md号传参到get_full_info() |
 | wait | 等待用户选择 | False | True时遇到多结果要求用户输入(单选/全选/全不选)， False时则全部爬取 |
-| strict | 严格匹配模式 | True | 传参到search_anime()， 注意事项见search_anime()介绍 |
+| strict | 严格匹配模式 | True | 传参到search_media()， 注意事项见search_media()介绍 |
 | unreachable | 包含港澳台结果 | False | 如果显示仅限港澳台播放内容，可能会报错 |
 
 这个仓库有一个demo用于获取视频评论: demo_yui.py
@@ -625,7 +625,7 @@ video中，key为编号，value为详细信息的字典
 
 **另外说明：由于番剧/电影也存在av号/bv号，所有此API对于番剧等可能有效，多p情况可能异常**
 
-⛏ ```search_anime(keyword, strict = True)```
+⛏ ```search_media(keyword, strict = True ,type = bangumi)```
 -----
 
 此API因本人一个视频项目应运而生
@@ -634,11 +634,18 @@ video中，key为编号，value为详细信息的字典
 
 会自动检测页数，爬取一个页后会打印当前进度，并休眠5秒
 
-* 功能：搜索番剧名称，返回md号
+* 功能：搜索番剧/影视名称，返回md号
 
 * 必要的传参：要搜索的番剧名(keyword)
 
-* 选择的传参：严格匹配模式(strict)，默认过滤掉没有关键字的结果(True)
+* 选择的传参：严格匹配模式(strict)，默认过滤掉没有关键字的结果(True)；查询种类(type)，默认为番剧
+
+**查询种类通过改变查询URL中的关键字实现，具体解释如下：**
+
+| 类型名 | 传入到URL的关键字 | 备注 |
+| :---: | :---: | :---: |
+| bangumi | bangumi(番剧) | 对应番剧 |
+| other | pgc(影视) | 对应电影、综艺、电视剧和某些剧场版电影等 |
 
 **⚠ 虽然严格模式可以提高准确性，但不支持别名/原名搜索**
 

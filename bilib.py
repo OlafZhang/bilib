@@ -1117,15 +1117,18 @@ def raw2ass(file_path):
     print("FAIL")
 
 
-# 搜索番剧(beta)
-# 目前只支持搜索番剧，输入关键词返回字典，含有md号
-# 最多返回20条
-def search_anime(keyword, strict=True):
+# 搜索媒体(beta)
+# 默认搜索番剧，输入关键词返回字典，含有md号
+# 返回所有能找到的结果
+bangumi = str("bangumi")
+other = str("pgc")
+
+def search_media(keyword, strict=True ,type = bangumi):
     return_dict = {}
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
     # 搜索，拿到season_id
-    search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword), headers=headers,
+    search_info = requests.get("https://search.bilibili.com/" + str(type) + "?keyword=" + str(keyword), headers=headers,
                                timeout=timeout, cookies=cookies)
     if str(search_info.status_code) == str("404"):
         return return_dict

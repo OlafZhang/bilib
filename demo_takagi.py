@@ -16,7 +16,7 @@ class NoResult(Exception):
 
 def anime2md(keyword, wait=True, strict=True ,unreachable=False):
     return_list = []
-    result = bilib.search_anime(keyword,strict = strict)
+    result = bilib.search_media(keyword,strict = strict)
     if len(result) == 0:
         raise NoResult("No Result")
     elif len(result) == 1:
