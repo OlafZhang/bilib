@@ -173,7 +173,7 @@ api.bilibili.com下几乎所有API均返回JSON格式，bilib将JSON重新格式
  📙 ```demo_takagi.py```
  -----
 
-继承自demo_tamako.py，在执行demo_tamako.py的方法前，把番剧名转换为md号，再传入
+继承自demo_tamako.py，在执行demo_tamako.py的方法前，把番剧/影视作品名转换为md号，再传入
 
 * 方法：传入番剧/影视作品名称(越准确越好)
 
@@ -186,8 +186,8 @@ demo中的方法```get_full_info()```有以下传参
 | 参数名 | 解释 | 默认值 | 备注 |
 | :---: | :---: | :---: | :---: |
 | mediaID | md号 | 无，需要用户传参 | demo_tamako.py为手动传参，demo_takagi.py为自动传参 |
-| get_dan | 获取所有集的弹幕(ass) | False | 格式为"集数 番剧名称 danmaku_file.ass" |
-| tofile | 导出番剧信息到一个txt文件 | False | 格式为"md号_番剧名称.txt" |
+| get_dan | 获取所有集的弹幕(ass) | False | 格式为"集数 番剧/影视作品 danmaku_file.ass" |
+| tofile | 导出番剧/影视作品信息到一个txt文件 | False | 格式为"md号_番剧/影视作品名称.txt" |
 | cleanup | 清理获取弹幕时的xml文件 | True | 仅get_dan为True时有效 |
 
 另外，在```demo_takagi.py```有一个方法```anime2md()```
@@ -223,7 +223,7 @@ demo中的方法```get_full_info()```有以下传参
     所以此demo仅接受md号传参，但稳定性极好。
 
     demo_takagi.py对应《擅长捉弄的高木同学》的高木同学。虽和玉子都属于类似人妻型，但高木明显更机灵。
-    所以此demo可接受番剧名称传参。
+    所以此demo可接受番剧/影视作品名称传参。
 
     demo_yui.py对应《轻音少女》的平泽唯。在演唱会上能说会道，但非常大条和呆。
     所以此demo用于评论API的调试。
