@@ -80,6 +80,13 @@ enphonium_movie_1 = 28223435
 enphonium_movie_2 = 28223447
 enphonium_movie_3 = 28223448
 
+# OVERLORD(免费)
+overlord_1 = 2576
+overlord_2 = 8792
+overlord_3 = 102252
+overlord_movie_1 = 91972
+overlord_movie_2 = 113152
+
 # 工作细胞(大会员)
 work_cell_1 = 102392
 #work_cell_2 = 
@@ -152,7 +159,7 @@ princess_connect = 28228339
 # 分别是06版，09版，小凉宫，剧场版(凉宫春日的消失)，长门有希酱的消失
 suzumiya_2006 = 1056
 suzumiya_2009 = 24120616
-suzumiya_little = 4735
+suzumiya_ova = 4735
 suzumiya_movie = 2809
 nagato_yuki = 1558
 
