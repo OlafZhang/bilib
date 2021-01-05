@@ -771,4 +771,19 @@ video中，key为编号，value为详细信息的字典
 
 也感谢B站不把我打死（确信）
 
+💾 MEMO
+===
 
+目前发现了收藏夹的的API，考虑做
+
+只需要fid和page，不需要Refener，需要cookie
+
+https://api.bilibili.com/x/v3/fav/resource/list?media_id=820144418&pn=2&ps=20&keyword=&order=mtime&type=0&tid=0&platform=web&jsonp=jsonp
+
+专栏等收藏夹：
+
+https://api.bilibili.com/x/article/favorites/list/all?pn=1&ps=16&jsonp=jsonp
+
+需要Refener，需要cookie：
+
+https://api.bilibili.com/x/article/favorites/list/all?pn=1&ps=16&jsonp=jsonp
