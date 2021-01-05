@@ -1446,6 +1446,8 @@ def video_comment(aid,page = 1):
             index += 1
     except KeyError:
         pass
+    except TypeError:
+        pass
 
     try:
         # 置顶区域
@@ -1491,5 +1493,7 @@ def video_comment(aid,page = 1):
                         "total_page":total_page}
         return_dict[str("UPPER")] = this_dict
     except KeyError:
+        pass
+    except TypeError:
         pass
     return return_dict
