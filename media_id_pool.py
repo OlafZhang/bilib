@@ -11,6 +11,9 @@ kon_movie = 28220988
 tamako_market = 116772
 tamako_love_story = 4155
 
+# 埃罗芒阿老师(免费)
+ero_sense = 5997
+
 # JOJO的奇妙冒险(大会员)
 jojo_1_2 = 28223479
 jojo_3_ep1 = 28223481
