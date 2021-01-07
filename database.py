@@ -2,6 +2,7 @@ import pymysql
 import bilib
 import time
 import opencc
+import log
 from media_id_pool import *
 
 cc = opencc.OpenCC('t2s')
@@ -15,7 +16,8 @@ def write_into_database(mediaID):
         pass
     else:
         get_result = str(list(find_mediaID.fetchall())[0][1])
-        print(str(mediaID) + ": Data existed.(" + get_result + ")")
+        info = str("阻止用户写入数据库，原因：已存在此数据。其md号为" + str(mediaID) + "，名称为\"" + str(get_result + "\""))
+        log.log_write(message=info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=2,service="database.py")
         find_mediaID.close()
         return
 
@@ -24,7 +26,8 @@ def write_into_database(mediaID):
         season_id = int(base_info["season_id"])
         episode_info = bilib.anime_episode_info(season_id)
     except:
-        print(str(mediaID) + ": No info")
+        error = str("爬取遇到错误，问题发生在： " + str(mediaID))
+        log.log_write(message=error,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=3,service="database.py")
 
     try:
         write_timestamp = str(int(time.time()))
@@ -34,12 +37,16 @@ def write_into_database(mediaID):
             pass
         else:
             quality_ID = str("0")
+        if str(base_info["tag_id"]) == str("不支持"):
+            tag_id = 0
+        else:
+            tag_id = str(base_info["tag_id"])
         command = str('insert into anime values(%s,"%s","%s","%s","%s","%s","%s","%s","%s",%s,%s,%s,%s,%s,%s,%s,%s,%s,"%s","%s","%s","%s",%s,"%s","%s","%s",%s)' %
                    (str(base_info["media_id"]),str(base_info["title"]),str(base_info["origin_name"]),str(base_info["type"])
                     ,str(base_info["area"]),str(base_info["share_url"]),str(base_info["desc"]),str(base_info["cover_url"])
                     ,str(base_info["episode"]),str(base_info["rating_count"]),str(base_info["score"]),str(base_info["season_id"])
                     ,str(base_info["coins"]),str(base_info["danmakus"]),str(base_info["follow"]),str(base_info["series_follow"])
-                    ,str(base_info["views"]),str(base_info["tag_id"]),str(base_info["vip_info"]),str(base_info["aid"])
+                    ,str(base_info["views"]),tag_id,str(base_info["vip_info"]),str(base_info["aid"])
                     ,str(base_info["bvid"]),str(base_info["quality"]),quality_ID,str(base_info["is_finish"])
                     ,str(base_info["is_started"]),str(base_info["showtime"]),str(write_timestamp)))
         database_cursor.execute(command)
@@ -218,12 +225,16 @@ def write_into_database(mediaID):
             db.commit()
             database_cursor.close()
 
-        print(str(mediaID) + ": Done.(" + str(base_info["title"]) + ")")
+        info = str("完成数据库写入，其md号为" + str(mediaID) + "，名称为\"" + str(base_info["title"] + "\""))
+        log.log_write(message=info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=1,service="database.py")
         if after_input_user:
-            print("Now you should search some character name, some of them in database is NONE.")
+            info = str("发现不完整的CV数据，问题发生在： " + str(base_info["title"]))
+            log.log_write(message=info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=2,service="database.py")
         return
     except Exception:
         db.rollback()
+    #except KeyboardInterrupt:
+        #pass
 
 def find_actor(actor_name,fuzzy = False):
     find = db.cursor()
@@ -414,5 +425,5 @@ def find_anime(title,fuzzy = False):
                 pass
     find.close()
 
-find_character("由崎司",fuzzy=True)
+#find_character("由崎司",fuzzy=True)
 
