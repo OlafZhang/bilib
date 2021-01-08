@@ -814,7 +814,63 @@ def user_info(uid_input):
     # 返回字典，总共使用两个API
     return return_dict
 
+# xml格式弹幕转换为csv
+# 未测试特殊弹幕，上一版本为借鉴版，代码太长
+def xml2csv(path):
+    path = os.path.abspath(path)
+    xml_file = open(path,"r",encoding="utf-8")
+    final = str(path).replace(".xml",".csv")
+    file_final = open(final, 'w', encoding='utf-16')
+    xml_line = ""
+    for line in xml_file.readlines():
+        xml_line += str(line)
+    xml_file.close()
+    result = re.findall("<d.+?</d>",xml_line)
+    for text in result:
+        text = str(text)
+        # 不会真有憨憨发下面的符号吧...
+        text = text.replace("<d p=\"","")
+        text = text.replace("</d>","")
+        text = text.replace("\">",",")
+        file_final.write(text)
+        file_final.write("\n")
+    file_final.close()
+    print(final)
+    return final
 
+# 获取弹幕(原始信息，即xml)
+# 另外，为配合转换工具，设置了UTF-8编码而非UTF-16
+# 如果需要数据分析，请直接使用get_danmaku()
+def get_danmaku_raw(cid_input, reset=False):
+    try:
+        file_name = str(str(cid_input) + '.xml')
+        if str(cid_input).isdigit():
+            pass
+        else:
+            raise InfoError('You should input cid ONLY.')
+
+        if os.path.exists(file_name):
+            if reset:
+                pass
+            else:
+                return os.path.abspath(file_name)
+        else:
+            pass
+
+        url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
+        try:
+            rr = requests.get(url=url, timeout=timeout, cookies=cookies)
+        except requests.exceptions.ReadTimeout:
+            raise Timeout("Timeout.")
+        rr.encoding = 'uft-8'
+        xml = open(file_name, "w", encoding="utf-8")
+        xml.write(rr.text)
+        xml.close()
+        print(os.path.abspath(file_name))
+        return os.path.abspath(file_name)
+
+    except Exception as e:
+        print(e)
 
 # 获取弹幕(自动转换为可读性较高的csv)
 def get_danmaku(cid_input, reset=False):
@@ -834,90 +890,9 @@ def get_danmaku(cid_input, reset=False):
         else:
             pass
 
-        bvIndex = url.find('BV')
-        id = url[bvIndex:]
-        try:
-            rr = requests.get(url=url, timeout=timeout, cookies=cookies)
-        except requests.exceptions.ReadTimeout:
-            raise Timeout("Timeout.")
-        rr.encoding = 'uft-16'
-        soup = BeautifulSoup(rr.text, 'lxml')
-        danmu_info = soup.find_all('d')
-        all_info = []
-        all_text = []
-
-        for i in danmu_info:
-            all_info.append(i['p'])
-            all_text.append(i)
-        f = open('danmu_info.csv', 'w', encoding='utf-16')
-        csv_writer = csv.writer(f)
-
-        for i in all_info:
-            i = str(i).split(',')
-            csv_writer.writerow(i)
-        f.close()
-
-        f = open('danmu_text.csv', 'w', encoding='utf-16')
-        csv_writer = csv.writer(f)
-
-        for i in all_text:
-            csv_writer.writerow(i)
-        f.close()
-
-        file1 = open('danmu_text.csv', 'r', encoding='utf-16')
-        file2 = open('danmu_text_output.csv', 'w', encoding='utf-16')
-
-        for line in file1.readlines():
-            if line == '\n':
-                line = line.strip("\n")
-            file2.write(line)
-        file1.close()
-        file2.close()
-
-        file1 = open('danmu_info.csv', 'r', encoding='utf-16')
-        file2 = open('danmu_info_output.csv', 'w', encoding='utf-16')
-        for line in file1.readlines():
-            if line == '\n':
-                line = line.strip("\n")
-            file2.write(line)
-        file1.close()
-        file2.close()
-
-        danmaku_list = []
-        file1 = open('danmu_text_output.csv', 'r', encoding='utf-16')
-        file2 = open('danmu_info_output.csv', 'r', encoding='utf-16')
-        file_final = open(file_name, 'w', encoding='utf-16')
-
-        for line in file1.readlines():
-            danmaku = str(line)[0:int(len(line)) - 1]
-            danmaku_list.append(str(danmaku))
-
-        count = 0
-
-        for line in file2.readlines():
-            info = str(line)[0:int(len(line)) - 1]
-            final_text = str(info + "," + danmaku_list[count] + "\n")
-            file_final.write(final_text)
-            count += 1
-
-        file1.close()
-        file2.close()
-        file_final.close()
-
-        os.remove("danmu_info.csv")
-        os.remove("danmu_text.csv")
-        os.remove("danmu_info_output.csv")
-        os.remove("danmu_text_output.csv")
-
-        if int(os.path.getsize(file_name)) == 0:
-            os.remove(file_name)
-            raise InfoError('cid error, check cid.')
-        else:
-            if os.path.exists(file_name):
-                print(os.path.abspath(file_name))
-                return os.path.abspath(file_name)
-            else:
-                raise danmakuError('danmaku file was deleted or error.')
+        xml_file = str(get_danmaku_raw(cid_input=cid_input,reset=reset))
+        xml2csv(xml_file)
+        return 
 
     except Exception as e:
         print(e)
@@ -1058,41 +1033,6 @@ def count_danmaku(file_path):
     file_path = open(str(file_path), 'r', encoding='utf-16')
     return len(file_path.readlines())
 
-
-# 获取弹幕(原始信息，即xml)
-# 由于此API设计初衷是配合ass转换工具的，所以没有单独做xml转csv的API
-# 另外，为配合转换工具，设置了UTF-8编码而非UTF-16
-# 如果需要数据分析，请直接使用get_danmaku()
-def get_danmaku_raw(cid_input, reset=False):
-    try:
-        file_name = str(str(cid_input) + '.xml')
-        if str(cid_input).isdigit():
-            pass
-        else:
-            raise InfoError('You should input cid ONLY.')
-
-        if os.path.exists(file_name):
-            if reset:
-                pass
-            else:
-                return os.path.abspath(file_name)
-        else:
-            pass
-
-        url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
-        try:
-            rr = requests.get(url=url, timeout=timeout, cookies=cookies)
-        except requests.exceptions.ReadTimeout:
-            raise Timeout("Timeout.")
-        rr.encoding = 'uft-8'
-        xml = open(file_name, "w", encoding="utf-8")
-        xml.write(rr.text)
-        xml.close()
-        print(os.path.abspath(file_name))
-        return os.path.abspath(file_name)
-
-    except Exception as e:
-        print(e)
 
 
 # 弹幕文件(xml)转字幕文件(ass)
