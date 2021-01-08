@@ -345,6 +345,8 @@ def find_character(character_name,fuzzy = False):
             full = find_full.execute("select * from full_actor where `name` = '" + str(cv) + "'")
             if int(full) == 0:
                 print("，此声优看起来不在完整声优数据库中。")
+                info = str("\"" + str(cv) + "\"看上去不在完整声优数据库中，问题发生在：" + str(character_name) + " - " + str(anime_info))
+                log.log_write(message=info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=2,service="database.py",outprint=False)
             else:
                 print("，此声优在完整声优数据库中。")
                 finded = list(find_full.fetchall())
@@ -426,4 +428,3 @@ def find_anime(title,fuzzy = False):
     find.close()
 
 #find_character("由崎司",fuzzy=True)
-
