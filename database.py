@@ -16,7 +16,7 @@ def write_into_database(mediaID):
         pass
     else:
         get_result = str(list(find_mediaID.fetchall())[0][1])
-        info = str("阻止用户写入数据库，原因：已存在此数据。其md号为" + str(mediaID) + "，名称为\"" + str(get_result + "\""))
+        info = str("已阻止用户写入已存在的数据，问题发生在：md" + str(mediaID) + "(" + str(get_result) + ")")
         log.log_write(message=info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=2,service="database.py")
         find_mediaID.close()
         return
@@ -428,3 +428,4 @@ def find_anime(title,fuzzy = False):
     find.close()
 
 #find_character("由崎司",fuzzy=True)
+

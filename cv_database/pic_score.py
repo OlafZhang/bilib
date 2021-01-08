@@ -10,11 +10,13 @@ all_list = list(find.fetchall())
 find.close()
 anime_list = []
 score_list = []
+
 for i in all_list:
     anime = str(i[0])
     score = float(i[1])
     anime_list.append(anime)
     score_list.append(score)
+
 
 
 bar = Bar()
