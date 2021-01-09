@@ -391,7 +391,7 @@ def find_anime(title,fuzzy = False):
     if fuzzy:
         data_exist = find.execute("select * from actor where `title` like '%" + str(title) + "%'")
     else:
-        data_exist = find.execute("select * from actor where `character` = '" + str(title) + "'")
+        data_exist = find.execute("select * from actor where `title` = '" + str(title) + "'")
     if data_exist == 0:
         print('没有在数据库查询到名为"' + str(title) + '"的番剧/电影。')
         find.close()
