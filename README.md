@@ -8,9 +8,9 @@ bili + lib = bilib
 
 ![image](https://github.com/OlafZhang/bilib/blob/main/images/back.jpg)
 
-![](https://img.shields.io/badge/language-python3.8.6-bule.svg?style=flat-square)
-![](https://img.shields.io/badge/license-Apache%20License%202.0-red.svg?style=flat-square)
-![](https://img.shields.io/badge/state-available-blue.svg?style=flat-square)
+![](https://github.com/OlafZhang/bilib/blob/main/images/python.svg)
+![](https://github.com/OlafZhang/bilib/blob/main/images/license.svg)
+![](https://github.com/OlafZhang/bilib/blob/main/images/state.svg)
 
 主要配合以下的模块运行:
 
