@@ -8,8 +8,11 @@ bili + lib = bilib
 
 ![image](https://github.com/OlafZhang/bilib/blob/main/images/back.jpg)
 
+![](https://img.shields.io/badge/language-python3.8.6-bule.svg?style=flat-square)
+![](https://img.shields.io/badge/license-Apache%20License%202.0-red.svg?style=flat-square)
+![](https://img.shields.io/badge/state-available-blue.svg?style=flat-square)
 
-使用Python3.8.6开发，主要配合以下的模块运行:
+主要配合以下的模块运行:
 
 | 模块 | 备注 |
 | :---: | :---: |
