@@ -6,11 +6,11 @@ bili + lib = bilib
 
 **注：** 2020.12.2，此代码除错误可能不够妥当，不带后台相关、tag搜索、下载(写了，但不放)外，功能已经完善，现可正式使用
 
-![image](https://github.com/OlafZhang/bilib/blob/main/images/back.jpg)
+![image](https://raw.githubusercontent.com/OlafZhang/bilib/master/images/back.jpg)
 
-![](https://github.com/OlafZhang/bilib/blob/main/images/python.svg)
-![](https://github.com/OlafZhang/bilib/blob/main/images/license.svg)
-![](https://github.com/OlafZhang/bilib/blob/main/images/state.svg)
+![](https://raw.githubusercontent.com/OlafZhang/bilib/master/images/python.svg)
+![](https://raw.githubusercontent.com/OlafZhang/bilib/master/images/license.svg)
+![](https://raw.githubusercontent.com/OlafZhang/bilib/master/images/state.svg)
 
 主要配合以下的模块运行:
 
