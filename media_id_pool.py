@@ -92,8 +92,8 @@ overlord_movie_2 = 113152
 
 # 工作细胞(大会员)
 work_cell_1 = 102392
-#work_cell_2 = 
-#work_cell_black = 
+work_cell_2 = 28231816
+work_cell_black = 28231819
 
 # 鬼灭之刃(大会员)
 kimetsu_no_yaiba = 22718131
