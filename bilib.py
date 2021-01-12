@@ -1271,7 +1271,7 @@ def search_video(keyword,page=1):
     return return_list
 
 
-def video_comment(aid,page = 1):
+def video_comment(aid,page = 1,video = True):
     return_dict = {}
     ua_json = os.getcwd() + '\\fake_useragent_0.1.11.json'
     ua = str(UserAgent(path=ua_json).random)
@@ -1283,7 +1283,12 @@ def video_comment(aid,page = 1):
     else:
         raise InfoError("You should input av.")
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
-    result = requests.get("https://api.bilibili.com/x/v2/reply?type=1&oid=" + str(id_input) + "&pn=" + str(page))
+    #这里type=1时为视频，12为专栏
+    if video:
+        type_no = str("1")
+    else:
+        type_no = str("12")
+    result = requests.get("https://api.bilibili.com/x/v2/reply?type=" + type_no + "&oid=" + str(id_input) + "&pn=" + str(page))
     result = result.json()
 
     # 主评论区域

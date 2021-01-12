@@ -1,7 +1,7 @@
 import bilib
 import time
-def show_comment(aid,page = 1):
-    info = bilib.video_comment(aid = aid,page=page)
+def show_comment(aid,page = 1,video = True):
+    info = bilib.video_comment(aid = aid,page=page,video=video)
     for key,value in info.items():
         total_page = value["total_page"]
         print("第" + str(page) + "页/共" + str(total_page) + "页")
