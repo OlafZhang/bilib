@@ -151,6 +151,7 @@ SESSDATA可在浏览器开发人员工具找到，有效时间为1个月
 所有方法要想使用Cookie，必须先做Cookie初始化：
 
     import bilib
+    bilib.with_cookie = True               //打开全局Cookie传入开关
     bilib.cookies = str("rq27tr0fa")       //设置SESSDATA
 
 ❌ 异常
