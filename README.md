@@ -145,7 +145,10 @@ SESSDATA可在浏览器开发人员工具找到，有效时间为1个月
 
 只有以下方法必须使用cookie，否则将无法使用(或非完全使用)此方法：
 
-    def list_follower(uid,page=1)
+    list_follower(uid,page=1,step=20)
+    如果不使用cookie，5页之后不能获取
+
+    list_following(uid,page=1,step=20)
     如果不使用cookie，5页之后不能获取
 
 所有方法要想使用Cookie，必须先做Cookie初始化：
@@ -792,16 +795,16 @@ video中，key为编号，value为详细信息的字典
 
 唯一不足是可能不支持特殊弹幕
 
-⛏ ```list_follower(uid,page=1,step=15)```
+⛏ ```list_follower(uid,page=1,step=20)```
 -----
 
 **最多返回1000个用户**
 
 * 功能：列出某个用户全部粉丝列表
 
-* 必要的传参：用户uid(uid)
+* 必要的传参：用户的UID（uid）
 
-* 选择的传参：指定页码(page)，默认为1;返回步长(step)，默认单次返回20条结果，最大单次返回50条
+* 选择的传参：指定页码(page)，默认为1；单次返回数量(step)，默认单次返回20条结果，最大单次返回50条
 
 * 返回：字典，key为编号(0开始)，元素为字典，参数如下：
 
@@ -813,16 +816,16 @@ video中，key为编号，value为详细信息的字典
 
 必须带Cookie，否则只能返回5*20条结果
 
-⛏ ```list_following(uid,page=1,step=15)```
+⛏ ```list_following(uid,page=1,step=20)```
 -----
 
 **最多返回1000个用户**
 
 * 功能：列出某个用户全部关注列表
 
-* 必要的传参：用户uid(uid)
+* 必要的传参：用户的UID（uid）
 
-* 选择的传参：指定页码(page)，默认为1;返回步长(step)，默认单次返回20条结果，最大单次返回50条
+* 选择的传参：指定页码(page)，默认为1；单次返回数量(step)，默认单次返回20条结果，最大单次返回50条
 
 * 返回：字典，key为编号(0开始)，元素为字典，参数如下：
 
