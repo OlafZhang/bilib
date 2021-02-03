@@ -11,6 +11,11 @@ kon_movie = 28220988
 tamako_market = 116772
 tamako_love_story = 4155
 
+# 黄金拼图(免费)
+kiniro_mosaic_1 = 443
+kiniro_mosaic_2 = 3491
+kiniro_mosaic_movie = 8692
+
 # 埃罗芒阿老师(免费)
 ero_sense = 5997
 
