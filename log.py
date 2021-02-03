@@ -9,12 +9,16 @@ def log_write(message,path,level,service,outprint=True):
     elif level == 1:
         level = str("INFO")
     elif level == 2:
-        level = str("WARNING")
+        level = str("REMIND")
     elif level == 3:
-        level = str("ERROR")
+        level = str("WARNING")
     elif level == 4:
         level = str("CRITICAL")
     elif level == 5:
+        level = str("ERROR")
+    elif level == 6:
+        level = str("CRISIS")
+    elif level == 7:
         level = str("CRASH")
     else:
         level = str("NOTYPE")
