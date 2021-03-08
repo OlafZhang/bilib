@@ -855,9 +855,17 @@ def user_info(uid_input):
     fans = fans.json()
     following = fans['data']['following']
     fans = fans['data']['follower']
+    # 入站时间(必须带Cookie)
+    if with_cookie:
+        calendar = requests.get("https://member.bilibili.com/x2/creative/h5/calendar/event?ts=0", headers=headers,
+                                timeout=timeout, cookies="SESSDATA=" + str(cookies))
+        calendar = calendar.json()
+        in_time = calendar["data"]["pfs"]["jointime"]
     return_dict = {"name": name, "uid": uid, "fans": fans, "following": following, "sex": sex, "level": level,
                    "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type}
-    # 返回字典，总共使用两个API
+    if with_cookie:
+        return_dict += {"in_time": in_time}
+    # 返回字典
     return return_dict
 
 # xml格式弹幕转换为csv
