@@ -22,6 +22,10 @@ horimiya = 28231840
 # 咒术回战[连载中]
 jujutsu_kaisen = 28229899
 
+#动物狂想曲(大会员)[第二季连载中]
+beastars_1 = 28222618
+beastars_2 = 28231773
+
 # 甜梦猫[连载中]
 mewkledreamy = 28228433
 
@@ -64,6 +68,9 @@ ano_hana = 835
 # CLANNAD(免费)
 clannad_1 = 1177
 clannad_2 = 1178
+
+# Anne Happy(免费)
+anne_happy = 3498
 
 # EVA(免费)
 # 本人非eva厨且不熟悉，所以不放剧场版
