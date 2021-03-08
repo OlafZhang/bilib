@@ -16,6 +16,15 @@ kiniro_mosaic_1 = 443
 kiniro_mosaic_2 = 3491
 kiniro_mosaic_movie = 8692
 
+# 堀与宫村(2021版，非2012版)[连载中]
+horimiya = 28231840
+
+# 咒术回战[连载中]
+jujutsu_kaisen = 28229899
+
+# 甜梦猫[连载中]
+mewkledreamy = 28228433
+
 # 埃罗芒阿老师(免费)
 ero_sense = 5997
 
