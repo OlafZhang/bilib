@@ -195,3 +195,6 @@ tom_and_jerry = 132112
 
 # 环太平洋(大会员)
 pacific_rim = 28227720
+
+# 铠甲勇士(免费)
+armor_hero = 28220966
