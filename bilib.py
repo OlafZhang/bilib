@@ -837,11 +837,11 @@ def user_info(uid_input):
         pass
     # 防止愚人节的临时改动造成lib和用户代码异常
     elif vip_type == str("小会员"):
-        vip_type == str("大会员")
+        vip_type = str("大会员")
     elif vip_type == str("年度小会员"):
-        vip_type == str("年度大会员")
+        vip_type = str("年度大会员")
     else:
-        vip_type == str("None")
+        vip_type = str("None")
     try:
         # 获取关注/粉丝量
         if with_cookie:
