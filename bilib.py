@@ -1573,7 +1573,7 @@ def list_following(uid,page=1,step=20):
                 , "User-Agent": ua
                 , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"
                 , "Cookie":"SESSDATA="+str(cookies)}
-    result = requests.get("https://api.bilibili.com/x/relation/followings?vmid=" + str(uid) + "&pn=" + str(page) + "&ps=" + str(step) + "&order=desc&order_type=attention&jsonp=jsonp",headers=headers, timeout=timeout)
+    result = requests.get("https://api.bilibili.com/x/relation/followings?vmid=" + str(uid) + "&pn=" + str(page) + "&ps=" + str(step) + "&order=desc&jsonp=jsonp",headers=headers, timeout=timeout)
     result = result.json()
     if str(result["message"]) == str("限制只访问前5页"):
         raise InfoError("Max limit pages(5)")
