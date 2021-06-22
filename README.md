@@ -857,6 +857,8 @@ video中，key为编号，value为详细信息的字典
 💾 MEMO
 ===
 
+**最优先做：弹幕同屏数量热度图**
+
 目前发现了收藏夹的的API，考虑做
 
 只需要fid和page，不需要Refener，需要cookie
