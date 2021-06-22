@@ -6,7 +6,7 @@ import log
 from media_id_pool import *
 
 cc = opencc.OpenCC('t2s')
-db = pymysql.connect("localhost","root","123456","bili",charset='utf8')
+db = pymysql.connect(host = "localhost",user = "root",password = "123456",database = "bili",charset='utf8')
 
 def write_into_database(mediaID):
     mediaID = mediaID
@@ -427,5 +427,5 @@ def find_anime(title,fuzzy = False):
                 pass
     find.close()
 
-#find_character("由崎司",fuzzy=True)
+find_character("由崎司",fuzzy=True)
 

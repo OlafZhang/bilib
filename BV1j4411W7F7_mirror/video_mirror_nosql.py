@@ -1,6 +1,5 @@
 import bilib
 import time
-import pymysql
 import requests
 from log import log_write
 
@@ -64,29 +63,17 @@ def time_match(mode=5):
 # 影流之主：BV1Qt411T7VS
 
 bvid = str("BV1j4411W7F7")
-log_path = str("C:\\Users\\10245\\OneDrive\\Python\\bilib\\" + str(bvid) + "_mirror.txt")
+log_path = str("/home/" + str(bvid) + "_mirror.txt")
 service_name = str("mirror.py")
 threshold_views = 100000000
 
-con = pymysql.connect(host='localhost', user='root',passwd='123456', database="video_bili")
-log_message = str(("(%s)数据库已连接")%(bvid))
+log_message = str(("(%s)即将完成初始化，数据库离线")%(bvid))
 log_write(message=log_message,path=log_path,level=1,service=service_name)
-
-cur = con.cursor()
-table_name = str(bvid)
-try:
-    cur.execute("desc " + str(table_name))
-    log_message = str(("(%s)视频相关表\"%s\"已存在")%(bvid,table_name))
-    log_write(message=log_message,path=log_path,level=1,service=service_name)
-except pymysql.err.ProgrammingError:
-    cur.execute("create table `" + str(table_name) + "` like `mod`;")
-    log_message = str(("(%s)表不存在，创造了一个名为\"%s\"的表")%(bvid,table_name))
-    log_write(message=log_message,path=log_path,level=2,service=service_name)
-cur.close()
 
 last_view = 0
 time_wait = 0
 time_match_mode = 5
+sleep_time = 300
 
 while True:
     time_match(mode=time_match_mode)
@@ -100,17 +87,24 @@ while True:
         log_write(message=log_message,path=log_path,level=5,service=service_name)
         time.sleep(5)
         log_message = str(("(%s)重试...")%(bvid))
-        log_write(message=log_message,path=log_path,level=1,service=service_name)
+        log_write(message=log_message,path=log_path,level=2,service=service_name)
         continue
     except bilib.Timeout:
         log_message = str(("(%s)网络请求超时，即将重试...")%(bvid))
         log_write(message=log_message,path=log_path,level=5,service=service_name)
         time.sleep(5)
         log_message = str(("(%s)重试...")%(bvid))
-        log_write(message=log_message,path=log_path,level=1,service=service_name)
+        log_write(message=log_message,path=log_path,level=2,service=service_name)
+        continue
+    except bilib.InfoError:
+        log_message = str(("(%s)疑似网络请求超时，即将重试...")%(bvid))
+        log_write(message=log_message,path=log_path,level=5,service=service_name)
+        time.sleep(5)
+        log_message = str(("(%s)重试...")%(bvid))
+        log_write(message=log_message,path=log_path,level=2,service=service_name)
         continue
     log_message = str(("(%s)通过bilib API查询完成")%(bvid))
-    log_write(message=log_message,path=log_path,level=1,service=service_name)
+    log_write(message=log_message,path=log_path,level=2,service=service_name)
     title = str(info["title"])
     view = str(info["view"])
     danmaku = str(info["danmaku"])
@@ -128,28 +122,28 @@ while True:
         log_write(message=log_message,path=log_path,level=3,service=service_name)
     elif int(view) + 2000 >= int(threshold_views):
         log_message = str(("(%s)当前播放量即将到达设定阀值 %s，剩余不到2000")%(bvid,threshold_views))
-        log_write(message=log_message,path=log_path,level=3,service=service_name)
+        log_write(message=log_message,path=log_path,level=4,service=service_name)
         sleep_time = 60
         time_match_mode = 2
         log_message = str(("(%s)重置间隔时间为%s")%(bvid,human_time(sleep_time)))
         log_write(message=log_message,path=log_path,level=2,service=service_name)
     elif int(view) + 10000 >= int(threshold_views):
         log_message = str(("(%s)当前播放量即将到达设定阀值 %s，剩余不到10000")%(bvid,threshold_views))
-        log_write(message=log_message,path=log_path,level=3,service=service_name)
+        log_write(message=log_message,path=log_path,level=4,service=service_name)
         sleep_time = 120
         time_match_mode = 2
         log_message = str(("(%s)重置间隔时间为%s")%(bvid,human_time(sleep_time)))
         log_write(message=log_message,path=log_path,level=2,service=service_name)
     elif int(view) + 100000 >= int(threshold_views):
         log_message = str(("(%s)当前播放量即将到达设定阀值 %s，剩余不到100000")%(bvid,threshold_views))
-        log_write(message=log_message,path=log_path,level=3,service=service_name)
+        log_write(message=log_message,path=log_path,level=4,service=service_name)
         sleep_time = 180
         time_match_mode = 3
         log_message = str(("(%s)重置间隔时间为%s")%(bvid,human_time(sleep_time)))
         log_write(message=log_message,path=log_path,level=2,service=service_name)
     else:
         pass
-    speed = int(int(view) - int(last_view)) / 5
+    speed = int(int(view) - int(last_view)) / time_match_mode
     last = int(threshold_views - int(view))
     use_time = int(last / speed) * 60
     if use_time == 0:
@@ -160,8 +154,8 @@ while True:
             log_write(message=log_message,path=log_path,level=2,service=service_name)
     else:
         use_time = human_time(int(use_time))
-        speed_per_five = speed * 5
-        log_message = str(("(%s)预计将于%s后到达阈值（%s次/5分钟，剩余%s）")%(bvid,str(use_time),str(speed_per_five),str(last)))
+        speed_per = int(speed * time_match_mode)
+        log_message = str(("(%s)预计将于%s后到达阈值（%s次/%s分钟，剩余%s）")%(bvid,str(use_time),str(speed_per),str(time_match_mode),str(last)))
         log_write(message=log_message,path=log_path,level=2,service=service_name)
     if last_view == 0:
         pass
@@ -171,24 +165,17 @@ while True:
         warn_1 = 1000
         if int(view) - int(last_view) >= int(warn_1):
             log_message = str(("(%s)当前播放量增幅大于 %s/%s，警报1级")%(bvid,str(warn_1),human_time(sleep_time)))
-            log_write(message=log_message,path=log_path,level=2,service=service_name)
+            log_write(message=log_message,path=log_path,level=3,service=service_name)
         elif int(view) - int(last_view) >= int(warn_2):
             log_message = str(("(%s)当前播放量增幅大于 %s/%s，警报2级")%(bvid,str(warn_2),human_time(sleep_time)))
-            log_write(message=log_message,path=log_path,level=2,service=service_name)
+            log_write(message=log_message,path=log_path,level=3,service=service_name)
         elif int(view) - int(last_view) >= int(warn_3):
             log_message = str(("(%s)当前播放量增幅大于 %s/%s，警报3级")%(bvid,str(warn_3),human_time(sleep_time)))
-            log_write(message=log_message,path=log_path,level=2,service=service_name)
+            log_write(message=log_message,path=log_path,level=3,service=service_name)
         else:
             pass
-    command = str(("insert into %s values(%s,\"%s\",%s,%s,%s,%s,%s,%s,%s)")%(table_name,now_time,title,view,danmaku,reply,favorite,coin,share,like))
-    cur = con.cursor()
-    cur.execute(command)
-    log_message = str(("(%s)已执行数据库命令")%(bvid))
-    log_write(message=log_message,path=log_path,level=1,service=service_name)
-    con.commit()
-    cur.close()
     time_wait = 0
-    log_message = str(("(%s)强制暂停10秒")%(bvid))
+    log_message = str(("(%s)强制暂停5秒")%(bvid))
     log_write(message=log_message,path=log_path,level=1,service=service_name)
-    time.sleep(10)
+    time.sleep(5)
     last_view = view
