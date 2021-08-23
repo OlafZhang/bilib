@@ -9,6 +9,9 @@ import sys
 import time
 import traceback
 import platform
+import datetime
+from pyecharts.charts import *
+from pyecharts import options as opts
 
 sysstr = platform.system()
 
@@ -1633,3 +1636,54 @@ def online_watch(id_input,cid):
     total_online = str(data["data"]["total"])
     return_dict = {"h5_online":h5_online,"total_online":total_online}
     return return_dict
+
+def gaoneng_bar(cid):
+    video_cid = int(cid)
+    danmuku_file = get_danmaku(video_cid)
+    file_exist = False
+    for i in range(0,5):
+        if os.path.exists(str(video_cid) + str(".csv")):
+            file_exist = True
+            break
+        else:
+            file_exist = False
+            continue
+    if file_exist == True: 
+        dict_list = listall_danmaku(danmuku_file,stamp=False)
+    else:
+        raise FileNotFoundError
+
+
+    def time2sec(time):
+        time = str(time)
+        hour = int(time.split(":")[0])
+        minu = int(time.split(":")[1])
+        sec = int(time.split(":")[2])
+        total = hour*3600 + minu*60 + sec
+        return total
+
+    list_sec = []
+    for x,y in dict_list.items():
+        raw = str(y[0])
+        raw = str(raw.split(".")[0])
+        list_sec.append(time2sec(raw))
+    list_sec.sort()
+    max = list_sec[len(list_sec) - 1]
+    min = list_sec[0]
+
+    list_count = []
+    for i in range(min,max+1):
+        list_count.append(list_sec.count(i))
+
+    list_time = []
+
+    for i in range(min,max+1):
+        if i in list_time:
+            continue
+        else:
+            list_time.append(str(datetime.timedelta(seconds=i)))
+    w = str(max * 2) + str("px")
+    line = Line(init_opts=opts.InitOpts(width=w))
+    line.add_xaxis(list_time)
+    line.add_yaxis("",list_count)
+    line.render()
