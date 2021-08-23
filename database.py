@@ -429,3 +429,4 @@ def find_anime(title,fuzzy = False):
 
 find_character("由崎司",fuzzy=True)
 
+
