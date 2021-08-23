@@ -1596,3 +1596,40 @@ def list_following(uid,page=1,step=20):
         uname = raw["uname"]
         return_dict[int(i)] = {"mid":mid,"uname":uname,"mtime":mtime}
     return return_dict
+
+
+
+def online_watch(id_input,cid):
+    id_input = str(id_input)
+    if id_input.isdigit():
+        mode = "av"
+    else:
+        mode = str(id_input[0:2].lower())
+        if str("av") == mode:
+            id_input = str(id_input[2:])
+        elif str("bv") == mode:
+            id_input = str("BV") + str(id_input[2:])
+        else:
+            mode = str("bv")
+            id_input = str("BV") + str(id_input[2:])
+    if mode == str("av"):
+        url = str(('http://api.bilibili.com/x/player/online/total?aid=%s&cid=%s')%(str(id_input),str(cid)))
+    else:
+        url = str(('http://api.bilibili.com/x/player/online/total?bvid=%s&cid=%s')%(str(id_input),str(cid)))
+    try:
+        if with_cookie:
+            rr = requests.get(url=url, timeout=timeout, cookies="SESSDATA=" + str(cookies))
+        else:
+            rr = requests.get(url=url, timeout=timeout)
+    except requests.exceptions.ReadTimeout:
+        raise Timeout("Timeout.")
+    data = rr.json()
+    if str(data["message"]) == str("0"):
+        pass
+    else:
+        print(str(data["message"]))
+        raise RequestError
+    h5_online = int(data["data"]["count"])
+    total_online = str(data["data"]["total"])
+    return_dict = {"h5_online":h5_online,"total_online":total_online}
+    return return_dict
