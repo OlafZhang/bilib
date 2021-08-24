@@ -1640,20 +1640,8 @@ def online_watch(id_input,cid):
 def gaoneng_bar(cid):
     video_cid = int(cid)
     danmuku_file = get_danmaku(video_cid)
-    file_exist = False
-    for i in range(0,5):
-        if os.path.exists(str(video_cid) + str(".csv")):
-            file_exist = True
-            break
-        else:
-            file_exist = False
-            continue
-    if file_exist == True: 
-        dict_list = listall_danmaku(danmuku_file,stamp=False)
-    else:
-        raise FileNotFoundError
-
-
+    time.sleep(3)
+    dict_list = listall_danmaku(danmuku_file,stamp=False)
     def time2sec(time):
         time = str(time)
         hour = int(time.split(":")[0])
