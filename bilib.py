@@ -1675,3 +1675,70 @@ def gaoneng_bar(cid):
     line.add_xaxis(list_time)
     line.add_yaxis("",list_count)
     line.render()
+
+def up_video_list(uid,page,step=30,tid=0,keyword="",order_way="pubdate"):
+    return_dict = {}
+    ua = str(UserAgent(path=ua_json).random)
+    headers = {"Host": "api.bilibili.com"
+                , "User-Agent": ua
+                , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"
+                , "Cookie":"SESSDATA="+str(cookies)}
+    try:
+        result = requests.get("https://api.bilibili.com/x/space/arc/search?mid=" + str(uid) + "&ps=" + str(step) + "&tid=" + str(tid) + "&pn=" + str(page) +"&keyword="  + str(keyword) +"&order=" + str(order_way) +"&jsonp=jsonp",headers=headers, timeout=timeout)
+        result = result.json()
+        type_list = {}
+        for i in result["data"]["list"]["tlist"]:
+            temp_list = {}
+            temp_list["name"] = result["data"]["list"]["tlist"][i]["name"]
+            temp_list["count"] = result["data"]["list"]["tlist"][i]["count"]
+            type_list[int(i)] = temp_list
+        return_dict["type_list"] = type_list
+
+        video_list = {}
+        index = 0
+        for i in result["data"]["list"]["vlist"]:
+            temp_list = {}
+            temp_list["comment"] = i["comment"]
+            temp_list["typeid"] = i["typeid"]
+            temp_list["play"] = i["play"]
+            temp_list["pic"] = i["pic"]
+            temp_list["subtitle"] = i["subtitle"]
+            temp_list["description"] = i["description"]
+            if int(i["copyright"]) == 1:
+                temp_list["copyright"] = str("未经作者授权，禁止转载")
+            elif int(i["copyright"]) == 2:
+                temp_list["copyright"] = str("转载的视频")
+            else:
+                temp_list["copyright"] = i["copyright"]
+            temp_list["title"] = i["title"]
+            temp_list["review"] = i["review"]
+            temp_list["author"] = i["author"]
+            temp_list["mid"] = i["mid"]
+            temp_list["created"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(i["created"])))
+            temp_list["length"] = i["length"]
+            temp_list["video_review"] = i["video_review"]
+            temp_list["aid"] = i["aid"]
+            temp_list["bvid"] = i["bvid"]
+            temp_list["hide_click"] = i["hide_click"]
+            temp_list["is_pay"] = i["is_pay"]
+            temp_list["is_union_video"] = i["is_union_video"]
+            temp_list["is_steins_gate"] = i["is_steins_gate"]
+            temp_list["is_live_playback"] = i["is_live_playback"]
+            video_list[index] = temp_list
+            index += 1
+        return_dict["video_list"] = video_list
+        return return_dict
+    except:
+        message = result['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
+        else:
+            print(message)
+            traceback.print_exc()
+            raise InfoError("Something error.")
