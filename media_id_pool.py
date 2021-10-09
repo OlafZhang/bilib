@@ -26,9 +26,6 @@ jujutsu_kaisen = 28229899
 beastars_1 = 28222618
 beastars_2 = 28231773
 
-# 甜梦猫[连载中]
-mewkledreamy = 28228433
-
 # 埃罗芒阿老师(免费)
 ero_sense = 5997
 
