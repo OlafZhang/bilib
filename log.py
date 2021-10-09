@@ -1,6 +1,7 @@
 import time
 from datetime import datetime
-from colorama import Fore, Back, Style
+from colorama import init,Fore,Back,Style
+init(autoreset=True)
 
 def color_print(string,color):
     output = ""
