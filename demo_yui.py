@@ -54,8 +54,10 @@ def show_comment(aid,page = 1,video = True):
                     print("   ---UP主在此层回复了")
                 else:
                     pass
+"""
 show_comment(bilib.video_info("BV117411p7US")["aid"])
 
 for i in range(14,57 + 1):
     show_comment(2543959,page = i)
     time.sleep(3)
+"""
