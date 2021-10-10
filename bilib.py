@@ -10,6 +10,12 @@ import time
 import traceback
 import platform
 import datetime
+import urllib.request
+import urllib.parse
+import http.cookiejar
+import urllib.error
+import urllib.request
+import urllib.parse
 from pyecharts.charts import *
 from pyecharts import options as opts
 
@@ -79,11 +85,6 @@ if sysstr == "Windows":
 else:
     ua_json = os.getcwd() + '/fake_useragent_0.1.11.json'
 
-# 默认没有cookie，应用到所有requests.get()
-# 由于带入cookie有些番剧还是不能得到正确消息，故不做cookie模块
-cookies = ""
-with_cookie = False
-
 # 获取视频最高清晰度
 # 传入参数：av号,bv号或ep号
 # 由于同时支持视频和番剧，故单独做了API，作为备份
@@ -109,10 +110,7 @@ def get_resolution(id_input, getid=False):
             main_url = str("https://www.bilibili.com/bangumi/play/" + str(id_input))
         else:
             main_url = str("https://www.bilibili.com/video/" + str(id_input))
-        if with_cookie:
-            main_url = requests.get(main_url, headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            main_url = requests.get(main_url, headers=headers, timeout=timeout)
+        main_url = requests.get(main_url, headers=headers, timeout=timeout)
     except:
         raise Timeout("Timeout.")
     quality = str("不支持")
@@ -186,18 +184,10 @@ def video_info(id_input):
     # 返回的结果全部来自此API
     try:
         if mode == "bv":
-            if with_cookie:
-                play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input),
-                                        headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input),
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?bvid=" + str(id_input),
                                      headers=headers, timeout=timeout)
         elif mode == "av":
-            if with_cookie:
-                play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input),
-                                        headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input),
+            play_info = requests.get("https://api.bilibili.com/x/web-interface/view?aid=" + str(id_input),
                                     headers=headers, timeout=timeout)
         else:
             raise InfoError("You should input 'av' or 'bv'.")
@@ -243,10 +233,7 @@ def video_info(id_input):
         headers = {"User-Agent": ua}
         try:
             main_url = str("https://www.bilibili.com/video/" + str(bvid))
-            if with_cookie:
-                main_url = requests.get(main_url, headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                main_url = requests.get(main_url, headers=headers, timeout=timeout)
+            main_url = requests.get(main_url, headers=headers, timeout=timeout)
         except:
             raise Timeout("Timeout.")
         soup = BeautifulSoup(main_url.text, "html.parser")
@@ -364,11 +351,7 @@ def anime_episode_info(season_id):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果全部来自此API
     try:
-        if with_cookie:
-            play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
-                                    headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
+        play_info = requests.get("https://api.bilibili.com/pgc/web/season/section?season_id=" + str(id_input),
                                     headers=headers, timeout=timeout)
         play_info = play_info.json()
     except requests.exceptions.ReadTimeout:
@@ -487,11 +470,7 @@ def anime_base_info(media_id):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果基本来自此API
     try:
-        if with_cookie:
-            play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers,
-                                    timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers,
+        play_info = requests.get("https://api.bilibili.com/pgc/review/user?media_id=" + str(id_input), headers=headers,
                                     timeout=timeout)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
@@ -520,11 +499,7 @@ def anime_base_info(media_id):
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
         # 获取tagID，此参数可以获得番剧/电影的相关推荐，如其它相关番剧和二创
         try:
-            if with_cookie:
-                tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
-                                        headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
+            tag_info = requests.get("https://api.bilibili.com/x/tag/info?tag_name=" + str(title),
                                     headers=headers, timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
@@ -544,12 +519,7 @@ def anime_base_info(media_id):
         bv_no = video_info(av_no)["bvid"]
         cid = str(episode_info[key]["cid"])
         try:
-            if with_cookie:
-                quality_info = requests.get(
-                    "https://api.bilibili.com/pgc/player/web/playurl?aid=" + str(av_no) + "&cid=" + str(cid),
-                    headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                quality_info = requests.get(
+           quality_info = requests.get(
                     "https://api.bilibili.com/pgc/player/web/playurl?aid=" + str(av_no) + "&cid=" + str(cid),
                     headers=headers, timeout=timeout)
         except requests.exceptions.ReadTimeout:
@@ -567,11 +537,7 @@ def anime_base_info(media_id):
         headers = {"Host": "api.bilibili.com", "User-Agent": ua}
         # 根据seasonID求总投币数，追番数等信息
         try:
-            if with_cookie:
-                other_info = requests.get("https://api.bilibili.com/pgc/web/season/stat?season_id=" + str(season_id),
-                                        headers=headers, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                other_info = requests.get("https://api.bilibili.com/pgc/web/season/stat?season_id=" + str(season_id),
+            other_info = requests.get("https://api.bilibili.com/pgc/web/season/stat?season_id=" + str(season_id),
                                       headers=headers, timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
@@ -584,11 +550,7 @@ def anime_base_info(media_id):
         try:
             # 获取HTML页，检查介绍信息和是否收费观看
             headers = {"User-Agent": ua}
-            if with_cookie:
-                url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,
-                                timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,
+            url = requests.get("https://www.bilibili.com/bangumi/media/md%s" % str(media_id), headers=headers,
                                timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
@@ -804,11 +766,7 @@ def user_info(uid_input):
     headers = {"Host": "api.bilibili.com", "User-Agent": ua}
     # 返回的结果基本来自此API
     try:
-        if with_cookie:
-            info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers,
-                                    timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers,
+        info_get = requests.get("https://api.bilibili.com/x/space/acc/info?mid=" + str(uid_input), headers=headers,
                                 timeout=timeout)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
@@ -847,27 +805,27 @@ def user_info(uid_input):
         vip_type = str("None")
     try:
         # 获取关注/粉丝量
-        if with_cookie:
-            fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,
-                                timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,
+        fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,
                             timeout=timeout)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     fans = fans.json()
     following = fans['data']['following']
     fans = fans['data']['follower']
+    """
     # 入站时间(必须带Cookie)
     if with_cookie:
         calendar = requests.get("https://member.bilibili.com/x2/creative/h5/calendar/event?ts=0", headers=headers,
                                 timeout=timeout, cookies="SESSDATA=" + str(cookies))
         calendar = calendar.json()
         in_time = calendar["data"]["pfs"]["jointime"]
+    """
     return_dict = {"name": name, "uid": uid, "fans": fans, "following": following, "sex": sex, "level": level,
                    "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type}
+    """
     if with_cookie:
         return_dict += {"in_time": in_time}
+    """
     # 返回字典
     return return_dict
 
@@ -916,10 +874,7 @@ def get_danmaku_raw(cid_input, reset=False):
 
         url = str('http://comment.bilibili.com/' + str(cid_input) + '.xml')
         try:
-            if with_cookie:
-                rr = requests.get(url=url, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                rr = requests.get(url=url, timeout=timeout)
+            rr = requests.get(url=url, timeout=timeout)
         except requests.exceptions.ReadTimeout:
             raise Timeout("Timeout.")
         rr.encoding = 'uft-8'
@@ -1063,9 +1018,11 @@ def listall_danmaku(file_path, stamp=False):
             def_list.append(str(line[7]))
 
             # 调整发送内容
-            send_what = str(line[8])
+            send_what = str(line[9])
+            
             send_what = send_what.translate(non_bmp_map)
             def_list.append(send_what[0:len(send_what) - 1])
+
 
             if raw_mode:
                 return_thing[int(blank_count)] = line
@@ -1126,11 +1083,7 @@ def search_media(keyword, strict=True ,type = "bangumi"):
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
     # 搜索，拿到season_id
-    if with_cookie:
-        search_info = requests.get("https://search.bilibili.com/" + str(type) + "?keyword=" + str(keyword), headers=headers,
-                                timeout=timeout, cookies="SESSDATA=" + str(cookies))
-    else:
-        search_info = requests.get("https://search.bilibili.com/" + str(type) + "?keyword=" + str(keyword), headers=headers,
+    search_info = requests.get("https://search.bilibili.com/" + str(type) + "?keyword=" + str(keyword), headers=headers,
                                timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_dict
@@ -1165,11 +1118,7 @@ def search_media(keyword, strict=True ,type = "bangumi"):
         else:
             pass
             # 跳转到播放页，拿到season_id
-        if with_cookie:
-            md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
-                                    timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
+        md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
                                    timeout=timeout)
         md_info = md_info.text
         media_id = re.findall("md\d+", md_info)[0]
@@ -1180,11 +1129,7 @@ def search_media(keyword, strict=True ,type = "bangumi"):
     else:
         for request_page in range(2, page + 1):
             time.sleep(5)
-            if with_cookie:
-                search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
-                                        , headers=headers,timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
+            search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
                                        , headers=headers,timeout=timeout)
             if str(search_info.status_code) == str("404"):
                 return return_dict
@@ -1216,11 +1161,7 @@ def search_media(keyword, strict=True ,type = "bangumi"):
                 else:
                     pass
                     # 跳转到播放页，拿到season_id
-                if with_cookie:
-                    md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
-                                        timeout=timeout, cookies="SESSDATA=" + str(cookies))
-                else:
-                    md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
+                md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
                                        timeout=timeout)
                 md_info = md_info.text
                 media_id = re.findall("md\d+", md_info)[0]
@@ -1235,11 +1176,7 @@ def search_video_all(keyword):
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
-    if with_cookie:
-        search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword), headers=headers,
-                                timeout=timeout, cookies="SESSDATA=" + str(cookies))
-    else:
-        search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword), headers=headers,
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword), headers=headers,
                                 timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_list
@@ -1276,11 +1213,7 @@ def search_video_all(keyword):
         for request_page in range(2,page + 1):
             time.sleep(5)
             headers = {"User-Agent": ua}
-            if with_cookie:
-                search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
-                                        headers=headers,timeout=timeout, cookies="SESSDATA=" + str(cookies))
-            else:
-                search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
+            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
                                        headers=headers,timeout=timeout)
             if str(search_info.status_code) == str("404"):
                 return return_list
@@ -1322,11 +1255,7 @@ def search_video(keyword,page=1):
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
-    if with_cookie:
-        search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page)
-                                    , headers=headers,timeout=timeout, cookies="SESSDATA=" + str(cookies))
-    else:
-        search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page)
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page)
                                 , headers=headers,timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_list
@@ -1375,7 +1304,7 @@ def video_comment(aid,page = 1,video = True):
         type_no = str("1")
     else:
         type_no = str("12")
-    result = requests.get("https://api.bilibili.com/x/v2/reply?type=" + type_no + "&oid=" + str(id_input) + "&pn=" + str(page), timeout=timeout,headers=headers,cookies=cookies)
+    result = requests.get("https://api.bilibili.com/x/v2/reply?type=" + type_no + "&oid=" + str(id_input) + "&pn=" + str(page), timeout=timeout,headers=headers)
     result = result.json()
 
     # 主评论区域
@@ -1539,8 +1468,7 @@ def list_follower(uid,page=1,step=20):
     step = int(step)
     headers = {"Host": "api.bilibili.com"
                 , "User-Agent": ua
-                , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"
-                , "Cookie":"SESSDATA="+str(cookies)}
+                , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"}
     result = requests.get("https://api.bilibili.com/x/relation/followers?vmid=" + str(uid) + "&pn=" + str(page) + "&ps=" + str(step) + "&order=desc&order_type=attention&jsonp=jsonp",headers=headers, timeout=timeout)
     result = result.json()
     if str(result["message"]) == str("限制只访问前5页"):
@@ -1574,8 +1502,7 @@ def list_following(uid,page=1,step=20):
     step = int(step)
     headers = {"Host": "api.bilibili.com"
                 , "User-Agent": ua
-                , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"
-                , "Cookie":"SESSDATA="+str(cookies)}
+                , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"}
     result = requests.get("https://api.bilibili.com/x/relation/followings?vmid=" + str(uid) + "&pn=" + str(page) + "&ps=" + str(step) + "&order=desc&jsonp=jsonp",headers=headers, timeout=timeout)
     result = result.json()
     if str(result["message"]) == str("限制只访问前5页"):
@@ -1620,10 +1547,7 @@ def online_watch(id_input,cid):
     else:
         url = str(('http://api.bilibili.com/x/player/online/total?bvid=%s&cid=%s')%(str(id_input),str(cid)))
     try:
-        if with_cookie:
-            rr = requests.get(url=url, timeout=timeout, cookies="SESSDATA=" + str(cookies))
-        else:
-            rr = requests.get(url=url, timeout=timeout)
+        rr = requests.get(url=url, timeout=timeout)
     except requests.exceptions.ReadTimeout:
         raise Timeout("Timeout.")
     data = rr.json()
@@ -1680,9 +1604,7 @@ def up_video_list(uid,page,step=30,tid=0,keyword="",order_way="pubdate"):
     return_dict = {}
     ua = str(UserAgent(path=ua_json).random)
     headers = {"Host": "api.bilibili.com"
-                , "User-Agent": ua
-                , "Referer":"https://space.bilibili.com/" + str(uid) + "/fans/fans"
-                , "Cookie":"SESSDATA="+str(cookies)}
+                , "User-Agent": ua}
     try:
         result = requests.get("https://api.bilibili.com/x/space/arc/search?mid=" + str(uid) + "&ps=" + str(step) + "&tid=" + str(tid) + "&pn=" + str(page) +"&keyword="  + str(keyword) +"&order=" + str(order_way) +"&jsonp=jsonp",headers=headers, timeout=timeout)
         result = result.json()
@@ -1742,3 +1664,55 @@ def up_video_list(uid,page,step=30,tid=0,keyword="",order_way="pubdate"):
             print(message)
             traceback.print_exc()
             raise InfoError("Something error.")
+
+
+def send_video_comment(id, message, cookie, ua):
+    csrf = ""
+    cookie_list = str(cookie).split(";")
+    for i in cookie_list:
+        if str("bili_jct") in str(i):
+            csrf = str(i)
+            break
+    csrf = str(csrf).replace("bili_jct=","").replace(" ","")
+    video_info  = video_info(id)
+    bvid = video_info["bvid"]
+    oid = video_info["aid"]
+    headers = {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Encoding': 'deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Connection': 'keep-alive',
+        'Cookie': cookie,
+        'Host': 'api.bilibili.com',
+        'Origin': 'https://www.bilibili.com',
+        'Referer': 'https://www.bilibili.com/video/'+bvid+'/?spm_id_from=333.334.home_popularize.3',
+        'User-Agent': str(ua)      
+    }
+
+    url = 'https://api.bilibili.com/x/v2/reply/add'
+    comment = {
+        'oid': oid,
+        'type': '1',
+        'message': message,
+        'plat': '1',
+        'jsonp': 'jsonp',
+        'csrf': csrf
+    }
+
+    postdata = urllib.parse.urlencode(comment).encode('utf-8')
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    urllib.request.install_opener(opener)
+    try:
+        request = urllib.request.Request(url, headers=headers, data=postdata)
+        response = opener.open(request)
+        json_data = response.read().decode("utf-8")
+        json_data = json.loads(json_data)
+        if str(json_data["code"]) == str("0"):
+            back = str("Success")
+        else:
+            back = str(("[%s]%s")%(json_data["code"],json_data["message"]))
+        return back
+    except urllib.error.URLError as e:
+        if hasattr(e,'reason'):
+            return e.reason

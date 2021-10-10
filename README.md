@@ -141,21 +141,7 @@ api.bilibili.com下几乎所有API均返回JSON格式，bilib将JSON重新格式
 
 访问bilibili会用到很多cookie，其中最重要的是SESSDATA，用于区别不同用户
 
-SESSDATA可在浏览器开发人员工具找到，有效时间为1个月
-
-只有以下方法必须使用cookie，否则将无法使用(或非完全使用)此方法：
-
-    list_follower(uid,page=1,step=20)
-    如果不使用cookie，5页之后不能获取
-
-    list_following(uid,page=1,step=20)
-    如果不使用cookie，5页之后不能获取
-
-所有方法要想使用Cookie，必须先做Cookie初始化：
-
-    import bilib
-    bilib.with_cookie = True               //打开全局Cookie传入开关
-    bilib.cookies = str("rq27tr0fa")       //设置SESSDATA
+但是呢，由于cookie_jar的原因，作者暂时删除几乎所有方法传入Cookie的代码，之后仅在必要方法上加入
 
 ❌ 异常
 ===
@@ -934,7 +920,24 @@ B站前段时间将视频在线观看人数分成了两种（网页端和全站�
 | is_steins_gate | **未知参数** | 默认为0 |
 | is_live_playback | 是否为直播回放视频 | 默认为0，即false |
 
+⛏ ```send_video_comment(id, message, cookie, ua)```
+-----
 
+🎈 此API在Bulletrushman/bilibiliTools（Apache 2.0 许可证）的基础上做了修改，感谢作者
+
+* 功能：对某个视频发送评论
+
+* 必要的传参：视频id(av号或bv号)，发送内容(message)，你的用户的全部Cookie(cookie)，登录此用户的浏览器User-Agent标识符(ua)
+
+    一般cookie和ua都能在浏览器的开发者工具找到，都在请求头(Request Header)中
+
+    ua使用cookie登录的对应浏览器主要是为了**防封号**
+
+* 选择的传参：无
+
+* 返回：发送结果，成功返回Success，其他原因返回代码和原因
+
+**此API内部没有完成优化，有潜在bug**
 
 🎈 感谢
 ===
