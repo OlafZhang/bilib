@@ -941,7 +941,7 @@ B站前段时间将视频在线观看人数分成了两种（网页端和全站�
 
 
 
-⛏ ```report_danmaku(cid, dmid, reason, cookie, ua ,block = False ,content = "")```
+⛏ ```report_danmaku(cid, dmid, reason, cookie, ua, block = False, content = "")```
 -----
 
 此功能主要解决视频下刷人名的问题，虽然不能进入后端删除，但可以举报弹幕，进而间接删除它
@@ -958,7 +958,7 @@ B站前段时间将视频在线观看人数分成了两种（网页端和全站�
 
     ua使用cookie登录的对应浏览器主要是为了**防封号**
 
-* 选择的传参：是否拉黑弹幕发送者(block)，默认不发送;原因具体说明(content=)，仅在原因为其它时需要输入
+* 选择的传参：是否拉黑弹幕发送者(block)，默认不发送;原因具体说明(content)，仅在原因为其它时需要输入
 
 * 返回：发送结果，成功返回Success，其他原因返回代码和原因
 
