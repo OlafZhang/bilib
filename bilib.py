@@ -10,6 +10,7 @@ import time
 import traceback
 import platform
 import datetime
+import json
 import urllib.request
 import urllib.parse
 import http.cookiejar
@@ -1712,6 +1713,54 @@ def send_video_comment(id, message, cookie, ua):
             back = str("Success")
         else:
             back = str(("[%s]%s")%(json_data["code"],json_data["message"]))
+        return back
+    except urllib.error.URLError as e:
+        if hasattr(e,'reason'):
+            return e.reason
+
+def report_danmaku(cid, dmid, reason, cookie, ua ,block = False ,content = ""):
+    csrf = ""
+    cookie_list = str(cookie).split(";")
+    for i in cookie_list:
+        if str("bili_jct") in str(i):
+            csrf = str(i)
+            break
+    csrf = str(csrf).replace("bili_jct=","").replace(" ","")
+    headers = {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Encoding': 'deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Connection': 'keep-alive',
+        'Cookie': cookie,
+        'Host': 'api.bilibili.com',
+        'Origin': 'https://www.bilibili.com',
+        'User-Agent': str(ua)      
+    }
+
+    url = 'https://api.bilibili.com/x/dm/report/add'
+    comment = {
+        'cid': cid,
+        'dmid': dmid,
+        'reason': reason,
+        'block': str(str(block).lower()),
+        'content': content,
+        'jsonp': 'jsonp',
+        'csrf': csrf
+    }
+
+    postdata = urllib.parse.urlencode(comment).encode('utf-8')
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    urllib.request.install_opener(opener)
+    try:
+        request = urllib.request.Request(url, headers=headers, data=postdata)
+        response = opener.open(request)
+        json_data = response.read().decode("utf-8")
+        json_data = json.loads(json_data)
+        if str(json_data["code"]) == str("0"):
+            back = str("Success")
+        else:
+            back = str("Error(%s-%s)")%(json_data["code"],json_data["message"])
         return back
     except urllib.error.URLError as e:
         if hasattr(e,'reason'):
