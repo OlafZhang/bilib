@@ -1041,7 +1041,7 @@ B站前段时间将视频在线观看人数分成了两种（网页端和全站�
 
 有现成的直播弹幕演示脚本**live_danmaku.py**，只需要修改直播房间号和获取弹幕时间即可
 
-如果直播间未开播，会爆错：**bilib.InfoError: Live is closed or Something error.**
+如果直播间未开播，会报错：**bilib.InfoError: Live is closed or Something error.**
 
 🎈 感谢
 ===
