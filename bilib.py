@@ -1822,3 +1822,36 @@ def up_article_list(uid,page,step=12,order_way="publish_time"):
             traceback.print_exc()
             raise InfoError("Something error.")
 
+def listall_danmaku_live(roomid,type="room"):
+    return_dict = {}
+    ua = str(UserAgent(path=ua_json).random)
+    headers = {"Host": "api.live.bilibili.com"
+                , "User-Agent": ua}
+    try:
+        result = requests.get("https://api.live.bilibili.com/xlive/web-room/v1/dM/gethistory?roomid=" + str(roomid),headers=headers, timeout=timeout)
+        result = result.json()
+        for i in range(0,10):
+            mydict = {}
+            send_time = str(result["data"][type][i]["timeline"])
+            timeArray = time.strptime(send_time,"%Y-%m-%d %H:%M:%S")
+            timestamp = int(time.mktime(timeArray))
+            mydict["timestamp"] = timestamp
+            mydict["name"] = str(result["data"][type][i]["nickname"])
+            mydict["uid"] = result["data"][type][i]["uid"]
+            mydict["text"] = str(result["data"][type][i]["text"])
+            return_dict[i] = mydict
+        return return_dict
+    except:
+        message = result['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
+        else:
+            print(message)
+            traceback.print_exc()
+            raise InfoError("Live is closed or Something error.")
