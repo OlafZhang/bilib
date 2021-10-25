@@ -794,6 +794,8 @@ def user_info(uid_input):
     birthday = info_get["data"]["birthday"]
     coins = info_get["data"]["coins"]
     vip_type = info_get["data"]["vip"]["label"]["text"]
+    stream_room_id = info_get['data']['live_room']['roomid']
+    liveStatus = info_get['data']['live_room']['liveStatus']
     # B站用户大会员类型就三种：普通用户(不返回值)，大会员，年度大会员
     if vip_type == str("大会员") or vip_type == str("年度大会员"):
         pass
@@ -813,8 +815,6 @@ def user_info(uid_input):
     fans = fans.json()
     following = fans['data']['following']
     fans = fans['data']['follower']
-    stream_room_id = fans['data']['live_room']['roomid']
-    liveStatus = fans['data']['live_room']['liveStatus']
     """
     # 入站时间(必须带Cookie)
     if with_cookie:
