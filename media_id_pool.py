@@ -83,11 +83,13 @@ natsume_6 = 5977
 natsume_movie = 28221382
 
 # Love Live(免费，包含Sunshine和虹咲学园)
+# ...并新加入SuperStar(太好听了8！)
 ll_1 = 3068
 ll_2 = 3071
 llss_1 = 5062
 llss_2 = 6433
 ll_3_1 = 28229887
+ll_4 = 28234693
 ll_movie = 28230704
 ll_ss_movie = 28228631
 
