@@ -813,6 +813,7 @@ def user_info(uid_input):
     fans = fans.json()
     following = fans['data']['following']
     fans = fans['data']['follower']
+    stream_room_id = fans['data']['live_room']['roomid']
     """
     # 入站时间(必须带Cookie)
     if with_cookie:
@@ -822,7 +823,8 @@ def user_info(uid_input):
         in_time = calendar["data"]["pfs"]["jointime"]
     """
     return_dict = {"name": name, "uid": uid, "fans": fans, "following": following, "sex": sex, "level": level,
-                   "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type}
+                   "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type, 
+                   "stream_room_id": stream_room_id}
     """
     if with_cookie:
         return_dict += {"in_time": in_time}
@@ -1675,7 +1677,7 @@ def send_video_comment(id, message, cookie, ua):
             csrf = str(i)
             break
     csrf = str(csrf).replace("bili_jct=","").replace(" ","")
-    video_info  = video_info(id)
+    videoInfo  = video_info(id)
     bvid = video_info["bvid"]
     oid = video_info["aid"]
     headers = {
@@ -1765,3 +1767,57 @@ def report_danmaku(cid, dmid, reason, cookie, ua ,block = False ,content = ""):
     except urllib.error.URLError as e:
         if hasattr(e,'reason'):
             return e.reason
+
+def up_article_list(uid,page,step=12,order_way="publish_time"):
+    return_dict = {}
+    ua = str(UserAgent(path=ua_json).random)
+    headers = {"Host": "api.bilibili.com"
+                , "User-Agent": ua
+                , "Refencer": "https://space.bilibili.com/" + str(uid) + "/article"}
+    try:
+        result = requests.get("https://api.bilibili.com/x/space/article?mid=" + str(uid) + "&pn=" + str(page) + "&ps=" + str(step) + "&sort=" + str(order_way) +"&jsonp=jsonp",headers=headers, timeout=timeout)
+        result = result.json()
+        counter = int(result["data"]["count"])
+        if counter == 0:
+            return return_dict
+        else:
+            pass
+        for index in range(0,counter):
+            my_dict = {}
+            my_dict["id"] = str(result["data"]["articles"][index]["id"])
+            class_list = []
+            for category in result["data"]["articles"][index]["categories"]:
+                class_list.append(category["name"])
+            my_dict["class"] = class_list
+            my_dict["title"] = str(result["data"]["articles"][index]["title"])
+            my_dict["summary"] = str(result["data"]["articles"][index]["summary"])
+            my_dict["publish_time"] = str(result["data"]["articles"][index]["publish_time"])
+            my_dict["view"] = str(result["data"]["articles"][index]["stats"]["view"])
+            my_dict["favorite"] = str(result["data"]["articles"][index]["stats"]["favorite"])
+            my_dict["like"] = str(result["data"]["articles"][index]["stats"]["like"])
+            my_dict["reply"] = str(result["data"]["articles"][index]["stats"]["reply"])
+            my_dict["share"] = str(result["data"]["articles"][index]["stats"]["share"])
+            my_dict["coin"] = str(result["data"]["articles"][index]["stats"]["coin"])
+            my_dict["word_conut"] = str(result["data"]["articles"][index]["words"])
+            my_dict["cover_url"] = str(result["data"]["articles"][index]["origin_image_urls"])
+            try:
+                my_dict["include_md"] = str(result["data"]["articles"][index]["media"]["media_id"])
+            except ValueError:
+                my_dict["include_md"] = ""
+            return_dict[index] = my_dict
+        return return_dict
+    except:
+        message = result['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
+        else:
+            print(message)
+            traceback.print_exc()
+            raise InfoError("Something error.")
+
