@@ -814,6 +814,7 @@ def user_info(uid_input):
     following = fans['data']['following']
     fans = fans['data']['follower']
     stream_room_id = fans['data']['live_room']['roomid']
+    liveStatus = fans['data']['live_room']['liveStatus']
     """
     # 入站时间(必须带Cookie)
     if with_cookie:
@@ -824,7 +825,7 @@ def user_info(uid_input):
     """
     return_dict = {"name": name, "uid": uid, "fans": fans, "following": following, "sex": sex, "level": level,
                    "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type, 
-                   "stream_room_id": stream_room_id}
+                   "liveStatus":liveStatus, "stream_room_id": stream_room_id}
     """
     if with_cookie:
         return_dict += {"in_time": in_time}
