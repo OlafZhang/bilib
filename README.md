@@ -670,7 +670,7 @@ video中，key为编号，value为详细信息的字典
 
 
 
-⛏ ```search_video_all(keyword,tids_1=0,tids_2=0)```
+⛏ ```search_video_all(keyword,tids_1=0,tids_2=0)```以及```search_video(keyword,page=1,tids_1=0,tids_2=0)```
 -----
 
 ❗ 目前发现搜索内容带空格时会影响代码稳定性，貌似找出了解决办法，但仍有可能发生
@@ -685,7 +685,7 @@ video中，key为编号，value为详细信息的字典
 
 * 必要的传参：要搜索的关键字(keyword)
 
-* 选择的传参：大分类号(tids_1)，小分类号(tids_2)
+* 选择的传参：大分类号(tids_1)，小分类号(tids_2)，对于```search_video(keyword,page=1,tids_1=0,tids_2=0)```，还有页码号(page)
 
 * 返回：列表，元素为字典，参数如下：
 
@@ -699,7 +699,7 @@ video中，key为编号，value为详细信息的字典
 
 * 报错：没有查到会返回空列表(无论是不是404)，412会抛出异常，并导出未完成的列表
 
-另外还有一个方法```search_video(keyword,page=1,tids_1=0,tids_2=0)```,可以指定爬取页
+```search_video(keyword,page=1,tids_1=0,tids_2=0)```,可以指定爬取页
 
 相比```search_video_all(keyword,tids_1=0,tids_2=0)```爬取全部更自由，但不能返回总页数
 
