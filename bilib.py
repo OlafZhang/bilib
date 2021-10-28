@@ -1171,7 +1171,7 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
-    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + str(extend_keyword), headers=headers,
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&order=totalrank&duration=0" +  str(extend_keyword), headers=headers,
                                 timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_list
@@ -1208,7 +1208,7 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
         for request_page in range(2,page + 1):
             time.sleep(5)
             headers = {"User-Agent": ua}
-            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + str(extend_keyword) + "&page=" + str(request_page),
+            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&order=totalrank&duration=0" +  str(extend_keyword) + "&page=" + str(request_page),
                                        headers=headers,timeout=timeout)
             if str(search_info.status_code) == str("404"):
                 return return_list
@@ -1256,7 +1256,7 @@ def search_video(keyword,page=1,tids_1=0,tids_2=0):
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
-    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page) + str(extend_keyword)
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page) + "&order=totalrank&duration=0" + str(extend_keyword)
                                 , headers=headers,timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_list
