@@ -670,8 +670,10 @@ video中，key为编号，value为详细信息的字典
 
 
 
-⛏ ```search_video_all(keyword)```
+⛏ ```search_video_all(keyword,tids_1=0,tids_2=0)```
 -----
+
+❗ 目前发现搜索内容带空格时会影响代码稳定性，仍在研究。
 
 此API为有需要做统计类视频的同学奠定基础
 
@@ -683,7 +685,7 @@ video中，key为编号，value为详细信息的字典
 
 * 必要的传参：要搜索的关键字(keyword)
 
-* 选择的传参：无
+* 选择的传参：大分类号(tids_1)，小分类号(tids_2)
 
 * 返回：列表，元素为字典，参数如下：
 
@@ -697,11 +699,19 @@ video中，key为编号，value为详细信息的字典
 
 * 报错：没有查到会返回空列表(无论是不是404)，412会抛出异常，并导出未完成的列表
 
-另外还有一个方法```search_video(keyword,page=1)```,可以指定爬取页
+另外还有一个方法```search_video(keyword,page=1,tids_1=0,tids_2=0)```,可以指定爬取页
 
-相比```search_video_all(keyword)```爬取全部更自由，但不能返回总页数
+相比```search_video_all(keyword,tids_1=0,tids_2=0)```爬取全部更自由，但不能返回总页数
 
+关于大分类号和小分类号的用法： 
 
+    1. 你可以不传参，这样就是在全部分类下搜索
+    2. 你可以只传入大分类号，这样就是在大分类下搜索
+    3. 如果需要搜索小分类，必须同时指定大分类号和小分类号
+
+```search_video_all(keyword,tids_1=0,tids_2=0)```和```search_video(keyword,page=1,tids_1=0,tids_2=0)```均支持分类查找。
+
+分类号说明可以在[class.md](https://github.com/OlafZhang/bilib/blob/main/class.md)下找到
 
 ⛏ ```online_watch(id_input,cid)```
 -----

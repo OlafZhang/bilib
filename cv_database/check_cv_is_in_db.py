@@ -1,6 +1,6 @@
 import pymysql
 import log
-db = pymysql.connect("localhost","root","123456","bili",charset='utf8')
+db = pymysql.connect(host = "localhost",user = "root",password = "123456",database = "bili",charset='utf8')
 
 log.log_write(message="开始数据库CV检查...",path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=1,service="check_cv_in_db.py")
 database_cursor = db.cursor()

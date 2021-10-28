@@ -86,10 +86,6 @@ if sysstr == "Windows":
 else:
     ua_json = os.getcwd() + '/fake_useragent_0.1.11.json'
 
-# 获取视频最高清晰度
-# 传入参数：av号,bv号或ep号
-# 由于同时支持视频和番剧，故单独做了API，作为备份
-# 已集成到video_info()，anime_base_info()则使用了另外的方法
 def get_resolution(id_input, getid=False):
     id_input = str(id_input)
     # 判断用户输入的是av号还是bv号
@@ -162,9 +158,7 @@ def get_resolution(id_input, getid=False):
         return quality
 
 
-# 获取视频信息
-# 对于番剧/电影，除了能配合anime_episode_info获得bv号、视频原生分辨率以外，没有任何作用，且数据比较不可信
-# 而av号和bv号对番剧/电影来说没有意义
+
 def video_info(id_input):
     return_dict = {}
     ua = str(UserAgent(path=ua_json).random)
@@ -345,7 +339,7 @@ def video_info(id_input):
             raise InfoError("Something error.")
 
 
-# 番剧/电影剧集信息（返回每集的cid，封面URL等，cid可用于爬取弹幕）
+
 def anime_episode_info(season_id):
     ua = str(UserAgent(path=ua_json).random)
     id_input = str(season_id)
@@ -464,7 +458,7 @@ def anime_episode_info(season_id):
     return return_dict
 
 
-# 番剧/电影基本信息（返回seasonID,以便请求剧集的详情）
+
 def anime_base_info(media_id):
     ua = str(UserAgent(path=ua_json).random)
     id_input = str(media_id)
@@ -759,8 +753,7 @@ def anime_base_info(media_id):
             raise InfoError("Something error.")
 
 
-# 获取用户信息
-# 这个是实验性API，理论效果更好，功能更多，流量开销更小
+
 def user_info(uid_input):
     uid_input = int(uid_input)
     ua = str(UserAgent(path=ua_json).random)
@@ -833,8 +826,8 @@ def user_info(uid_input):
     # 返回字典
     return return_dict
 
-# xml格式弹幕转换为csv
-# 未测试特殊弹幕，上一版本为借鉴版，代码太长
+
+
 def xml2csv(path):
     path = os.path.abspath(path)
     xml_file = open(path,"r",encoding="utf-8")
@@ -857,9 +850,8 @@ def xml2csv(path):
     print(final)
     return final
 
-# 获取弹幕(原始信息，即xml)
-# 另外，为配合转换工具，设置了UTF-8编码而非UTF-16
-# 如果需要数据分析，请直接使用get_danmaku()
+
+
 def get_danmaku_raw(cid_input, reset=False):
     try:
         file_name = str(str(cid_input) + '.xml')
@@ -891,7 +883,8 @@ def get_danmaku_raw(cid_input, reset=False):
     except Exception as e:
         print(e)
 
-# 获取弹幕(自动转换为可读性较高的csv)
+
+
 def get_danmaku(cid_input, reset=False):
     try:
         if str(cid_input).isdigit():
@@ -917,8 +910,7 @@ def get_danmaku(cid_input, reset=False):
         print(e)
 
 
-# 根据csv文件列出所有弹幕
-# 列出的弹幕会被处理，例如转换时间戳
+
 def listall_danmaku(file_path, stamp=False):
     non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
     if os.path.exists(file_path):
@@ -1043,8 +1035,7 @@ def listall_danmaku(file_path, stamp=False):
         return return_thing
 
 
-# 数弹幕行数
-# 虽然没什么难的，但是意义在于辅助弹幕文件的遍历
+
 def count_danmaku(file_path):
     if os.path.exists(file_path):
         pass
@@ -1056,10 +1047,6 @@ def count_danmaku(file_path):
 
 
 
-# 弹幕文件(xml)转字幕文件(ass)
-# 对于某些不支持弹幕的播放器可以用这个API
-# 现支持跨平台运行
-# 已经测试Potplayer(Windows)和nPlayer(iOS)，弹幕无异常
 def raw2ass(file_path):
     import platform
     sysstr = platform.system()
@@ -1078,9 +1065,6 @@ def raw2ass(file_path):
     print("FAIL")
 
 
-# 搜索媒体(beta)
-# 默认搜索番剧，输入关键词返回字典，含有md号
-# 返回所有能找到的结果
 
 def search_media(keyword, strict=True ,type = "bangumi"):
     return_dict = {}
@@ -1174,13 +1158,20 @@ def search_media(keyword, strict=True ,type = "bangumi"):
     return return_dict
 
 
-# 搜索视频功能，返回包含字典的列表，字典含标题，BV号，播放量，up主和发布时间
-# 返回所有结果，可显示当前爬取状态和总页数
-def search_video_all(keyword):
+
+def search_video_all(keyword,tids_1=0,tids_2=0):
+    extend_keyword = ""
+    if tids_1 == 0:
+        pass
+    else:
+        if tids_2 == 0:
+            extend_keyword = str(("&tids_1=%s")%(str(tids_1)))
+        else:
+            extend_keyword = str(("&tids_1=%s&tids_2=%s")%(str(tids_1),str(tids_2)))
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
-    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword), headers=headers,
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + str(extend_keyword), headers=headers,
                                 timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_list
@@ -1217,7 +1208,7 @@ def search_video_all(keyword):
         for request_page in range(2,page + 1):
             time.sleep(5)
             headers = {"User-Agent": ua}
-            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(request_page),
+            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + str(extend_keyword) + "&page=" + str(request_page),
                                        headers=headers,timeout=timeout)
             if str(search_info.status_code) == str("404"):
                 return return_list
@@ -1253,13 +1244,19 @@ def search_video_all(keyword):
 
 
 
-# 搜索视频功能，返回包含字典的列表，字典含标题，BV号，播放量，up主和发布时间
-# 返回单页结果，不显示当前爬取状态和总页数
-def search_video(keyword,page=1):
+def search_video(keyword,page=1,tids_1=0,tids_2=0):
+    extend_keyword = ""
+    if tids_1 == 0:
+        pass
+    else:
+        if tids_2 == 0:
+            extend_keyword = str(("&tids_1=%s")%(str(tids_1)))
+        else:
+            extend_keyword = str(("&tids_1=%s&tids_2=%s")%(str(tids_1),str(tids_2)))
     return_list = []
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
-    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page)
+    search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&page=" + str(page) + str(extend_keyword)
                                 , headers=headers,timeout=timeout)
     if str(search_info.status_code) == str("404"):
         return return_list
@@ -1290,6 +1287,7 @@ def search_video(keyword,page=1):
         write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback}
         return_list.append(write_dict)
     return return_list
+
 
 
 def video_comment(aid,page = 1,video = True):
@@ -1565,6 +1563,8 @@ def online_watch(id_input,cid):
     return_dict = {"h5_online":h5_online,"total_online":total_online}
     return return_dict
 
+
+
 def gaoneng_bar(cid):
     video_cid = int(cid)
     danmuku_file = get_danmaku(video_cid)
@@ -1603,6 +1603,8 @@ def gaoneng_bar(cid):
     line.add_xaxis(list_time)
     line.add_yaxis("",list_count)
     line.render()
+
+
 
 def up_video_list(uid,page,step=30,tid=0,keyword="",order_way="pubdate"):
     return_dict = {}
@@ -1670,6 +1672,7 @@ def up_video_list(uid,page,step=30,tid=0,keyword="",order_way="pubdate"):
             raise InfoError("Something error.")
 
 
+
 def send_video_comment(id, message, cookie, ua):
     csrf = ""
     cookie_list = str(cookie).split(";")
@@ -1721,6 +1724,8 @@ def send_video_comment(id, message, cookie, ua):
         if hasattr(e,'reason'):
             return e.reason
 
+
+
 def report_danmaku(cid, dmid, reason, cookie, ua ,block = False ,content = ""):
     csrf = ""
     cookie_list = str(cookie).split(";")
@@ -1768,6 +1773,8 @@ def report_danmaku(cid, dmid, reason, cookie, ua ,block = False ,content = ""):
     except urllib.error.URLError as e:
         if hasattr(e,'reason'):
             return e.reason
+
+
 
 def up_article_list(uid,page,step=12,order_way="publish_time"):
     return_dict = {}
@@ -1821,6 +1828,8 @@ def up_article_list(uid,page,step=12,order_way="publish_time"):
             print(message)
             traceback.print_exc()
             raise InfoError("Something error.")
+
+
 
 def listall_danmaku_live(roomid,type="room"):
     return_dict = {}

@@ -274,7 +274,6 @@ def find_actor(actor_name,fuzzy = False):
             anime = str(item[1])
             print("      |--- " + character + " - 《" + anime + "》")
     
-
 def find_character(character_name,fuzzy = False):
     character_name = str(character_name)
     find = db.cursor()
@@ -343,20 +342,35 @@ def find_character(character_name,fuzzy = False):
             find.close()
             find_full = db.cursor()
             full = find_full.execute("select * from full_actor where `name` = '" + str(cv) + "'")
-            if int(full) == 0:
+            full_data = find_full.fetchall()
+            back_length = len(str(full_data))
+            if back_length == 2:
                 print("，此声优看起来不在完整声优数据库中。")
                 info = str("\"" + str(cv) + "\"看上去不在完整声优数据库中，问题发生在：" + str(character_name) + " - " + str(anime_info))
                 log.log_write(message=info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=2,service="database.py",outprint=False)
             else:
                 print("，此声优在完整声优数据库中。")
-                finded = list(find_full.fetchall())
+                finded = full_data
                 is_alive = finded[0][4]
+                region = finded[0][2]
+                year = finded[0][3]
                 if int(is_alive) == 0:
                     print("    。。。且此声优已故，R.I.P.")
                 elif int(is_alive) == 2:
                     print("    。。。且此声优已隐退声优界")
                 else:
                     pass
+                if str(region) == "CN":
+                    print("    。。。此声优来自中国。")
+                elif str(region) == "JP":
+                    pass
+                else:
+                    print(("    。。。此声优来自“%s”。")%(str(region)))
+                if len(str(year)) == 0:
+                    pass
+                else:
+                    print(("    。。。出生于：%s。")%(str(year)))
+
             find_full.close()
             count = 0
             for thing in actor_list:
@@ -428,5 +442,3 @@ def find_anime(title,fuzzy = False):
     find.close()
 
 find_character("由崎司",fuzzy=True)
-
-
