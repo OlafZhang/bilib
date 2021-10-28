@@ -84,14 +84,16 @@ natsume_movie = 28221382
 
 # Love Live(免费，包含Sunshine和虹咲学园)
 # ...并新加入SuperStar(太好听了8！)
+# 为做出区别，使用pro以分辨企划，例如pro2对应Aqours（水团），pro4对应Liella（星团）
+# 初代LL不使用上述方法区分
 ll_1 = 3068
 ll_2 = 3071
-llss_1 = 5062
-llss_2 = 6433
-ll_3_1 = 28229887
-ll_4 = 28234693
+ll_pro2_1 = 5062
+ll_pro2_2 = 6433
+ll_pro3_1 = 28229887
+ll_pro4_1 = 28234693
 ll_movie = 28230704
-ll_ss_movie = 28228631
+ll_pro2_movie = 28228631
 
 # 笨女孩(免费)
 aho_girl = 6311
