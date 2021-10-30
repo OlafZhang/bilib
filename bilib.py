@@ -218,11 +218,12 @@ def video_info(id_input):
         owner_name = play_info['data']['owner']["name"]
         owner_uid = play_info['data']['owner']["mid"]
         owner_face = play_info['data']['owner']["face"]
+        total_duration = play_info['data']["duration"]
 
         return_dict = {"aid": aid, "bvid": bvid, "type_id":type_id,"type_name":type_name,"pic_url":pic_url,"put_time":put_time,
                         "ctime":ctime, "title": title, "desc": desc,"argue_msg":argue_msg,"state":state,"evaluation":evaluation,"owner_name": owner_name,
                        "owner_uid": owner_uid, "owner_face":owner_face,"view": view, "danmaku": danmaku, "reply": reply, "favorite": favorite,
-                       "coin": coin, "share": share, "like": like, "now_rank":now_rank,"his_rank":his_rank,"total_page":total_page}
+                       "coin": coin, "share": share, "like": like, "now_rank":now_rank,"his_rank":his_rank,"total_page":total_page,"total_duration":total_duration}
 
 
         headers = {"User-Agent": ua}
@@ -1190,6 +1191,7 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
     time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
     name_list_raw = re.findall('class="up-name">.*?<', search_txt)
     playback_list_raw = re.findall(',"play":\d*,"', search_txt)
+    length_list = re.findall(',"duration":.+?,"', search_txt)
     for id in range(0,len(bv_title_list)):
         raw_text = bv_title_list[id]
         bv = str(str(raw_text).split("?")[0]).replace("/","")
@@ -1199,7 +1201,8 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
         put_time = str(time_list[id])
         up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
         playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
-        write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback}
+        length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
+        write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback,"length":length}
         return_list.append(write_dict)
     print("1 / " + str(page))
     if page == 1:
@@ -1228,6 +1231,7 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
             time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
             name_list_raw = re.findall('class="up-name">.*?<', search_txt)
             playback_list_raw = re.findall(',"play":\d*,"', search_txt)
+            length_list = re.findall(',"duration":.+?,"', search_txt)
             for id in range(0, len(bv_title_list)):
                 raw_text = bv_title_list[id]
                 bv = str(str(raw_text).split("?")[0]).replace("/", "")
@@ -1237,7 +1241,8 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
                 put_time = str(time_list[id])
                 up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
                 playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
-                write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback}
+                length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
+                write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback,"length":length}
                 return_list.append(write_dict)
             print(str(request_page) + " / " + str(page))
     return return_list
@@ -1275,6 +1280,7 @@ def search_video(keyword,page=1,tids_1=0,tids_2=0):
     time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
     name_list_raw = re.findall('class="up-name">.*?<', search_txt)
     playback_list_raw = re.findall(',"play":\d*,"', search_txt)
+    length_list = re.findall(',"duration":.+?,"', search_txt)
     for id in range(0,len(bv_title_list)):
         raw_text = bv_title_list[id]
         bv = str(str(raw_text).split("?")[0]).replace("/","")
@@ -1284,7 +1290,8 @@ def search_video(keyword,page=1,tids_1=0,tids_2=0):
         put_time = str(time_list[id])
         up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
         playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
-        write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback}
+        length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
+        write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback,"length":length}
         return_list.append(write_dict)
     return return_list
 
