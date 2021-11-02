@@ -1056,6 +1056,68 @@ B站前段时间将视频在线观看人数分成了两种（网页端和全站�
 
 如果直播间未开播，会报错：**bilib.InfoError: Live is closed or Something error.**
 
+
+
+⛏ ```send_danmaku_video(id_input, page, send_time, mode, message, cookie, ua, color="FFFFFF", fontsize=25, pool=0)```
+-----
+
+
+* 功能：对某个视频发送弹幕
+
+* 必要的传参：视频id(id_input，av号或bv号)，视频分p（page，以1开始），发送的时间点（send_time，单位为秒，支持小数和整数），弹幕模式（mode，默认为滚动弹幕），发送内容(message)，你的用户的全部Cookie(cookie)，登录此用户的浏览器User-Agent标识符(ua)
+
+    一般cookie和ua都能在浏览器的开发者工具找到，都在请求头(Request Header)中
+
+    ua使用cookie登录的对应浏览器主要是为了**防封号**
+
+    弹幕模式稍后说明
+
+* 选择的传参：弹幕颜色（color，十六进制RGB值，默认为白色），字体大小（fontsize，默认为25，即默认大小），弹幕池（pool,默认为0）
+
+* 返回：发送结果，成功返回Success，其他原因返回代码和原因
+
+| 弹幕模式(mode) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| 1 | 滚动弹幕 |  |
+| 4 | 底部弹幕 |  |
+| 5 | 顶部弹幕 |  |
+| 6 | 逆向弹幕 | 实测不可用 |
+| 7 | 特殊弹幕 | 未测试 |
+| 7 | 精确弹幕 | 弹幕池编号为1，未测试 |
+
+**此API通过了作者自己的视频测试**
+
+
+
+⛏ ```send_danmaku_anime(md, page, send_time, mode, message, cookie, ua, color="FFFFFF", fontsize=25, pool=0)```
+-----
+
+
+* 功能：对某个番剧发送弹幕
+
+* 必要的传参：番剧md号(md)，视频分p（page，以1开始，遇到特殊页面如PV时直接输入PV），发送的时间点（send_time，单位为秒，支持小数和整数），弹幕模式（mode，默认为滚动弹幕），发送内容(message)，你的用户的全部Cookie(cookie)，登录此用户的浏览器User-Agent标识符(ua)
+
+    一般cookie和ua都能在浏览器的开发者工具找到，都在请求头(Request Header)中
+
+    ua使用cookie登录的对应浏览器主要是为了**防封号**
+
+    弹幕模式稍后说明
+
+* 选择的传参：弹幕颜色（color，十六进制RGB值，默认为白色），字体大小（fontsize，默认为25，即默认大小），弹幕池（pool,默认为0）
+
+* 返回：发送结果，成功返回Success，其他原因返回代码和原因
+
+| 弹幕模式(mode) | 解释 | 备注 |
+| :---:| :---: | :---: |
+| 1 | 滚动弹幕 |  |
+| 4 | 底部弹幕 |  |
+| 5 | 顶部弹幕 |  |
+| 6 | 逆向弹幕 | 实测不可用 |
+| 7 | 特殊弹幕 | 未测试 |
+| 7 | 精确弹幕 | 弹幕池编号为1，未测试 |
+
+**此API看起来没有通过番剧测试，还在检查中**
+
 🎈 感谢
 ===
 

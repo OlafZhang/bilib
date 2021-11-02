@@ -239,8 +239,11 @@ def video_info(id_input):
             if str("window.__playinfo__=") in str(x.string):
                 # 匹配简介的正则表达式(关键字accept_quality)
                 text = str(x.string)
-                quality_id = str(re.findall(r'"accept_quality":.\d+.,', text)[0])
-                quality_id = str(str(quality_id.split("[")[1]).split("]")[0])
+                try:
+                    quality_id = str(re.findall(r'"accept_quality":.\d+.,', text)[0])
+                    quality_id = str(str(quality_id.split("[")[1]).split("]")[0])
+                except:
+                    continue
                 if str(",") in quality_id:
                     quality_id = quality_id.split(",")[0]
                 else:
@@ -1871,3 +1874,164 @@ def listall_danmaku_live(roomid,type="room"):
             print(message)
             traceback.print_exc()
             raise InfoError("Live is closed or Something error.")
+
+
+
+def send_danmaku_video(id_input, page, send_time, mode, message, cookie, ua, color="FFFFFF", fontsize=25, pool=0):
+    page = page - 1
+    color = str(int(str(color), 16))
+    csrf = ""
+    ctime = str(send_time).split(".")
+    try:
+        if float(ctime[1]) == 0:
+            send_time = str(send_time) + str("000")
+        else:
+            if len(ctime[1]) == 3:
+                send_time = str(str(send_time).replace(".",""))
+            elif len(ctime[1]) == 2:
+                send_time = str(str(send_time).replace(".","")) + str("0")
+            elif len(ctime[1]) == 1:
+                send_time = str(str(send_time).replace(".","")) + str("00")
+            else:
+                send_time = str(ctime[0] + str(ctime[1])[0:3])
+    except IndexError:
+        send_time = str(send_time) + str("000")
+    cookie_list = str(cookie).split(";")
+    for i in cookie_list:
+        if str("bili_jct") in str(i):
+            csrf = str(i)
+            break
+    csrf = str(csrf).replace("bili_jct=","").replace(" ","")
+    videoInfo  = video_info(id_input)
+    bvid = videoInfo["bvid"]
+    cid = videoInfo["video"][int(page)]["cid"]
+    url = 'https://api.bilibili.com/x/v2/dm/post'
+    comment = {
+        'type': '1',
+        'oid': cid,
+        'msg': message,
+        'bvid': bvid,
+        'progress': send_time,
+        'plat': '1',
+        'csrf': csrf,
+        'color': color,
+        'fontsize': fontsize,
+        'pool': pool,
+        'mode': mode
+    }
+
+    postdata = urllib.parse.urlencode(comment).encode('utf-8')
+
+    headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Encoding': 'deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Connection': 'keep-alive',
+        'Cookie': cookie,
+        'Host': 'api.bilibili.com',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Origin': 'https://www.bilibili.com',
+        'Dnt': '1',
+        'Te': 'trailers',
+        'Content-Length': str(len(postdata)),
+        'Referer': 'https://www.bilibili.com/video/'+bvid+'/?spm_id_from=333.334.home_popularize.3',
+        'User-Agent': str(ua)      
+    }
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    urllib.request.install_opener(opener)
+    try:
+        request = urllib.request.Request(url, headers=headers, data=postdata)
+        response = opener.open(request)
+        json_data = response.read().decode("utf-8")
+        json_data = json.loads(json_data)
+        if str(json_data["code"]) == str("0"):
+            back = str("Success")
+        else:
+            back = str(("[%s]%s")%(json_data["code"],json_data["message"]))
+        return back
+    except urllib.error.URLError as e:
+        if hasattr(e,'reason'):
+            return e.reason
+
+
+
+def send_danmaku_anime(md, page, send_time, mode, message, cookie, ua, color="FFFFFF", fontsize=25, pool=0):
+    page = str(page)
+    color = str(int(str(color), 16))
+    csrf = ""
+    ctime = str(send_time).split(".")
+    try:
+        if float(ctime[1]) == 0:
+            send_time = str(send_time) + str("000")
+        else:
+            if len(ctime[1]) == 3:
+                send_time = str(str(send_time).replace(".",""))
+            elif len(ctime[1]) == 2:
+                send_time = str(str(send_time).replace(".","")) + str("0")
+            elif len(ctime[1]) == 1:
+                send_time = str(str(send_time).replace(".","")) + str("00")
+            else:
+                send_time = str(ctime[0] + str(ctime[1])[0:3])
+    except IndexError:
+        send_time = str(send_time) + str("000")
+    cookie_list = str(cookie).split(";")
+    for i in cookie_list:
+        if str("bili_jct") in str(i):
+            csrf = str(i)
+            break
+    csrf = str(csrf).replace("bili_jct=","").replace(" ","")
+    anime_info = anime_base_info(int(md))
+    ss_id = int(anime_info['season_id'])
+    episode_info = anime_episode_info(ss_id)
+    aid = episode_info[page]['aid']
+    cid = episode_info[page]['cid']
+    epid = episode_info[page]['ep_id']
+    url = 'https://api.bilibili.com/x/v2/dm/post'
+    comment = {
+        'type': '1',
+        'oid': cid,
+        'msg': message,
+        'aid': aid,
+        'progress': send_time,
+        'plat': '1',
+        'csrf': csrf,
+        'color': color,
+        'fontsize': fontsize,
+        'pool': pool,
+        'mode': mode
+    }
+
+    postdata = urllib.parse.urlencode(comment).encode('utf-8')
+
+    headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Encoding': 'deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Connection': 'keep-alive',
+        'Cookie': cookie,
+        'Host': 'api.bilibili.com',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Origin': 'https://www.bilibili.com',
+        'Dnt': '1',
+        'Te': 'trailers',
+        'Content-Length': str(len(postdata)),
+        'Referer': 'https://www.bilibili.com/bangumi/play/ep' + str(epid) + '?spm_id_from=333.999.0.0',
+        'User-Agent': str(ua)      
+    }
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    urllib.request.install_opener(opener)
+    try:
+        request = urllib.request.Request(url, headers=headers, data=postdata)
+        response = opener.open(request)
+        json_data = response.read().decode("utf-8")
+        json_data = json.loads(json_data)
+        if str(json_data["code"]) == str("0"):
+            back = str("Success")
+        else:
+            back = str(("[%s]%s")%(json_data["code"],json_data["message"]))
+        return back
+    except urllib.error.URLError as e:
+        if hasattr(e,'reason'):
+            return e.reason
