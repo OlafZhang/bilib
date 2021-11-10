@@ -571,8 +571,8 @@ demo中的方法```get_full_info()```有以下传参
 | type_id | 类型编号 |  |
 | type_name | 类型描述 |  |
 | pic_url | 封面图片URL |  |
-| put_time | 投稿时间 | 时间戳 |
-| ctime | *未知参数* | 时间戳 |
+| put_time | 审核成功时间 | 时间戳 |
+| ctime | 投稿时间 | 时间戳 |
 | title | 视频标题 |  |
 | desc | 视频描述 |  |
 | argue_msg | 视频提醒信息 | 例如“视频内含有危险行为，请勿模仿” |
