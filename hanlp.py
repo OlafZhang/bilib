@@ -10,7 +10,12 @@ import time
 
 video_id = "BV1J4411m7wk"
 reason = 4
-cookie = str()
+
+cookie_file = open("COOKIE_FILE.txt","r",encoding="utf-8")
+for line in cookie_file.readlines():
+    cookie = str(line).replace("\n","")
+    break
+
 ua = str("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 
 reason_list = {'0':'违法违禁','1':'色情低俗','2':'恶意刷屏','3':'赌博诈骗','4':'人身攻击','5':'侵犯隐私','6':'垃圾广告','7':'视频无关','8':'引战','9':'剧透','10':'青少年不良信息','11':'其它'}
