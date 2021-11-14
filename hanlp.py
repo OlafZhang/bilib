@@ -8,9 +8,9 @@ import time
 
 # 参数在这里
 
-video_id = "BV1gL4y1a7Fs"
+video_id = "BV1J4411m7wk"
 reason = 4
-cookie = str(r"b_ut=-1; i-wanna-go-back=-1; _uuid=9F63B883-5436-2510-C0E8-FCA2CD415ACC08758infoc; buvid3=968CF330-C292-4110-AA7B-54BE9D251004148804infoc; CURRENT_BLACKGAP=0; CURRENT_FNVAL=976; blackside_state=1; rpdid=|(k|k)mR~~kk0J'uYJkRmuRkk; DedeUserID=4670418; DedeUserID__ckMd5=4c838627b4f771e8; SESSDATA=0f5c33cb%2C1648043458%2Ce5a84*91; bili_jct=03ae531804a4e9a54b87f69b2a5a1e75; PVID=2; bp_video_offset_4670418=580192133996157076; CURRENT_QUALITY=80; bp_t_offset_4670418=579766541390622780; dy_spec_agreed=1; LIVE_BUVID=AUTO3616333962855780; fingerprint3=de99c73ecbc97fcc75c0fdc8c69456fe; fingerprint=d6e8026be183bbb1abaa02ebf1c3b32c; fingerprint_s=6b9dcd8748af972e3e53a4bca2dfbcf8; buvid_fp=968CF330-C292-4110-AA7B-54BE9D251004148804infoc; buvid_fp_plain=968CF330-C292-4110-AA7B-54BE9D251004148804infoc; innersign=1; sid=j3hyedlt; bfe_id=1bad38f44e358ca77469025e0405c4a6")
+cookie = str()
 ua = str("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 
 reason_list = {'0':'违法违禁','1':'色情低俗','2':'恶意刷屏','3':'赌博诈骗','4':'人身攻击','5':'侵犯隐私','6':'垃圾广告','7':'视频无关','8':'引战','9':'剧透','10':'青少年不良信息','11':'其它'}
@@ -72,31 +72,31 @@ for x,y in alist.items():
                     else:
                         result = str(bilib.report_danmaku(cid, dmid, reason, cookie, ua, content=content))
                         print(str(("处理结果：%s")%(result)))
-                        time.sleep(3)
+                        time.sleep(1.5)
                         break
                 else:
                     result = str(bilib.report_danmaku(cid, dmid, reason, cookie, ua, content=content))
                     print(str(("处理结果：%s")%(result)))
-                    time.sleep(3)
+                    time.sleep(1.5)
                     break
             elif str(user_input) == str("n"):
                 print("此弹幕将不会举报",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r此弹幕将不会举报.",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r此弹幕将不会举报..",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r此弹幕将不会举报...",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r                   ",end="")
                 print("\r此弹幕将不会举报",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r此弹幕将不会举报.",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r此弹幕将不会举报..",end="")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 print("\r此弹幕将不会举报...")
-                time.sleep(0.5)
+                time.sleep(0.25)
                 break
             else:
                 print("输入有误")
