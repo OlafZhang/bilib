@@ -1,6 +1,5 @@
-# 我知道你会再来这里，所以我放出监视你（偷我视频的人）的代码
-# 我怀疑就是发出issue的人搞的，不然就不会删除issue
-# 等着瞧，这个代码会在树莓派长期运行
+# 监视偷视频者的代码
+# 此代码将长期运行
 
 from os import execv
 import bilib
@@ -37,7 +36,8 @@ while True:
             print("描述：",end="")
             print(FUCKER_video_list[FUCKER_video_counter]["description"])
             if FUCKER_video_counter > FUCKER_newest_video_number:
-                message = str("那个逼发视频了：%s（%s）")%(str(FUCKER_video_list[FUCKER_video_counter]["title"]),str(FUCKER_video_list[FUCKER_video_counter]["bvid"]))
+                message = str("那个逼发视频了：\n%s（%s）")%(str(FUCKER_video_list[FUCKER_video_counter]["title"]),str(FUCKER_video_list[FUCKER_video_counter]["bvid"]))
+                FUCKER_newest_video_number = FUCKER_video_counter
                 send_notice_ifttt(message)
             else:
                 pass
