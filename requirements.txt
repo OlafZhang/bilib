@@ -2,3 +2,9 @@ requests
 bs4
 beautifulsoup4
 fake_useragent
+re
+csv
+urllib
+http
+pyecharts
+rich
