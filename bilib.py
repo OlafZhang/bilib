@@ -19,6 +19,12 @@ import urllib.request
 import urllib.parse
 from pyecharts.charts import *
 from pyecharts import options as opts
+from rich.traceback import install
+from rich import console
+from rich.progress import *
+from rich.live import Live
+from rich import console
+install(show_locals=True)
 
 sysstr = platform.system()
 
@@ -1072,6 +1078,16 @@ def raw2ass(file_path):
 
 def search_media(keyword, strict=True ,type = "bangumi"):
     return_dict = {}
+    progress = Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]进行中...", justify="right"),
+        BarColumn(bar_width=None),
+        "[progress.percentage]{task.percentage:>3.0f}%",
+        ",耗时",
+        TimeElapsedColumn(),
+        ",剩余",
+        TimeRemainingColumn()
+    )
     ua = str(UserAgent(path=ua_json).random)
     headers = {"User-Agent": ua}
     # 搜索，拿到season_id
@@ -1090,80 +1106,96 @@ def search_media(keyword, strict=True ,type = "bangumi"):
     page = int(page.split('"')[1])
     result_list_raw = re.findall('ss\\d+/\\?from=search\" title=\".+?\" target=\"_blank\" ',search_raw)
     title_list = []
-    for id in range(0,len(result_list_raw)):
-        raw = result_list_raw[id]
-        season_id = str(str(raw).split("/")[0])
-        title = str(str(raw).split("title=")[1])
-        title = str(title.split("target=")[0])
-        title = title.replace(" ","")
-        title = str(title.replace('"',''))
-        if title in title_list:
-            continue
-        else:
-            title_list.append(title)
-
-        if strict:
-            if bool(re.search(keyword, title, re.IGNORECASE)):
-                pass
-            else:
+    with Live(progress,refresh_per_second=1) as live:
+        for id in range(0,len(result_list_raw)):
+            raw = result_list_raw[id]
+            season_id = str(str(raw).split("/")[0])
+            title = str(str(raw).split("title=")[1])
+            title = str(title.split("target=")[0])
+            title = title.replace(" ","")
+            title = str(title.replace('"',''))
+            if title in title_list:
                 continue
-        else:
-            pass
-            # 跳转到播放页，拿到season_id
-        md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
-                                   timeout=timeout)
-        md_info = md_info.text
-        media_id = re.findall("md\d+", md_info)[0]
-        return_dict[title] = media_id
-    print("1 / " + str(page))
-    if page == 1:
-        pass
-    else:
-        for request_page in range(2, page + 1):
-            time.sleep(5)
-            search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
-                                       , headers=headers,timeout=timeout)
-            if str(search_info.status_code) == str("404"):
-                return return_dict
-            elif str(search_info.status_code) == str("412"):
-                return return_dict
-                raise RequestRefuse("Banning.")
+            else:
+                title_list.append(title)
+
+            if strict:
+                if bool(re.search(keyword, title, re.IGNORECASE)):
+                    pass
+                else:
+                    continue
             else:
                 pass
-            search_raw = str(search_info.text)
-            result_list_raw = re.findall('ss\\d+/\\?from=search\" title=\".+?\" target=\"_blank\" ', search_raw)
-            title_list = []
-            for id in range(0, len(result_list_raw)):
-                raw = result_list_raw[id]
-                season_id = str(str(raw).split("/")[0])
-                title = str(str(raw).split("title=")[1])
-                title = str(title.split("target=")[0])
-                title = title.replace(" ", "")
-                title = str(title.replace('"', ''))
-                if title in title_list:
-                    continue
-                else:
-                    title_list.append(title)
-
-                if strict:
-                    if bool(re.search(keyword, title, re.IGNORECASE)):
-                        pass
-                    else:
-                        continue
+                # 跳转到播放页，拿到season_id
+            md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
+                                    timeout=timeout)
+            md_info = md_info.text
+            media_id = re.findall("md\d+", md_info)[0]
+            return_dict[title] = media_id
+        if page == 1:
+            pass
+        else:
+            task1 = progress.add_task('[cyan]进行中...', total=int(page))
+            progress.update(task1, advance=1)
+            message = str("搜索模式:%s 关键词:%s 严格匹配模式:%s 页面:%s/%s")%(str(type),str(keyword),str(strict),str(1),str(page))
+            live.console.log(message)
+            for request_page in range(2, page + 1):
+                time.sleep(5)
+                search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
+                                        , headers=headers,timeout=timeout)
+                if str(search_info.status_code) == str("404"):
+                    return return_dict
+                elif str(search_info.status_code) == str("412"):
+                    return return_dict
+                    raise RequestRefuse("Banning.")
                 else:
                     pass
-                    # 跳转到播放页，拿到season_id
-                md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
-                                       timeout=timeout)
-                md_info = md_info.text
-                media_id = re.findall("md\d+", md_info)[0]
-                return_dict[title] = media_id
-            print(str(request_page) + " / " + str(page))
-    return return_dict
+                search_raw = str(search_info.text)
+                result_list_raw = re.findall('ss\\d+/\\?from=search\" title=\".+?\" target=\"_blank\" ', search_raw)
+                title_list = []
+                for id in range(0, len(result_list_raw)):
+                    raw = result_list_raw[id]
+                    season_id = str(str(raw).split("/")[0])
+                    title = str(str(raw).split("title=")[1])
+                    title = str(title.split("target=")[0])
+                    title = title.replace(" ", "")
+                    title = str(title.replace('"', ''))
+                    if title in title_list:
+                        continue
+                    else:
+                        title_list.append(title)
+
+                    if strict:
+                        if bool(re.search(keyword, title, re.IGNORECASE)):
+                            pass
+                        else:
+                            continue
+                    else:
+                        pass
+                        # 跳转到播放页，拿到season_id
+                    md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
+                                        timeout=timeout)
+                    md_info = md_info.text
+                    media_id = re.findall("md\d+", md_info)[0]
+                    return_dict[title] = media_id
+                progress.update(task1, advance=1)
+                message = str("搜索模式:%s 关键词:%s 严格匹配模式:%s 页面:%s/%s")%(str(type),str(keyword),str(strict),str(request_page),str(page))
+                live.console.log(message)
+        return return_dict
 
 
 
 def search_video_all(keyword,tids_1=0,tids_2=0):
+    progress = Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]进行中...", justify="right"),
+        BarColumn(bar_width=None),
+        "[progress.percentage]{task.percentage:>3.0f}%",
+        ",耗时",
+        TimeElapsedColumn(),
+        ",剩余",
+        TimeRemainingColumn()
+    )
     extend_keyword = ""
     if tids_1 == 0:
         pass
@@ -1195,60 +1227,61 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
     name_list_raw = re.findall('class="up-name">.*?<', search_txt)
     playback_list_raw = re.findall(',"play":\d*,"', search_txt)
     length_list = re.findall(',"duration":.+?,"', search_txt)
-    for id in range(0,len(bv_title_list)):
-        raw_text = bv_title_list[id]
-        bv = str(str(raw_text).split("?")[0]).replace("/","")
-        title = str(str(raw_text).split("title=")[1]).replace('"',"")
-        title = title.replace('<em class="keyword">',"")
-        title = str(title.replace('</em>', ""))
-        put_time = str(time_list[id])
-        up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
-        playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
-        length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
-        write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback,"length":length}
-        return_list.append(write_dict)
-    print("1 / " + str(page))
-    if page == 1:
-        pass
-    else:
-        for request_page in range(2,page + 1):
-            time.sleep(5)
-            headers = {"User-Agent": ua}
-            search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&order=totalrank&duration=0" +  str(extend_keyword) + "&page=" + str(request_page),
-                                       headers=headers,timeout=timeout)
-            if str(search_info.status_code) == str("404"):
-                return return_list
-            elif str(search_info.status_code) == str("412"):
-                return return_list
-                raise RequestRefuse("Banning." )
-            else:
-                pass
-            search_txt = search_info.text
-            page = str(re.findall("numPages\":\\d*?,\"", search_txt)[0])
-            page = page.replace(":", "")
-            page = page.replace(",", "")
-            page = int(page.split('"')[1])
-            if page == 0:
-                raise SeemsNothing("No result.")
-            bv_title_list = re.findall("/BV.*?\\?from=search\" title=\".+?\"", search_txt)
-            time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
-            name_list_raw = re.findall('class="up-name">.*?<', search_txt)
-            playback_list_raw = re.findall(',"play":\d*,"', search_txt)
-            length_list = re.findall(',"duration":.+?,"', search_txt)
-            for id in range(0, len(bv_title_list)):
-                raw_text = bv_title_list[id]
-                bv = str(str(raw_text).split("?")[0]).replace("/", "")
-                title = str(str(raw_text).split("title=")[1]).replace('"', "")
-                title = title.replace('<em class="keyword">', "")
-                title = str(title.replace('</em>', ""))
-                put_time = str(time_list[id])
-                up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
-                playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
-                length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
-                write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback,"length":length}
-                return_list.append(write_dict)
-            print(str(request_page) + " / " + str(page))
-    return return_list
+    with Live(progress,refresh_per_second=1) as live:
+        for id in range(0,len(bv_title_list)):
+            raw_text = bv_title_list[id]
+            bv = str(str(raw_text).split("?")[0]).replace("/","")
+            title = str(str(raw_text).split("title=")[1]).replace('"',"")
+            title = title.replace('<em class="keyword">',"")
+            title = str(title.replace('</em>', ""))
+            put_time = str(time_list[id])
+            up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
+            playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
+            length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
+            write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback,"length":length}
+            return_list.append(write_dict)
+        if page == 1:
+            pass
+        else:
+            task1 = progress.add_task('[cyan]进行中...', total=int(page))
+            progress.update(task1, advance=1)
+            message = str("关键词:%s 主类号(tids_1):%s 次类号(tids_2):%s 页面:%s/%s")%(str(keyword),str(tids_1),str(tids_2),str(1),str(page))
+            live.console.log(message)
+            for request_page in range(2,page + 1):
+                time.sleep(5)
+                headers = {"User-Agent": ua}
+                search_info = requests.get("https://search.bilibili.com/video?keyword=" + str(keyword) + "&order=totalrank&duration=0" +  str(extend_keyword) + "&page=" + str(request_page),
+                                        headers=headers,timeout=timeout)
+                if str(search_info.status_code) == str("404"):
+                    return return_list
+                elif str(search_info.status_code) == str("412"):
+                    return return_list
+                    raise RequestRefuse("Banning." )
+                else:
+                    pass
+                search_txt = search_info.text
+                
+                bv_title_list = re.findall("/BV.*?\\?from=search\" title=\".+?\"", search_txt)
+                time_list = re.findall(r"\d{4}-\d{2}-\d{2}", search_txt)
+                name_list_raw = re.findall('class="up-name">.*?<', search_txt)
+                playback_list_raw = re.findall(',"play":\d*,"', search_txt)
+                length_list = re.findall(',"duration":.+?,"', search_txt)
+                for id in range(0, len(bv_title_list)):
+                    raw_text = bv_title_list[id]
+                    bv = str(str(raw_text).split("?")[0]).replace("/", "")
+                    title = str(str(raw_text).split("title=")[1]).replace('"', "")
+                    title = title.replace('<em class="keyword">', "")
+                    title = str(title.replace('</em>', ""))
+                    put_time = str(time_list[id])
+                    up_name = str(str(name_list_raw[id]).split(">")[1]).split("<")[0]
+                    playback = str(str(str(playback_list_raw[id]).replace(",", "").replace(":", "")).split('"')[2])
+                    length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
+                    write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback,"length":length}
+                    return_list.append(write_dict)
+                progress.update(task1, advance=1)
+                message = str("关键词:%s 主类号(tids_1):%s 次类号(tids_2):%s 页面:%s/%s")%(str(keyword),str(tids_1),str(tids_2),str(request_page),str(page))
+                live.console.log(message)
+        return return_list
 
 
 
@@ -2035,3 +2068,79 @@ def send_danmaku_anime(md, page, send_time, mode, message, cookie, ua, color="FF
     except urllib.error.URLError as e:
         if hasattr(e,'reason'):
             return e.reason
+
+
+def user_bangumi_list(uid):
+    progress = Progress(
+        SpinnerColumn(),
+        TextColumn("[cyan]进行中...", justify="right"),
+        BarColumn(bar_width=None),
+        "[progress.percentage]{task.percentage:>3.0f}%",
+        ",耗时",
+        TimeElapsedColumn(),
+        ",剩余",
+        TimeRemainingColumn()
+    )
+    return_dict = {}
+    ua = str(UserAgent(path=ua_json).random)
+    headers = {"Host": "api.bilibili.com"
+                ,'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+                ,'Accept-Encoding': 'deflate'
+                ,'Accept-Language': 'zh-CN,zh;q=0.9'
+                , "User-Agent": ua}
+    try:
+        page = 1
+        count = 0
+        total_page = -1
+        total_item = 0
+        uname = user_info(uid)["name"]
+        with Live(progress,refresh_per_second=1) as live:
+            while True:
+                result = requests.get("http://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=0&pn="+str(page)+"&ps=15&vmid=" + str(uid),headers=headers, timeout=timeout)
+                result = result.json()
+                getList = result["data"]["list"]
+                if total_page == -1:
+                    total_item = int(result["data"]["total"])
+                    if total_item % 15 == 0:
+                        total_page = total_item // 15
+                    else:
+                        total_page = total_item // 15
+                        total_page += 1
+                    task1 = progress.add_task('[cyan]进行中...', total=total_page)
+                if len(getList) == 0:
+                    break
+                else:
+                    progress.update(task1, advance=1)
+                    message = str(("UID:%s(%s) 进度%s/%s 项目数%s")%(str(uid),str(uname),str(page),str(total_page),str(total_item)))
+                    live.console.log(message)
+                    for i in getList:
+                        mydict = {}
+                        name = str(i["title"])
+                        season_id = int(i["season_id"])
+                        media_id = int(i["media_id"])
+                        mydict["name"] = name
+                        mydict["season_id"] = season_id
+                        mydict["media_id"] = media_id
+                        return_dict[count] = mydict
+                        count+=1
+                    time.sleep(3)
+                if page == total_page:
+                    break
+                else:
+                    page+=1
+            return return_dict
+    except:
+        message = result['message']
+        if str(message) == str("请求错误"):
+            raise RequestError("Request error.")
+        elif str(message) == str("啥都木有"):
+            raise SeemsNothing("Seems no such info.")
+        elif str(message) == str("服务调用超时"):
+            raise Timeout("Timeout.")
+        elif str(message) == str("请求被拦截"):
+            raise RequestRefuse("Banning.")
+        else:
+            print(message)
+            traceback.print_exc()
+            raise InfoError("Something error.")
+            
