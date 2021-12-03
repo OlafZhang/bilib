@@ -11,6 +11,9 @@ import time
 video_id = "BV1J4411m7wk"
 reason = 4
 
+# 需自行创建COOKIE_FILE.txt，编码UTF-8
+# 直接将所有Cookie粘贴即可，只允许有一行
+# 例如： b_ut=-1; i-wanna-go-back=-1; _uuid=*******; buvid3=*****; CURRENT_BLACKGAP=0; ...
 cookie_file = open("COOKIE_FILE.txt","r",encoding="utf-8")
 for line in cookie_file.readlines():
     cookie = str(line).replace("\n","")
