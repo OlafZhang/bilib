@@ -1175,3 +1175,7 @@ B站前段时间将视频在线观看人数分成了两种（网页端和全站�
 直播房间基本信息：
 
 https://api.live.bilibili.com/room/v1/Room/room_init?id=23280160
+
+生成requirements:
+
+pipreqs.exe . --encoding=utf8 --force
