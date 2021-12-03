@@ -19,11 +19,10 @@ import urllib.request
 import urllib.parse
 from pyecharts.charts import *
 from pyecharts import options as opts
-from rich.traceback import install
 from rich import console
 from rich.progress import *
 from rich.live import Live
-from rich import console
+from rich.traceback import install
 install(show_locals=True)
 
 sysstr = platform.system()
