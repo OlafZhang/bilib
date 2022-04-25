@@ -24,6 +24,8 @@ from rich.progress import *
 from rich.live import Live
 from rich.traceback import install
 install(show_locals=True)
+from colorama import init,Fore,Back,Style
+init(autoreset=True)
 
 sysstr = platform.system()
 
@@ -796,8 +798,13 @@ def user_info(uid_input):
     birthday = info_get["data"]["birthday"]
     coins = info_get["data"]["coins"]
     vip_type = info_get["data"]["vip"]["label"]["text"]
-    stream_room_id = info_get['data']['live_room']['roomid']
-    liveStatus = info_get['data']['live_room']['liveStatus']
+    hard_core_vip =  int(info_get["data"]["is_senior_member"])
+    try:
+        stream_room_id = info_get['data']['live_room']['roomid']
+        liveStatus = info_get['data']['live_room']['liveStatus']
+    except:
+        stream_room_id = "null"
+        liveStatus = "null"
     # B站用户大会员类型就三种：普通用户(不返回值)，大会员，年度大会员
     if vip_type == str("大会员") or vip_type == str("年度大会员"):
         pass
@@ -808,6 +815,10 @@ def user_info(uid_input):
         vip_type = str("年度大会员")
     else:
         vip_type = str("None")
+    if hard_core_vip == 1:
+        hard_core_vip = True
+    else:
+        hard_core_vip = False
     try:
         # 获取关注/粉丝量
         fans = requests.get("https://api.bilibili.com/x/relation/stat?vmid=" + str(uid_input), headers=headers,
@@ -827,7 +838,7 @@ def user_info(uid_input):
     """
     return_dict = {"name": name, "uid": uid, "fans": fans, "following": following, "sex": sex, "level": level,
                    "face_url": face_url, "sign": sign, "birthday": birthday, "coins": coins, "vip_type": vip_type, 
-                   "liveStatus":liveStatus, "stream_room_id": stream_room_id}
+                   "liveStatus":liveStatus, "stream_room_id": stream_room_id, "hard_core_vip":hard_core_vip}
     """
     if with_cookie:
         return_dict += {"in_time": in_time}
@@ -1075,7 +1086,7 @@ def raw2ass(file_path):
 
 
 
-def search_media(keyword, strict=True ,type = "bangumi"):
+def search_media(keyword, strict=False ,type = "bangumi"):
     return_dict = {}
     progress = Progress(
         SpinnerColumn(),
@@ -1105,7 +1116,8 @@ def search_media(keyword, strict=True ,type = "bangumi"):
     page = int(page.split('"')[1])
     result_list_raw = re.findall('ss\\d+/\\?from=search\" title=\".+?\" target=\"_blank\" ',search_raw)
     title_list = []
-    with Live(progress,refresh_per_second=1) as live:
+    with Live(progress) as live:
+        task1 = progress.add_task('[cyan]进行中...', total=int(page))
         for id in range(0,len(result_list_raw)):
             raw = result_list_raw[id]
             season_id = str(str(raw).split("/")[0])
@@ -1125,19 +1137,20 @@ def search_media(keyword, strict=True ,type = "bangumi"):
                     continue
             else:
                 pass
-                # 跳转到播放页，拿到season_id
+                # 跳转到播放页，拿到md号
             md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
                                     timeout=timeout)
             md_info = md_info.text
             media_id = re.findall("md\d+", md_info)[0]
             return_dict[title] = media_id
+            message = str("[%s] 搜索到 %s(%s)")%(str(Fore.YELLOW + str(keyword) + Style.RESET_ALL),str(title),str(media_id))
+            live.console.log(message)
+        progress.update(task1, advance=1)
+        message = str("搜索模式:%s 关键词:%s 严格匹配模式:%s 页面:%s/%s")%(str(type),str(keyword),str(strict),str(1),str(page))
+        live.console.log(message)
         if page == 1:
             pass
         else:
-            task1 = progress.add_task('[cyan]进行中...', total=int(page))
-            progress.update(task1, advance=1)
-            message = str("搜索模式:%s 关键词:%s 严格匹配模式:%s 页面:%s/%s")%(str(type),str(keyword),str(strict),str(1),str(page))
-            live.console.log(message)
             for request_page in range(2, page + 1):
                 time.sleep(5)
                 search_info = requests.get("https://search.bilibili.com/bangumi?keyword=" + str(keyword) + "&page=" + str(request_page)
@@ -1171,12 +1184,14 @@ def search_media(keyword, strict=True ,type = "bangumi"):
                             continue
                     else:
                         pass
-                        # 跳转到播放页，拿到season_id
+                        # 跳转到播放页，拿到md号
                     md_info = requests.get("https://www.bilibili.com/bangumi/play/" + str(season_id), headers=headers,
                                         timeout=timeout)
                     md_info = md_info.text
                     media_id = re.findall("md\d+", md_info)[0]
                     return_dict[title] = media_id
+                    message = str("[%s] 搜索到 %s(%s)")%(str(Fore.YELLOW + str(keyword) + Style.RESET_ALL),str(title),str(media_id))
+                    live.console.log(message)
                 progress.update(task1, advance=1)
                 message = str("搜索模式:%s 关键词:%s 严格匹配模式:%s 页面:%s/%s")%(str(type),str(keyword),str(strict),str(request_page),str(page))
                 live.console.log(message)
@@ -1226,7 +1241,8 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
     name_list_raw = re.findall('class="up-name">.*?<', search_txt)
     playback_list_raw = re.findall(',"play":\d*,"', search_txt)
     length_list = re.findall(',"duration":.+?,"', search_txt)
-    with Live(progress,refresh_per_second=1) as live:
+    with Live(progress) as live:
+        task1 = progress.add_task('[cyan]进行中...', total=int(page))
         for id in range(0,len(bv_title_list)):
             raw_text = bv_title_list[id]
             bv = str(str(raw_text).split("?")[0]).replace("/","")
@@ -1239,13 +1255,14 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
             length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
             write_dict = {"bv":bv,"title":title,"put_time":put_time,"up_name":up_name,"playback":playback,"length":length}
             return_list.append(write_dict)
+            message = str("[%s] 搜索到 %s(%s)")%(str(Fore.YELLOW + str(keyword) + Style.RESET_ALL),str(title),str(bv))
+            live.console.log(message)
+        progress.update(task1, advance=1)
+        message = str("[%s] 主类号(tids_1):%s 次类号(tids_2):%s 页面:%s/%s")%(str(Fore.YELLOW + str(keyword) + Style.RESET_ALL),str(tids_1),str(tids_2),str(1),str(page))
+        live.console.log(message)
         if page == 1:
             pass
         else:
-            task1 = progress.add_task('[cyan]进行中...', total=int(page))
-            progress.update(task1, advance=1)
-            message = str("关键词:%s 主类号(tids_1):%s 次类号(tids_2):%s 页面:%s/%s")%(str(keyword),str(tids_1),str(tids_2),str(1),str(page))
-            live.console.log(message)
             for request_page in range(2,page + 1):
                 time.sleep(5)
                 headers = {"User-Agent": ua}
@@ -1277,9 +1294,14 @@ def search_video_all(keyword,tids_1=0,tids_2=0):
                     length = str(str(str(str(length_list[id]).split('":"')[1]).replace('"','')).replace(',',''))
                     write_dict = {"bv": bv, "title": title, "put_time": put_time, "up_name": up_name, "playback": playback,"length":length}
                     return_list.append(write_dict)
+                    message = str("[%s] 搜索到：%s(%s)")%(str(Fore.YELLOW + str(keyword) + Style.RESET_ALL),str(title),str(bv))
+                    live.console.log(message)
                 progress.update(task1, advance=1)
-                message = str("关键词:%s 主类号(tids_1):%s 次类号(tids_2):%s 页面:%s/%s")%(str(keyword),str(tids_1),str(tids_2),str(request_page),str(page))
+                message = str("[%s] 主类号(tids_1):%s 次类号(tids_2):%s 页面:%s/%s")%(str(Fore.YELLOW + str(keyword) + Style.RESET_ALL),str(tids_1),str(tids_2),str(request_page),str(page))
                 live.console.log(message)
+                if len(bv_title_list) == 0:
+                    message = str(Fore.RED + str("当前页发生了异常。") + Style.RESET_ALL)
+                    live.console.log(message)
         return return_list
 
 
@@ -2093,7 +2115,7 @@ def user_bangumi_list(uid):
         total_page = -1
         total_item = 0
         uname = user_info(uid)["name"]
-        with Live(progress,refresh_per_second=1) as live:
+        with Live(progress) as live:
             while True:
                 result = requests.get("http://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=0&pn="+str(page)+"&ps=15&vmid=" + str(uid),headers=headers, timeout=timeout)
                 result = result.json()
@@ -2122,6 +2144,8 @@ def user_bangumi_list(uid):
                         mydict["media_id"] = media_id
                         return_dict[count] = mydict
                         count+=1
+                        message = str(("[NO.%s by %s] %s(md%s) ")%(str(count),str(uid),str(name),str(media_id)))
+                        live.console.log(message)
                     time.sleep(3)
                 if page == total_page:
                     break
