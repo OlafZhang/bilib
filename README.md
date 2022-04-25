@@ -288,8 +288,9 @@ demo中的方法```get_full_info()```有以下传参
 | birthday | 生日 | 可以为空值 |
 | coins | 硬币 | 意义不明，可能是获币数量 |
 | vip_type | 是否为大会员 | 空值/大会员/年度大会员 |
-| liveStatus | 直播间状态 | 0为未开播，1为开播 |
-| stream_room_id | 直播房间号 |  |
+| liveStatus | 直播间状态 | 0为未开播，1为开播，没开过直播返回null |
+| stream_room_id | 直播房间号 | 没开过直播返回null |
+| hard_core_vip | 是否是硬核会员 | 布尔值 |
 
 * 补充：由于愚人节会临时将大会员改为小会员，bilib已做好相应对策，但可能会失效，故在此提醒
 
