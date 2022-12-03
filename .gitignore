@@ -85,3 +85,9 @@ niconvert-master/niconvert/fndcli/__pycache__/main.cpython-38.pyc
 niconvert-master/niconvert/fndcli/__pycache__/main.cpython-38.pyc
 COOKIE_FILE.txt
 2.py
+1.py
+header_translator.py
+header_translator.txt
+global_log.txt
+*.pyc
+*.pyc

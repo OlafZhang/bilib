@@ -29,12 +29,12 @@ def color_print(string,color):
 # 模式0：直接输入直播间ID
 # 模式1：根据UID查直播间ID
 # 模式2：根据UID查直播间ID（即使未开播也尝试显示弹幕）
-mode = 2
+mode = 1
 
 now_timestamp = 0
-timesleep = 3
-roomid = 5265
-uid = 4549624
+timesleep = 0.1
+roomid = 88621
+uid = 5970160
 
 if mode == 0:
     pass

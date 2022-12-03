@@ -1,7 +1,7 @@
 import bilib
 import log
 import time
-def user_mirror(uid,outprint=True):
+def user_monitor(uid,outprint=True):
     user_data = bilib.user_info(uid)
     name = str(user_data["name"])
     uid = str(user_data["uid"])
@@ -13,7 +13,7 @@ def user_mirror(uid,outprint=True):
     log.log_write(message=user_info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=1,service="mirror.py",outprint=outprint)
     return
 
-def video_mirror(id,outprint=True):
+def video_monitor(id,outprint=True):
     video_data = bilib.video_info(str(id))
     bvid = str(video_data["bvid"])
     title = str(video_data["title"])
@@ -28,7 +28,7 @@ def video_mirror(id,outprint=True):
     log.log_write(message=video_info,path="C:\\Users\\10245\\OneDrive\\Python\\bilib\\global_log.txt",level=1,service="mirror.py",outprint=outprint)
     return
 
-def anime_mirror(mid,outprint=True):
+def anime_monitor(mid,outprint=True):
     anime_data = bilib.anime_base_info(int(mid))
     title = str(anime_data["title"])
     type_name = str(anime_data["type"])

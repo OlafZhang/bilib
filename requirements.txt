@@ -1,9 +1,9 @@
-beautifulsoup4==4.10.0
+beautifulsoup4==4.11.1
 colorama==0.4.4
 fake_useragent==0.1.11
 OpenCC==1.1.1
-pyecharts==1.9.0
-pyhanlp==0.1.79
+pyecharts==1.9.1
+pyhanlp==0.1.84
 PyMySQL==1.0.2
-requests==2.26.0
-rich==10.15.2
+requests==2.27.1
+rich==12.4.4
