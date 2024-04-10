@@ -1,10 +1,10 @@
 # 🍻bilib🍻
 
+**注：** 2024.4.10，此代码绝大部分功能遇到412错误，已无法使用，弃坑存档
+
 整合多个B站原生API，并结合爬取技术的Python爬取用lib
 
 bili + lib = bilib
-
-**注：** 2020.12.2，此代码除错误可能不够妥当，不带后台相关、tag搜索、下载(写了，但不放)外，功能已经完善，现可正式使用
 
 ![image](https://raw.githubusercontent.com/OlafZhang/bilib/master/images/back.jpg)
 
